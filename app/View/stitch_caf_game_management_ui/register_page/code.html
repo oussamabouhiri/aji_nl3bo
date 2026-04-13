@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register | The Tactile Archive</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#2f4e4e",
+                    "tertiary-container": "#453214",
+                    "on-background": "#e5e2e1",
+                    "on-primary": "#412d00",
+                    "inverse-surface": "#e5e2e1",
+                    "surface": "#131313",
+                    "on-secondary": "#153535",
+                    "inverse-on-surface": "#313030",
+                    "primary-fixed-dim": "#e9c176",
+                    "on-tertiary-fixed-variant": "#584324",
+                    "secondary-fixed-dim": "#abcdcc",
+                    "secondary": "#abcdcc",
+                    "background": "#131313",
+                    "tertiary-fixed": "#feddb3",
+                    "tertiary": "#e1c299",
+                    "surface-container-highest": "#353534",
+                    "on-tertiary-container": "#b69a73",
+                    "on-error": "#690005",
+                    "surface-tint": "#e9c176",
+                    "outline-variant": "#414848",
+                    "surface-container-low": "#1c1b1b",
+                    "secondary-fixed": "#c7e9e8",
+                    "outline": "#8b9292",
+                    "on-secondary-fixed": "#002020",
+                    "surface-container": "#201f1f",
+                    "on-tertiary": "#402d10",
+                    "surface-variant": "#353534",
+                    "on-surface": "#e5e2e1",
+                    "surface-dim": "#131313",
+                    "error-container": "#93000a",
+                    "surface-container-high": "#2a2a2a",
+                    "primary": "#e9c176",
+                    "on-tertiary-fixed": "#281801",
+                    "on-secondary-fixed-variant": "#2d4c4c",
+                    "on-secondary-container": "#9dbfbe",
+                    "on-primary-container": "#bd9852",
+                    "error": "#ffb4ab",
+                    "inverse-primary": "#775a19",
+                    "primary-container": "#473100",
+                    "on-primary-fixed": "#261900",
+                    "surface-bright": "#393939",
+                    "primary-fixed": "#ffdea5",
+                    "on-surface-variant": "#c1c8c7",
+                    "on-primary-fixed-variant": "#5d4201",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#e1c299"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .brass-gradient {
+            background: linear-gradient(135deg, #e9c176 0%, #bd9852 100%);
+        }
+        .glass-panel {
+            background: rgba(32, 31, 31, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .ghost-border {
+            outline: 1px solid rgba(65, 72, 72, 0.15);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen relative overflow-x-hidden flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 py-6 bg-transparent">
+<div class="text-2xl font-bold tracking-tighter text-[#e9c176]">The Tactile Archive</div>
+<div class="flex items-center gap-6">
+<button class="text-teal-100/70 hover:text-[#e9c176] transition-colors duration-300">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar (Suppressed for Transactional Page) -->
+<!-- Main Content -->
+<main class="flex-grow flex items-center justify-center relative px-6 py-24">
+<!-- Immersive Background Image -->
+<div class="fixed inset-0 z-0">
+<img class="w-full h-full object-cover opacity-30" data-alt="atmospheric interior of a luxurious board game cafe with leather seating, warm brass lighting, and floor-to-ceiling shelves of vintage games" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlwwKaoxRaYnyc1-NhaiPTmk3wXizNlwUGnYIvNpLzV4HxY5RtnyFG7iKFX7gNktNcPlo1ffxCTxJa2mbZVCF2Lu8JAs7X_JpF6Pkw4H6R4hUMbHBEgMDHnp58eZDBMqcrpxTIF1yyKt0jefM1fApddp-g7Cz7TGj6OlEW7uMKK6rIhD9hqUqmCKRHAwn1s4QaU98r6HHH5oRGNXuwysO4Uto0_yAeMqXXI_A7flvyNSZxDthB3v4GnDxE-ZMldg9R8LvhvFj_dtum"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50"></div>
+</div>
+<div class="relative z-10 w-full max-w-xl">
+<!-- Registration Card -->
+<div class="glass-panel p-8 md:p-12 rounded-xl shadow-2xl shadow-black/50 border-0 ghost-border">
+<div class="mb-10 text-center md:text-left">
+<p class="text-primary font-headline tracking-widest text-xs uppercase mb-2">Initiate Access</p>
+<h1 class="text-4xl md:text-5xl font-bold tracking-tight text-on-surface mb-4">The Archive awaits.</h1>
+<p class="text-secondary opacity-70 font-body">Join our curated circle of enthusiasts and curators.</p>
+</div>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Full Name -->
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-secondary/60 uppercase tracking-wider px-1">Full Name</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-0 ghost-border rounded-xl px-4 py-4 focus:ring-1 focus:ring-primary text-on-surface placeholder:text-surface-container-highest transition-all" placeholder="Alexander Thorne" type="text"/>
+</div>
+</div>
+<!-- Phone Number -->
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-secondary/60 uppercase tracking-wider px-1">Phone Number</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-0 ghost-border rounded-xl px-4 py-4 focus:ring-1 focus:ring-primary text-on-surface placeholder:text-surface-container-highest transition-all" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+</div>
+</div>
+<!-- Email -->
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-secondary/60 uppercase tracking-wider px-1">Email Address</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-0 ghost-border rounded-xl px-4 py-4 focus:ring-1 focus:ring-primary text-on-surface placeholder:text-surface-container-highest transition-all" placeholder="curator@aji-l3bo.com" type="email"/>
+</div>
+</div>
+<!-- Password -->
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-secondary/60 uppercase tracking-wider px-1">Password</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-0 ghost-border rounded-xl px-4 py-4 focus:ring-1 focus:ring-primary text-on-surface placeholder:text-surface-container-highest transition-all" placeholder="••••••••••••" type="password"/>
+<div class="absolute inset-y-0 right-4 flex items-center text-secondary/40">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</div>
+</div>
+</div>
+<!-- Terms & Conditions Hint -->
+<p class="text-[10px] text-secondary/40 text-center uppercase tracking-[0.2em] pt-2">
+                        By registering, you agree to the Archivist's Protocol
+                    </p>
+<!-- Register Button -->
+<button class="w-full brass-gradient text-on-primary font-headline font-bold py-5 rounded-full text-lg shadow-xl shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-95 duration-200" type="submit">
+                        Register
+                    </button>
+</form>
+<!-- Footer Link -->
+<div class="mt-8 text-center">
+<p class="text-secondary/60 text-sm">
+                        Already have access? 
+                        <a class="text-primary font-bold hover:underline ml-1" href="#">Sign In</a>
+</p>
+</div>
+</div>
+<!-- Aesthetic Accent -->
+<div class="mt-12 flex justify-between items-center px-4 opacity-50">
+<div class="h-[1px] w-12 bg-outline-variant"></div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-[10px] uppercase tracking-[0.4em] text-secondary">Aji L3bo Café</span>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="h-[1px] w-12 bg-outline-variant"></div>
+</div>
+</div>
+</main>
+</body></html>
