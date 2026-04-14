@@ -1,5 +1,4 @@
 CREATE DATABASE IF NOT EXISTS games_db
-USE games_db
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -13,13 +12,15 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    name VARCHAR(50) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 
 CREATE TABLE IF NOT EXISTS games (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    description VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
     difficulty ENUM('easy', 'medium', 'hard') NOT NULL,
     spots INT NOT NULL,
     duration INT NOT NULL,
