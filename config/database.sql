@@ -38,24 +38,23 @@ CREATE TABLE IF NOT EXISTS game_tables (
 CREATE TABLE IF NOT EXISTS reservations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
+    table_id INT NOT NULL,
     date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     spots INT NOT NULL,
     status ENUM('pending', 'confirmed', 'cancelled', 'completed') DEFAULT 'pending',
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (table_id) REFERENCES game_tables(id) ON DELETE CASCADE
 )
 
 CREATE TABLE IF NOT EXISTS sessions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     reservation_id INT NOT NULL,
-    table_id INT NOT NULL,
     game_id INT NOT NULL,
-    start_time TIME NOT NULL,
-    duree INT NOT NULL,
-    status ENUM('active', 'ended') DEFAULT 'active',
+    duration INT NOT NULL,
+    status ENUM('inactive', 'active', 'ended') DEFAULT 'inactive',
     FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
-    FOREIGN KEY (table_id) REFERENCES game_tables(id) ON DELETE CASCADE,
     FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
 )
 
