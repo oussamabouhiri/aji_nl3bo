@@ -2,10 +2,6 @@
 
 namespace App\Route;
 
-session_start() === PHP_SESSION_NONE ? session_start() : null;
-
-require __DIR__ . '/../vendor/autoload.php';
-
 use App\Middleware\Middleware;
 
 $config = require __DIR__ . '/../config/app.php';

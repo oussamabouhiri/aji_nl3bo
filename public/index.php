@@ -1,12 +1,15 @@
 <?php
 
+session_start() === PHP_SESSION_NONE ? session_start() : null;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Route\Router;
-use App\Controller\AuthController;
+
 
 // DEFINE ROUTES
 
-Router::get('login', [AuthController::class, 'index']);
+// For exemple 
+// Router::get('login', [AuthController::class, 'index']);
 
 Router::match();
