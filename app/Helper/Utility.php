@@ -9,9 +9,9 @@ class Utility {
     }
 
     public static function redirect(string $url): void {
-        $config = require dirname(__DIR__) . '/config/app.php';
+        $config = require dirname(__DIR__) . '/../config/app.php';
         $url = str_starts_with($url, '/') ? $url : '/' . $url;
-        header('Location: ' . $config['base_url'] . ltrim($url, '/'));
+        header('Location: ' . $config['base_url'] . "/" . ltrim($url, '/'));
         exit;
     }
 
