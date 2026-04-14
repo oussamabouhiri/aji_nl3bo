@@ -1,10 +1,15 @@
+<?php
+$errors = $errors ?? [];
+$old    = $old ?? [];
+$baseUrl = \App\Helper\Utility::baseUrl();
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Register | The Tactile Archive</title>
+    <title>Register | Aji L3bo</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
@@ -152,7 +157,17 @@
                     <p class="text-secondary opacity-70 font-body">Join our curated circle of enthusiasts and curators.
                     </p>
                 </div>
-                <form class="space-y-4">
+                <?php if (!empty($errors)): ?>
+                    <div class="mb-6 p-4 rounded-xl bg-error-container/20 border border-error/20">
+                        <?php foreach ($errors as $error): ?>
+                            <p class="text-error text-sm flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base">error</span>
+                                <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
+                            </p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                <form class="space-y-4" method="POST" action="<?= $baseUrl ?>register">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Full Name -->
                         <div class="space-y-2">
@@ -161,8 +176,10 @@
                                 Name</label>
                             <div class="relative">
                                 <input
+                                    name="name"
+                                    value="<?= htmlspecialchars($old['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                     class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 px-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="Alexander Thorne" type="text">
+                                    placeholder="Alexander Thorne" type="text" required>
                             </div>
                         </div>
                         <!-- Phone Number -->
@@ -172,8 +189,10 @@
                                 Number</label>
                             <div class="relative">
                                 <input
+                                    name="phone"
+                                    value="<?= htmlspecialchars($old['phone'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                     class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 px-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="+1 (555) 000-0000" type="tel">
+                                    placeholder="+212 600 000 000" type="tel">
                             </div>
                         </div>
                     </div>
@@ -182,8 +201,10 @@
                          <label class="text-xs font-headline uppercase tracking-widest text-primary/80 font-bold ml-1">Email Address</label>
                          <div class="relative">
                              <input
+                                 name="email"
+                                 value="<?= htmlspecialchars($old['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                  class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 px-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                 placeholder="curator@aji-l3bo.com" type="email">
+                                 placeholder="curator@aji-l3bo.com" type="email" required>
                          </div>
                     </div>
                     <!-- Password -->
@@ -191,8 +212,9 @@
                         <label class="text-xs font-headline uppercase tracking-widest text-primary/80 font-bold ml-1">Password</label>
                         <div class="relative">
                             <input
+                                name="password"
                                 class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 px-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                placeholder="••••••••••••" type="password">
+                                placeholder="••••••••••••" type="password" required minlength="6">
                             <div class="absolute right-4 top-1/2 -translate-y-1/2 text-secondary/40 cursor-pointer">
                                 <span class="material-symbols-outlined text-lg">visibility</span>
                             </div>
@@ -212,7 +234,7 @@
                 <div class="mt-8 text-center">
                     <p class="text-secondary/60 text-sm">
                         Already have access?
-                        <a class="text-primary font-bold hover:underline ml-1" href="<?= BASE_URL ?>/login">Sign In</a>
+                        <a class="text-primary font-bold hover:underline ml-1" href="<?= $baseUrl ?>login">Sign In</a>
                     </p>
                 </div>
             </div>
