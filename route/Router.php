@@ -49,9 +49,11 @@ class Router {
     }
 
     static public function request(): array {
-        $basePath = self::$config['base_path'];
-        $path = rtrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
-        $path = trim(str_replace(strtolower($basePath), '', strtolower($path)), '/');
+        $basePath = rtrim(self::$config['base_path'], '/');
+        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $path = strtolower($path);
+        $path = preg_replace('#^' . preg_quote(strtolower($basePath), '#') . '#', '', $path);
+        $path = trim($path, '/');
         
         return [
             'path' => $path ?: '/', 

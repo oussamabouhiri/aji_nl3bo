@@ -1,10 +1,15 @@
+<?php
+$errors = $errors ?? [];
+$old    = $old ?? [];
+$baseUrl = \App\Helper\Utility::baseUrl();
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Sign In | The Tactile Archive</title>
+    <title>Sign In | Aji L3bo</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
@@ -155,7 +160,17 @@
                         <h2 class="font-headline text-3xl font-bold text-on-surface mb-2">Sign In</h2>
                         <p class="text-outline text-sm">Enter your credentials to access your table.</p>
                     </div>
-                    <form class="space-y-6">
+                    <?php if (!empty($errors)): ?>
+                        <div class="mb-6 p-4 rounded-xl bg-error-container/20 border border-error/20">
+                            <?php foreach ($errors as $error): ?>
+                                <p class="text-error text-sm flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">error</span>
+                                    <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
+                                </p>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    <form class="space-y-6" method="POST" action="<?= $baseUrl ?>login">
                         <!-- Email Field -->
                         <div class="space-y-2 group">
                             <label
@@ -166,8 +181,10 @@
                                 <span
                                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/50 group-focus-within:text-primary transition-colors">mail</span>
                                 <input
+                                    name="email"
+                                    value="<?= htmlspecialchars($old['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                     class="w-full bg-surface-container-lowest border-none rounded-2xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="curator@archive.com" type="email">
+                                    placeholder="curator@archive.com" type="email" required>
                             </div>
                         </div>
                         <!-- Password Field -->
@@ -175,20 +192,19 @@
                             <div class="flex justify-between items-center ml-1">
                                 <label
                                     class="text-xs font-headline uppercase tracking-widest text-primary/80 font-bold">Password</label>
-                                <a class="text-[10px] uppercase tracking-widest text-outline hover:text-primary transition-colors font-bold"
-                                    href="#">Forgot Password?</a>
                             </div>
                             <div class="relative">
                                 <span
                                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/50 group-focus-within:text-primary transition-colors">lock</span>
                                 <input
+                                    name="password"
                                     class="w-full bg-surface-container-lowest border-none rounded-2xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" type="password">
+                                    placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" type="password" required>
                             </div>
                         </div>
                         <!-- Sign In Button -->
                         <div class="pt-4">
-                            <button
+                            <button type="submit"
                                 class="brass-gradient w-full py-4 rounded-full text-on-primary font-headline font-extrabold tracking-widest uppercase text-sm shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2">
                                 Sign In
                                 <span class="material-symbols-outlined"
@@ -200,7 +216,7 @@
                         <p class="text-outline text-sm">
                             New to the Archive?
                             <a class="text-primary font-bold ml-1 hover:underline underline-offset-4 text-glow transition-all"
-                                href="#">Create an Account</a>
+                                href="<?= $baseUrl ?>register">Create an Account</a>
                         </p>
                     </div>
                 </div>
