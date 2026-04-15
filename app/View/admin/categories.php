@@ -1,3 +1,6 @@
+<?php
+$baseUrl = \App\Helper\Utility::baseUrl();
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -131,43 +134,42 @@
         </div>
         <nav class="flex-1 space-y-2 px-4">
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="<?= BASE_URL ?>/dashboard">
+                href="<?= $baseUrl ?>admin/dashboard">
                 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
                 <span class="font-medium">Dashboard</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="<?= BASE_URL ?>/games">
+                href="<?= $baseUrl ?>admin/games">
                 <span class="material-symbols-outlined" data-icon="casino">casino</span>
                 <span class="font-medium">Games</span>
             </a>
             <!-- ACTIVE: Categories -->
             <a class="flex items-center gap-3 px-4 py-3 text-[#e9c176] font-bold border-r-2 border-[#e9c176] bg-gradient-to-r from-[#e9c176]/10 to-transparent rounded-l-xl"
-                href="<?= BASE_URL ?>/categories">
+                href="<?= $baseUrl ?>categories">
                 <span class="material-symbols-outlined" data-icon="category">category</span>
                 <span class="font-medium">Categories</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="<?= BASE_URL ?>/reservations">
+                href="<?= $baseUrl ?>admin/reservations">
                 <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
                 <span class="font-medium">Reservations</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="<?= BASE_URL ?>/sessions">
+                href="<?= $baseUrl ?>admin/sessions">
                 <span class="material-symbols-outlined" data-icon="timer">timer</span>
                 <span class="font-medium">Active Sessions</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="<?= BASE_URL ?>/history">
+                href="<?= $baseUrl ?>admin/session-history">
                 <span class="material-symbols-outlined" data-icon="history">history</span>
                 <span class="font-medium">History</span>
             </a>
         </nav>
         <div class="px-6 mt-auto">
-            <button
-                class="w-full brass-gradient text-[#412d00] font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 shadow-[0_4px_12px_rgba(233,193,118,0.2)] transition-all">
-                <span class="material-symbols-outlined text-sm" data-icon="add">add</span>
-                New Reservation
-            </button>
+            <a href="<?= $baseUrl ?>logout" class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group">
+                <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                <span class="font-medium">Logout</span>
+            </a>
         </div>
     </aside>
     <!-- TopNavBar -->
@@ -225,7 +227,7 @@
                 </button>
                 <dialog id="createCategoryModal" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50 w-full max-w-md">
                     <h3 class="text-xl font-bold text-primary mb-6">Create New Category</h3>
-                    <form method="POST" action="<?= BASE_URL ?>/categories/create" class="space-y-4">
+                    <form method="POST" action="<?= $baseUrl ?>categories/create" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-secondary mb-2">Category Name</label>
                             <input type="text" name="name" required
@@ -257,71 +259,74 @@
                     'Expert' => ['icon' => 'model_training', 'color' => 'error'],
                 ];
                 $colors = ['primary', 'secondary', 'tertiary', 'error'];
-                $icons = ['category', 'sports_esports', 'extension', 'casino', 'grid_view'];
-                -
+$icons = ['category', 'sports_esports', 'extension', 'casino', 'grid_view'];
+
                 $colorIndex = 0;
                 $iconIndex = 0;
                 
+                if (!empty($categories)):
                 foreach ($categories as $category): 
                     $style = $category_styles[$category['name']] ?? ['icon' => $icons[$iconIndex++ % count($icons)], 'color' => $colors[$colorIndex++ % count($colors)]];
-                ?>
-                <div class="group relative overflow-hidden bg-surface-container rounded-xl p-8 flex items-center justify-between transition-all duration-500 hover:bg-surface-container-highest ghost-border">
-                    <div class="flex items-center gap-8">
-                        <div class="w-16 h-16 rounded-2xl bg-<?= $style['color'] ?>/10 flex items-center justify-center text-<?= $style['color'] ?> group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined text-4xl"><?= $style['icon'] ?></span>
+                    ?>
+                    <div class="group relative overflow-hidden bg-surface-container rounded-xl p-8 flex items-center justify-between transition-all duration-500 hover:bg-surface-container-highest ghost-border">
+                        <div class="flex items-center gap-8">
+                            <div class="w-16 h-16 rounded-2xl bg-<?= $style['color'] ?>/10 flex items-center justify-center text-<?= $style['color'] ?> group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-4xl"><?= $style['icon'] ?></span>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold font-manrope text-on-surface"><?= $category['name'] ?? 'Category Name' ?></h3>
+                                <p class="text-secondary text-sm"><?= $category['description'] ?? 'Category description goes here.' ?></p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold font-manrope text-on-surface"><?= $category['name'] ?? 'Category Name' ?></h3>
-                            <p class="text-secondary text-sm"><?= $category['description'] ?? 'Category description goes here.' ?></p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-16">
-                        <div class="text-center">
-                            <p class="text-3xl font-black font-manrope text-primary"><?= $category['count'] ?? 0 ?></p>
-                            <p class="text-[10px] text-secondary uppercase tracking-widest">Games Available</p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <button type="button" onclick="document.getElementById('editModal-<?= $category['id'] ?? 0 ?>').showModal()" class="w-10 h-10 rounded-full flex items-center justify-center text-secondary hover:bg-surface-bright transition-colors border border-outline-variant/15">
-                                <span class="material-symbols-outlined text-sm">edit</span>
-                            </button>
-                            <button type="button" onclick="document.getElementById('deleteModal-<?= $category['id'] ?? 0 ?>').showModal()" class="w-10 h-10 rounded-full flex items-center justify-center text-error/60 hover:text-error hover:bg-error-container/20 transition-colors border border-outline-variant/15">
-                                <span class="material-symbols-outlined text-sm">delete</span>
-                            </button>
-                            <dialog id="editModal-<?= $category['id'] ?? 0 ?>" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50 w-full max-w-md">
-                                <h3 class="text-xl font-bold text-primary mb-6">Edit Category</h3>
-                                <form method="POST" action="<?= BASE_URL ?>/categories/update/<?= $category['id'] ?? 0 ?>" class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-secondary mb-2">Category Name</label>
-                                        <input type="text" name="name" value="<?= $category['name'] ?? '' ?>" required
-                                            class="w-full bg-surface-container-high px-4 py-3 rounded-xl border border-outline-variant/20 focus:border-primary text-on-surface">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-secondary mb-2">Description</label>
-                                        <textarea name="description" rows="3" required
-                                            class="w-full bg-surface-container-high px-4 py-3 rounded-xl border border-outline-variant/20 focus:border-primary text-on-surface"><?= $category['description'] ?? '' ?></textarea>
-                                    </div>
-                                    <div class="flex justify-end gap-3 pt-2">
-                                        <button type="button" onclick="document.getElementById('editModal-<?= $category['id'] ?? 0 ?>').close()"
-                                            class="px-6 py-2 rounded-full text-secondary hover:bg-surface-container">Cancel</button>
-                                        <button type="submit"
-                                            class="brass-gradient text-[#412d00] px-6 py-2 rounded-full font-bold">Save Changes</button>
-                                    </div>
-                                </form>
-                            </dialog>
-                            <dialog id="deleteModal-<?= $category['id'] ?? 0 ?>" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50">
-                                <h3 class="text-xl font-bold text-primary mb-4">Delete Category</h3>
-                                <p class="text-secondary mb-6">Are you sure you want to delete this category?</p>
-                                <div class="flex justify-end gap-4">
-                                    <button onclick="document.getElementById('deleteModal-<?= $category['id'] ?? 0 ?>').close()" class="px-4 py-2 rounded-full text-secondary hover:bg-surface-container">Cancel</button>
-                                    <form method="POST" action="<?= BASE_URL ?>/categories/delete/<?= $category['id'] ?? 0 ?>" class="inline">
-                                        <button type="submit" class="px-4 py-2 bg-error text-on-error rounded-full hover:opacity-90">Delete</button>
+                        <div class="flex items-center gap-16">
+                            <div class="text-center">
+                                <p class="text-3xl font-black font-manrope text-primary"><?= $category['count'] ?? 0 ?></p>
+                                <p class="text-[10px] text-secondary uppercase tracking-widest">Games Available</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button type="button" onclick="document.getElementById('editModal-<?= $category['id'] ?? 0 ?>').showModal()" class="w-10 h-10 rounded-full flex items-center justify-center text-secondary hover:bg-surface-bright transition-colors border border-outline-variant/15">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
+                                </button>
+                                <button type="button" onclick="document.getElementById('deleteModal-<?= $category['id'] ?? 0 ?>').showModal()" class="w-10 h-10 rounded-full flex items-center justify-center text-error/60 hover:text-error hover:bg-error-container/20 transition-colors border border-outline-variant/15">
+                                    <span class="material-symbols-outlined text-sm">delete</span>
+                                </button>
+                                <dialog id="editModal-<?= $category['id'] ?? 0 ?>" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50 w-full max-w-md">
+                                    <h3 class="text-xl font-bold text-primary mb-6">Edit Category</h3>
+                                    <form method="POST" action="<?= $baseUrl ?>categories/update/<?= $category['id'] ?? 0 ?>" class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-secondary mb-2">Category Name</label>
+                                            <input type="text" name="name" value="<?= $category['name'] ?? '' ?>" required
+                                                class="w-full bg-surface-container-high px-4 py-3 rounded-xl border border-outline-variant/20 focus:border-primary text-on-surface">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-secondary mb-2">Description</label>
+                                            <textarea name="description" rows="3" required
+                                                class="w-full bg-surface-container-high px-4 py-3 rounded-xl border border-outline-variant/20 focus:border-primary text-on-surface"><?= $category['description'] ?? '' ?></textarea>
+                                        </div>
+                                        <div class="flex justify-end gap-3 pt-2">
+                                            <button type="button" onclick="document.getElementById('editModal-<?= $category['id'] ?? 0 ?>').close()"
+                                                class="px-6 py-2 rounded-full text-secondary hover:bg-surface-container">Cancel</button>
+                                            <button type="submit"
+                                                class="brass-gradient text-[#412d00] px-6 py-2 rounded-full font-bold">Save Changes</button>
+                                        </div>
                                     </form>
-                                </div>
-                            </dialog>
+                                </dialog>
+                                <dialog id="deleteModal-<?= $category['id'] ?? 0 ?>" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50 w-full max-w-md">
+                                    <h3 class="text-xl font-bold text-primary mb-4">Delete Category</h3>
+                                    <p class="text-secondary mb-6">Are you sure you want to delete this category?</p>
+                                    <div class="flex justify-end gap-4">
+                                        <button onclick="document.getElementById('deleteModal-<?= $category['id'] ?? 0 ?>').close()" class="px-4 py-2 rounded-full text-secondary hover:bg-surface-container">Cancel</button>
+                                        <form method="POST" action="<?= $baseUrl ?>categories/delete/<?= $category['id'] ?? 0 ?>" class="inline">
+                                            <button type="submit" class="px-4 py-2 bg-error text-on-error rounded-full hover:opacity-90">Delete</button>
+                                        </form>
+                                    </div>
+                                </dialog>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <?php endforeach; ?>
+                    <?php endforeach;
+                endif;
+                ?>
             </div>
             <?php if (empty($categories)): ?>
             <!-- Empty State / Add Suggestion Card -->

@@ -1,3 +1,6 @@
+<?php
+$baseUrl = \App\Helper\Utility::baseUrl();
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -8,9 +11,6 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
-    rel="stylesheet">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
     rel="stylesheet">
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
@@ -85,100 +85,57 @@
     }
   </script>
   <style>
-    html {
-      font-size: 16px;
-    }
-
-    body {
-      font-size: 1rem;
-      font-family: 'Inter', sans-serif;
-    }
-
-    h1,
-    h2,
-    h3,
-    .headline {
-      font-family: 'Manrope', sans-serif;
-    }
-
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-
-    .glass-panel {
-      background: rgba(32, 31, 31, 0.6);
-      backdrop-filter: blur(16px);
-    }
-
-    .brass-gradient {
-      background: linear-gradient(135deg, #e9c176 0%, #bd9852 100%);
-    }
+    html { font-size: 16px; }
+    body { font-size: 1rem; font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .glass-panel { background: rgba(32, 31, 31, 0.6); backdrop-filter: blur(16px); }
+    .brass-gradient { background: linear-gradient(135deg, #e9c176 0%, #bd9852 100%); }
   </style>
 </head>
 
 <body class="bg-background text-on-surface">
-  <!-- SideNavBar (Authority: Shared Components JSON) -->
-  <aside
-    class="h-screen w-64 fixed left-0 top-0 bg-[#0e0e0e] flex flex-col h-full py-6 shadow-[16px_0_40px_-4px_rgba(0,0,0,0.5)] z-50">
+  <!-- SideNavBar -->
+  <aside class="h-screen w-64 fixed left-0 top-0 bg-[#0e0e0e] flex flex-col py-6 shadow-[16px_0_40px_-4px_rgba(0,0,0,0.5)] z-50 overflow-y-auto">
     <div class="px-8">
       <div class="text-xl font-bold text-[#e9c176] mb-8">Aji L3bo</div>
       <div class="flex items-center space-x-3 mb-10">
-        <img alt="Admin Avatar" class="w-10 h-10 rounded-full border border-primary/20"
-          data-alt="close-up portrait of a professional male manager with short dark hair in a modern workspace"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCepx_vae8Nm-2HcsTLoJ48ygDaF3kCVFf5saA67xDtcVM-UNOIeLZVBI9VrArGHgn3wIOr_poJwU7f4Jdz-mpSUm-uUzQYD_ygGfEq0NrwPHvdbvVixoRGpVurT5fu74Lnsx-2RC23kPcLx8Bnkena6BYsdgXXwygFZ_uGDIESZhqzWZca4uEiyZR86gy-jdIv0VJ8AcZ1gOScTtavYqW86_mbJ9OiRhQffqEGaRZ1XE9YhrheUEz9jhd8nwFE0Jm1xykhbkMoWXHf">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-[#412d00] font-bold">A</div>
         <div>
           <p class="text-on-surface font-headline font-bold text-sm leading-none">Admin Console</p>
           <p class="text-secondary text-xs mt-1">Super User</p>
         </div>
       </div>
     </div>
-    <nav class="flex-1 space-y-1">
-      <!-- Active Tab: Dashboard -->
-      <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center space-x-3 scale-98 transition-transform"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+    <nav class="flex-1 space-y-1 px-2">
+      <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center space-x-3" href="<?= $baseUrl ?>admin/dashboard">
+        <span class="material-symbols-outlined">dashboard</span>
         <span class="font-label">Dashboard</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="sports_esports">sports_esports</span>
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>admin/games">
+        <span class="material-symbols-outlined">sports_esports</span>
         <span class="font-label">Games</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="category">category</span>
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>categories">
+        <span class="material-symbols-outlined">category</span>
         <span class="font-label">Categories</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>admin/reservations">
+        <span class="material-symbols-outlined">event_available</span>
         <span class="font-label">Reservations</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="timer">timer</span>
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>admin/sessions">
+        <span class="material-symbols-outlined">timer</span>
         <span class="font-label">Active Sessions</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="history">history</span>
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>admin/session-history">
+        <span class="material-symbols-outlined">history</span>
         <span class="font-label">History</span>
       </a>
     </nav>
     <div class="px-4 mt-auto pt-6 space-y-1">
-      <button
-        class="w-full brass-gradient text-on-primary font-headline font-extrabold py-3 rounded-full mb-6 hover:opacity-90 transition-all flex items-center justify-center space-x-2">
-        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
-        <span>New Session</span>
-      </button>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="settings">settings</span>
-        <span class="font-label">Settings</span>
-      </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="logout">logout</span>
+      <a href="<?= $baseUrl ?>logout" class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3">
+        <span class="material-symbols-outlined">logout</span>
         <span class="font-label">Logout</span>
       </a>
     </div>
@@ -194,7 +151,7 @@
       <div class="flex items-center space-x-4">
         <div class="text-right">
           <p class="text-xs uppercase tracking-widest text-outline">Current Time</p>
-          <p class="text-xl font-headline font-bold text-primary">14:20 PM</p>
+          <p class="text-xl font-headline font-bold text-primary"><?= date('H:i') ?> PM</p>
         </div>
       </div>
     </header>

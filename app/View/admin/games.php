@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<?php
+$baseUrl = \App\Helper\Utility::baseUrl();
+?><!DOCTYPE html>
 
 <html class="dark" lang="en">
 
@@ -138,43 +140,42 @@
         </div>
         <nav class="flex-1 space-y-2 px-4">
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
+                href="<?= $baseUrl ?>admin/dashboard">
                 <span class="material-symbols-outlined text-xl">dashboard</span>
                 <span class="font-medium">Dashboard</span>
             </a>
             <!-- Active State: Games -->
             <a class="flex items-center gap-3 px-4 py-3 text-[#e9c176] font-bold border-r-2 border-[#e9c176] bg-gradient-to-r from-[#e9c176]/10 to-transparent transition-all duration-300 ease-out rounded-l-xl"
-                href="#">
+                href="<?= $baseUrl ?>admin/games">
                 <span class="material-symbols-outlined text-xl">casino</span>
                 <span class="font-medium">Games</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
+                href="<?= $baseUrl ?>categories">
                 <span class="material-symbols-outlined text-xl">category</span>
                 <span class="font-medium">Categories</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
+                href="<?= $baseUrl ?>admin/reservations">
                 <span class="material-symbols-outlined text-xl">event_available</span>
                 <span class="font-medium">Reservations</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
+                href="<?= $baseUrl ?>admin/sessions">
                 <span class="material-symbols-outlined text-xl">timer</span>
                 <span class="font-medium">Active Sessions</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
+                href="<?= $baseUrl ?>admin/session-history">
                 <span class="material-symbols-outlined text-xl">history</span>
                 <span class="font-medium">History</span>
             </a>
         </nav>
         <div class="px-6 mt-auto">
-            <button
-                class="w-full brass-gradient text-on-primary font-bold py-4 rounded-full shadow-lg shadow-primary/10 hover:scale-[0.98] transition-transform flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined">add_circle</span>
-                New Reservation
-            </button>
+            <a href="<?= $baseUrl ?>logout" class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group">
+                <span class="material-symbols-outlined text-xl">logout</span>
+                <span class="font-medium">Logout</span>
+            </a>
         </div>
     </aside>
     <!-- TopNavBar Anchor -->
