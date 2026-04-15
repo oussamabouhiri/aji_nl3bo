@@ -3,39 +3,42 @@
 namespace App\Middleware;
 
 use App\Helper\Utility;
-use App\Service\AuthService;
 
 class Middleware
 {
     
     public function auth(): void
     {
-        if (!AuthService::check()) {
+        if (!isset($_SESSION['user_id'])) {
             Utility::redirect('/login');
+            exit;
         }
     }
 
     
     public function guest(): void
     {
-        if (AuthService::check()) {
-            $user = AuthService::user();
-            if ($user['role'] === 'admin') {
-                Utility::redirect('/admin/dashboard');
+        if (isset($_SESSION['user_id'])) {
+            if ($_SESSION['user_role'] === 'admin') {
+                Utility::redirect('/admin');
             } else {
-                Utility::redirect('/dashboard');
+                Utility::redirect('/');
             }
+            exit;
         }
     }
 
     
     public function admin(): void
     {
-        if (!AuthService::check()) {
+        if (!isset($_SESSION['user_id'])) {
             Utility::redirect('/login');
+            exit;
         }
-        if (!AuthService::isAdmin()) {
-            Utility::redirect('/dashboard');
+        
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+            Utility::redirect('/');
+            exit;
         }
     }
 }
