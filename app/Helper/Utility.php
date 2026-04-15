@@ -33,6 +33,6 @@ class Utility
     public static function baseUrl(): string
     {
         $config = require dirname(__DIR__, 2) . '/config/app.php';
-        return $config['base_url'];
+        return rtrim($config['base_url'], '/') . '/';
     }
 }
