@@ -197,11 +197,28 @@ $baseUrl = \App\Helper\Utility::baseUrl();
                                 <span
                                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/50 group-focus-within:text-primary transition-colors">lock</span>
                                 <input
+                                    id="login-password"
                                     name="password"
-                                    class="w-full bg-surface-container-lowest border-none rounded-2xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" type="password" required>
+                                    class="w-full bg-surface-container-lowest border-none rounded-2xl py-4 pl-12 pr-12 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
+                                    placeholder="••••••••••••" type="password" required>
+                                <button type="button" onclick="toggleLoginPassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-outline/50 hover:text-primary">
+                                    <span id="login-eye-icon" class="material-symbols-outlined">visibility</span>
+                                </button>
                             </div>
                         </div>
+                        <script>
+                            function toggleLoginPassword() {
+                                const input = document.getElementById('login-password');
+                                const icon = document.getElementById('login-eye-icon');
+                                if (input.type === 'password') {
+                                    input.type = 'text';
+                                    icon.textContent = 'visibility_off';
+                                } else {
+                                    input.type = 'password';
+                                    icon.textContent = 'visibility';
+                                }
+                            }
+                        </script>
                         <!-- Sign In Button -->
                         <div class="pt-4">
                             <button type="submit"

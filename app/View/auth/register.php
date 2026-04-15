@@ -212,14 +212,28 @@ $baseUrl = \App\Helper\Utility::baseUrl();
                         <label class="text-xs font-headline uppercase tracking-widest text-primary/80 font-bold ml-1">Password</label>
                         <div class="relative">
                             <input
+                                id="password"
                                 name="password"
                                 class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 px-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
                                 placeholder="••••••••••••" type="password" required minlength="6">
-                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-secondary/40 cursor-pointer">
-                                <span class="material-symbols-outlined text-lg">visibility</span>
-                            </div>
+                            <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-secondary/40 cursor-pointer hover:text-primary">
+                                <span id="eye-icon" class="material-symbols-outlined text-lg">visibility</span>
+                            </button>
                         </div>
                     </div>
+                    <script>
+                        function togglePassword() {
+                            const input = document.getElementById('password');
+                            const icon = document.getElementById('eye-icon');
+                            if (input.type === 'password') {
+                                input.type = 'text';
+                                icon.textContent = 'visibility_off';
+                            } else {
+                                input.type = 'password';
+                                icon.textContent = 'visibility';
+                            }
+                        }
+                    </script>
                     <p class="text-xs text-secondary text-center pt-2">
                         By registering, you agree to our Terms of Service
                     </p>

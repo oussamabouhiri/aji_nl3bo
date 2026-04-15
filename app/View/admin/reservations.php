@@ -1,3 +1,6 @@
+<?php
+$baseUrl = \App\Helper\Utility::baseUrl();
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -120,43 +123,42 @@
         </div>
         <nav class="flex-1 space-y-1 px-4">
             <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
+                href="<?= $baseUrl ?>admin/dashboard">
                 <span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
                 <span class="font-medium">Dashboard</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
+                href="<?= $baseUrl ?>admin/games">
                 <span class="material-symbols-outlined text-xl" data-icon="casino">casino</span>
                 <span class="font-medium">Games</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
+                href="<?= $baseUrl ?>categories">
                 <span class="material-symbols-outlined text-xl" data-icon="category">category</span>
                 <span class="font-medium">Categories</span>
             </a>
             <!-- Active State: Reservations -->
             <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#e9c176] font-bold border-r-2 border-[#e9c176] bg-gradient-to-r from-[#e9c176]/10 to-transparent"
-                href="#">
+                href="<?= $baseUrl ?>admin/reservations">
                 <span class="material-symbols-outlined text-xl" data-icon="event_available">event_available</span>
                 <span class="font-medium">Reservations</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
+                href="<?= $baseUrl ?>admin/sessions">
                 <span class="material-symbols-outlined text-xl" data-icon="timer">timer</span>
                 <span class="font-medium">Active Sessions</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
+                href="<?= $baseUrl ?>admin/session-history">
                 <span class="material-symbols-outlined text-xl" data-icon="history">history</span>
                 <span class="font-medium">History</span>
             </a>
         </nav>
-        <div class="px-4 mt-auto">
-            <button
-                class="w-full brass-gradient text-[#412d00] font-bold py-3 px-4 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
-                <span class="material-symbols-outlined" data-icon="add">add</span>
-                <span>New Reservation</span>
-            </button>
+        <div class="px-6 mt-auto">
+            <a href="<?= $baseUrl ?>logout" class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group">
+                <span class="material-symbols-outlined text-xl">logout</span>
+                <span class="font-medium">Logout</span>
+            </a>
         </div>
     </aside>
     <!-- TopNavBar -->
