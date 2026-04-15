@@ -10,11 +10,10 @@ class Utility
         include dirname(__DIR__) . '/View/' . $path . '.php';
     }
 
-    public static function redirect(string $url): void
-    {
-        $config = require dirname(__DIR__, 2) . '/config/app.php';
+    public static function redirect(string $url): void {
+        $config = require dirname(__DIR__) . '/../config/app.php';
         $url = str_starts_with($url, '/') ? $url : '/' . $url;
-        header('Location: ' . rtrim($config['base_url'], '/') . $url);
+        header('Location: ' . $config['base_url'] . "/" . ltrim($url, '/'));
         exit;
     }
 

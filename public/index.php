@@ -7,22 +7,15 @@ if (session_status() === PHP_SESSION_NONE) {
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Route\Router;
-use App\Controller\AuthController;
+use App\Controller\CategoryController;
 
-Router::get('login', [AuthController::class, 'loginForm']);
-    // ->middleware('guest');
-Router::post('login', [AuthController::class, 'login']);
-    // ->middleware('guest');
 
-Router::get('register', [AuthController::class, 'registerForm']);
-    // ->middleware('guest');
-Router::post('register', [AuthController::class, 'register']);
-    // ->middleware('guest');
+// DEFINE ROUTES
 
-Router::get('logout', [AuthController::class, 'logout']);
-    // ->middleware('auth');
-
-Router::get('/', [AuthController::class, 'loginForm']);
-    // ->middleware('guest');
+// For exemple 
+Router::get('categories', [CategoryController::class, 'index']);
+Router::post('categories/create', [CategoryController::class, 'create']);
+Router::post('categories/update/{id}', [CategoryController::class, 'update']);
+Router::post('categories/delete/{id}', [CategoryController::class, 'delete']);
 
 Router::match();
