@@ -1,10 +1,10 @@
 <?php
-namespace App\Controller;
+namespace App\Controllers;
 
-use App\Model\GameModel;
-use App\Model\ReservationModel;
-use App\Model\GameTableModel;
-use App\Model\UserModel;
+use App\Models\GameModel;
+use App\Models\ReservationModel;
+use App\Models\GameTableModel;
+use App\Models\UserModel;
 use App\Helper\Utility;
 
 class UserController {

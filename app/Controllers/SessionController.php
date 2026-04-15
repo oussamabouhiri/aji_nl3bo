@@ -1,9 +1,9 @@
 <?php
-namespace App\Controller;
+namespace App\Controllers;
 
-use App\Model\SessionModel;
-use App\Model\GameTableModel;
-use App\Model\GameModel;
+use App\Models\SessionModel;
+use App\Models\GameTableModel;
+use App\Models\GameModel;
 use App\Helper\Utility;
 
 class SessionController {

@@ -1,8 +1,8 @@
 <?php
-namespace App\Controller;
+namespace App\Controllers;
 
-use App\Model\GameModel;
-use App\Model\CategoryModel;
+use App\Models\GameModel;
+use App\Models\CategoryModel;
 use App\Helper\Utility;
 
 class GameController {

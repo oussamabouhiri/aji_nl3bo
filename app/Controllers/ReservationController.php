@@ -1,7 +1,7 @@
 <?php
-namespace App\Controller;
+namespace App\Controllers;
 
-use App\Model\ReservationModel;
+use App\Models\ReservationModel;
 use App\Helper\Utility;
 
 class ReservationController {

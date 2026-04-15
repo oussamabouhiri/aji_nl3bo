@@ -5,11 +5,11 @@ session_start() === PHP_SESSION_NONE ? session_start() : null;
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Route\Router;
-use App\Controller\CategoryController;
-use App\Controller\GameController;
-use App\Controller\ReservationController;
-use App\Controller\SessionController;
-use App\Controller\UserController;
+use App\Controllers\CategoryController;
+use App\Controllers\GameController;
+use App\Controllers\ReservationController;
+use App\Controllers\SessionController;
+use App\Controllers\UserController;
 
 
 // DEFINE ROUTES

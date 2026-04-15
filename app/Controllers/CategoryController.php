@@ -1,7 +1,7 @@
 <?php
-namespace App\Controller;
+namespace App\Controllers;
 
-use App\Model\CategoryModel;
+use App\Models\CategoryModel;
 use App\Helper\Utility;
 
 class CategoryController {

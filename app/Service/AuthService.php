@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Model\User;
+use App\Models\User;
 
 class AuthService
 {
