@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<?php use App\Helper\Csrf; ?>
 <html class="dark" lang="en">
 
 <head>
@@ -336,6 +336,7 @@
                             <div class="flex justify-end gap-4">
                                 <button onclick="document.getElementById('deleteModal-<?= $game['id'] ?? 0 ?>').close()" class="px-4 py-2 rounded-full text-secondary hover:bg-surface-container">Cancel</button>
                                 <form method="POST" action="<?= BASE_URL ?>/admin/games/delete/<?= $game['id'] ?? 0 ?>" class="inline">
+                                    <?= Csrf::field() ?>
                                     <button type="submit" class="px-4 py-2 bg-error text-on-error rounded-full hover:opacity-90">Delete</button>
                                 </form>
                             </div>

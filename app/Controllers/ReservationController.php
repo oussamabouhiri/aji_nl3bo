@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Models\ReservationModel;
 use App\Helper\Utility;
+use App\Helper\Csrf;
 
 class ReservationController {
     private $reservationModel;
@@ -51,6 +52,11 @@ class ReservationController {
     }
 
     public function create() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/reservations');
+            return;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'user_id' => $_POST['user_id'] ?? null,
@@ -74,6 +80,11 @@ class ReservationController {
     }
 
     public function update() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/reservations');
+            return;
+        }
+        
         $id = $_POST['id'] ?? null;
         
         if (!$id || $_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -94,6 +105,11 @@ class ReservationController {
     }
 
     public function confirm() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/reservations');
+            return;
+        }
+        
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         
         if ($id) {
@@ -104,6 +120,11 @@ class ReservationController {
     }
 
     public function cancel() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/reservations');
+            return;
+        }
+        
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         
         if ($id) {
@@ -114,6 +135,11 @@ class ReservationController {
     }
 
     public function restore() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/reservations');
+            return;
+        }
+        
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         
         if ($id) {
@@ -132,6 +158,11 @@ class ReservationController {
     }
 
     public function delete() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/reservations');
+            return;
+        }
+        
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         
         if ($id) {

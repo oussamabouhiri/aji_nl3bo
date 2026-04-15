@@ -10,7 +10,7 @@ class Utility {
         }
         
         extract($data);
-        $viewPath = dirname(__DIR__) . '/View/' . $path . '.php';
+        $viewPath = dirname(__DIR__) . '/Views/' . $path . '.php';
         if (file_exists($viewPath)) {
             include $viewPath;
         } else {
@@ -27,7 +27,7 @@ class Utility {
 
     public static function abort(int $code = 404): void {
         http_response_code($code);
-        include dirname(__DIR__) . '/app/View/errors/' . $code . '.php';
+        include dirname(__DIR__, 2) . '/Views/errors/' . $code . '.php';
         exit;
     }
 

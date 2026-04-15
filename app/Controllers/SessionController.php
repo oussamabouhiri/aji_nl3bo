@@ -5,6 +5,7 @@ use App\Models\SessionModel;
 use App\Models\GameTableModel;
 use App\Models\GameModel;
 use App\Helper\Utility;
+use App\Helper\Csrf;
 
 class SessionController {
     private $sessionModel;
@@ -86,6 +87,11 @@ class SessionController {
     }
 
     public function start($params = []) {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/sessions');
+            return;
+        }
+        
         $reservationId = $_POST['reservation_id'] ?? null;
         $gameId = $_POST['game_id'] !== '' ? $_POST['game_id'] : null;
         
@@ -97,6 +103,11 @@ class SessionController {
     }
 
     public function changeGame() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/sessions');
+            return;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sessionId = $_POST['session_id'] ?? null;
             $newGameId = $_POST['game_id'] ?? null;
@@ -110,6 +121,11 @@ class SessionController {
     }
 
     public function end() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/sessions');
+            return;
+        }
+        
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         
         if ($id) {
@@ -123,6 +139,11 @@ class SessionController {
     }
 
     public function delete() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/sessions');
+            return;
+        }
+        
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         
         if ($id) {

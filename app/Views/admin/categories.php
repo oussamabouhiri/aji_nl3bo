@@ -243,6 +243,7 @@
                 <dialog id="createCategoryModal" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50 w-full max-w-md">
                     <h3 class="text-xl font-bold text-primary mb-6">Create New Category</h3>
                     <form method="POST" action="<?= BASE_URL ?>/admin/categories/create" class="space-y-4">
+                        <?= Csrf::field() ?>
                         <div>
                             <label class="block text-sm font-medium text-secondary mb-2">Category Name</label>
                             <input type="text" name="name" required
@@ -267,7 +268,8 @@
             <!-- Bento Category Grid (List View alternative for premium feel) -->
             <div class="space-y-6">
                 <?php
-                $category_styles = [
+use App\Helper\Csrf;
+$category_styles = [
                     'Strategy' => ['icon' => 'tactic', 'color' => 'primary'],
                     'Atmosphere' => ['icon' => 'auto_awesome', 'color' => 'secondary'],
                     'Family' => ['icon' => 'diversity_3', 'color' => 'tertiary'],
@@ -307,6 +309,7 @@
                             <dialog id="editModal-<?= $category['id'] ?? 0 ?>" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50 w-full max-w-md">
                                 <h3 class="text-xl font-bold text-primary mb-6">Edit Category</h3>
                                 <form method="POST" action="<?= BASE_URL ?>/admin/categories/update/<?= $category['id'] ?? 0 ?>" class="space-y-4">
+                                    <?= Csrf::field() ?>
                                     <div>
                                         <label class="block text-sm font-medium text-secondary mb-2">Category Name</label>
                                         <input type="text" name="name" value="<?= $category['name'] ?? '' ?>" required
@@ -331,6 +334,7 @@
                                 <div class="flex justify-end gap-4">
                                     <button onclick="document.getElementById('deleteModal-<?= $category['id'] ?? 0 ?>').close()" class="px-4 py-2 rounded-full text-secondary hover:bg-surface-container">Cancel</button>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/categories/delete/<?= $category['id'] ?? 0 ?>" class="inline">
+                                        <?= Csrf::field() ?>
                                         <button type="submit" class="px-4 py-2 bg-error text-on-error rounded-full hover:opacity-90">Delete</button>
                                     </form>
                                 </div>

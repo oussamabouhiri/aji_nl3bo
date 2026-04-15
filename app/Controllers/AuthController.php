@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Helper\Utility;
+use App\Helper\Csrf;
 use App\Service\AuthService;
 
 class AuthController
@@ -21,6 +22,11 @@ class AuthController
 
     public function login(): void
     {
+        if (!Csrf::validate()) {
+            Utility::redirect('/login');
+            return;
+        }
+        
         $email    = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $errors   = [];
@@ -62,11 +68,15 @@ class AuthController
     public function registerForm(): void
     {
         Utility::view('auth/register');
-        die();
     }
 
     public function register(): void
     {
+        if (!Csrf::validate()) {
+            Utility::redirect('/register');
+            return;
+        }
+        
         $name     = trim($_POST['name'] ?? '');
         $phone    = trim($_POST['phone'] ?? '');
         $email    = trim($_POST['email'] ?? '');

@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Models\CategoryModel;
 use App\Helper\Utility;
+use App\Helper\Csrf;
 
 class CategoryController {
 
@@ -29,29 +30,61 @@ class CategoryController {
     }
 
     public function create() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/categories');
+            return;
+        }
+        
+        $name = trim($_POST['name'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        
+        if (empty($name)) {
+            $this->utility->redirect('/admin/categories');
+            return;
+        }
+        
         $category_date = [
-            "name" => $_POST['name'] ?? '',
-            "description" => $_POST['description'] ?? ''
+            "name" => $name,
+            "description" => $description
         ];
         $this->categoryModel->addCategory($category_date);
         $this->utility->redirect('/admin/categories');
     }
 
     public function update($params = []) {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/categories');
+            return;
+        }
+        
         $id = $params['id'] ?? $_POST['id'] ?? null;
         if (!$id) {
             $this->utility->redirect('/admin/categories');
             return;
         }
+        
+        $name = trim($_POST['name'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        
+        if (empty($name)) {
+            $this->utility->redirect('/admin/categories');
+            return;
+        }
+        
         $category_date = [
-            "name" => $_POST['name'] ?? '',
-            "description" => $_POST['description'] ?? ''
+            "name" => $name,
+            "description" => $description
         ];
         $this->categoryModel->updateCategory($id, $category_date);
         $this->utility->redirect('/admin/categories');
     }
 
     public function delete($params = []) {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/categories');
+            return;
+        }
+        
         $id = $params['id'] ?? $_POST['id'] ?? $_GET['id'] ?? null;
         if (!$id) {
             $this->utility->redirect('/admin/categories');

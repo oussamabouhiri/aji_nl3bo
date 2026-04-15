@@ -21,7 +21,8 @@ class CategoryModel extends Database {
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            error_log("CategoryModel::getCategories - " . $e->getMessage());
+            return [];
         }
     }
 
@@ -36,7 +37,8 @@ class CategoryModel extends Database {
             return $stmt->fetch();
 
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            error_log("CategoryModel::getCategoryById - " . $e->getMessage());
+            return null;
         }   
     }
 
@@ -47,7 +49,8 @@ class CategoryModel extends Database {
             $stmt->execute($categoryData);
             return $this->db->lastInsertId();
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            error_log("CategoryModel::addCategory - " . $e->getMessage());
+            return false;
         }
 
     }
@@ -59,7 +62,8 @@ class CategoryModel extends Database {
             $stmt->execute(array_merge(['id' => $id], $categoryData));
             return $stmt->rowCount();
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            error_log("CategoryModel::updateCategory - " . $e->getMessage());
+            return false;
         }
     }
 
@@ -70,7 +74,8 @@ class CategoryModel extends Database {
             $stmt->execute(['id' => $id]);
             return $stmt->rowCount();
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            error_log("CategoryModel::deleteCategory - " . $e->getMessage());
+            return false;
         }
     }
 
@@ -86,7 +91,8 @@ class CategoryModel extends Database {
             $stmt->execute(['search' => "%$search%"]);
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            error_log("CategoryModel::searchCategories - " . $e->getMessage());
+            return [];
         }
     }
 

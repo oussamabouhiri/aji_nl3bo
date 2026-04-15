@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\GameModel;
 use App\Models\CategoryModel;
 use App\Helper\Utility;
+use App\Helper\Csrf;
 
 class GameController {
     private $gameModel;
@@ -70,20 +71,38 @@ class GameController {
     }
 
     public function store() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/games');
+            return;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $minPlayers = intval($_POST['min_players'] ?? 2);
+            $maxPlayers = intval($_POST['max_players'] ?? 4);
+            
+            if ($minPlayers > $maxPlayers) {
+                $this->utility->redirect('/admin/games/create');
+                return;
+            }
+            
             $data = [
-                'name' => $_POST['name'] ?? '',
-                'description' => $_POST['description'] ?? '',
+                'name' => trim($_POST['name'] ?? ''),
+                'description' => trim($_POST['description'] ?? ''),
                 'difficulty' => $_POST['difficulty'] ?? 'easy',
-                'min_players' => intval($_POST['min_players'] ?? 2),
-                'max_players' => intval($_POST['max_players'] ?? 4),
+                'min_players' => $minPlayers,
+                'max_players' => $maxPlayers,
                 'spots' => intval($_POST['spots'] ?? 4),
                 'duration' => intval($_POST['duration'] ?? 60),
                 'category_id' => $_POST['category_id'] ?: null,
                 'price' => floatval($_POST['price'] ?? 0),
-                'image_url' => $_POST['image_url'] ?? null,
+                'image_url' => $_POST['image_url'] ?: null,
                 'status' => $_POST['status'] ?? 'available'
             ];
+            
+            if (empty($data['name'])) {
+                $this->utility->redirect('/admin/games/create');
+                return;
+            }
             
             $id = $this->gameModel->create($data);
             if ($id) {
@@ -96,6 +115,11 @@ class GameController {
     }
 
     public function update() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/games');
+            return;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'] ?? null;
             
@@ -104,19 +128,32 @@ class GameController {
                 return;
             }
             
+            $minPlayers = intval($_POST['min_players'] ?? 2);
+            $maxPlayers = intval($_POST['max_players'] ?? 4);
+            
+            if ($minPlayers > $maxPlayers) {
+                $this->utility->redirect('/admin/games/edit/' . $id);
+                return;
+            }
+            
             $data = [
-                'name' => $_POST['name'] ?? '',
-                'description' => $_POST['description'] ?? '',
+                'name' => trim($_POST['name'] ?? ''),
+                'description' => trim($_POST['description'] ?? ''),
                 'difficulty' => $_POST['difficulty'] ?? 'easy',
-                'min_players' => intval($_POST['min_players'] ?? 2),
-                'max_players' => intval($_POST['max_players'] ?? 4),
+                'min_players' => $minPlayers,
+                'max_players' => $maxPlayers,
                 'spots' => intval($_POST['spots'] ?? 4),
                 'duration' => intval($_POST['duration'] ?? 60),
                 'category_id' => $_POST['category_id'] ?: null,
                 'price' => floatval($_POST['price'] ?? 0),
-                'image_url' => $_POST['image_url'] ?? null,
+                'image_url' => $_POST['image_url'] ?: null,
                 'status' => $_POST['status'] ?? 'available'
             ];
+            
+            if (empty($data['name'])) {
+                $this->utility->redirect('/admin/games/edit/' . $id);
+                return;
+            }
             
             $this->gameModel->update($id, $data);
         }
@@ -125,6 +162,11 @@ class GameController {
     }
 
     public function delete($params = []) {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/games');
+            return;
+        }
+        
         $id = $params['id'] ?? $_POST['id'] ?? $_GET['id'] ?? null;
         
         if ($id) {

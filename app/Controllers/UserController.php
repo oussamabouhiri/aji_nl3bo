@@ -6,6 +6,7 @@ use App\Models\ReservationModel;
 use App\Models\GameTableModel;
 use App\Models\UserModel;
 use App\Helper\Utility;
+use App\Helper\Csrf;
 
 class UserController {
     private $gameModel;
@@ -30,10 +31,7 @@ class UserController {
     }
 
     public function games() {
-        $games = $this->gameModel->getAll();
-        $this->utility->view("user/games", [
-            'games' => $games
-        ]);
+        $this->home();
     }
 
     public function gameDetail($params = []) {
@@ -70,6 +68,11 @@ class UserController {
     }
 
     public function createReservation() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/reservation');
+            return;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userId = $_SESSION['user_id'] ?? 1;
             
@@ -98,11 +101,11 @@ class UserController {
                 'date' => $date,
                 'start_time' => $startTime,
                 'end_time' => $endTime,
-                'spots' => $_POST['spots'] ?? null,
+                'spots' => intval($_POST['spots'] ?? 0),
                 'price' => $price
             ];
             
-            if ($data['table_id'] && $data['date'] && $data['start_time'] && $data['spots']) {
+            if ($data['table_id'] && $data['date'] && $data['start_time'] && $data['spots'] > 0) {
                 $id = $this->reservationModel->create($data);
                 if ($id) {
                     $this->utility->redirect('/my-reservations');
@@ -115,6 +118,11 @@ class UserController {
     }
     
     public function cancelReservation() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/my-reservations');
+            return;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'] ?? null;
             
@@ -144,6 +152,16 @@ class UserController {
     }
 
     public function login() {
+        if (isset($_SESSION['user_id'])) {
+            $this->utility->redirect($_SESSION['user_role'] === 'admin' ? '/admin' : '/');
+            return;
+        }
+        
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/login');
+            return;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';
@@ -173,6 +191,11 @@ class UserController {
     }
 
     public function register() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/register');
+            return;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $name = $_POST['name'] ?? '';
             $email = $_POST['email'] ?? '';

@@ -5,6 +5,7 @@ session_start() === PHP_SESSION_NONE ? session_start() : null;
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Route\Router;
+use App\Controllers\AdminController;
 use App\Controllers\CategoryController;
 use App\Controllers\GameController;
 use App\Controllers\ReservationController;
@@ -46,8 +47,7 @@ Router::get('/logout', [UserController::class, 'logout']);
 // =====================
 
 // Admin Dashboard
-Router::get('/admin', [SessionController::class, 'dashboard']);
-Router::get('/admin/', [SessionController::class, 'dashboard']);
+Router::get('/admin', [AdminController::class, 'dashboard']);
 
 // Categories
 Router::get('/admin/categories', [CategoryController::class, 'index']);

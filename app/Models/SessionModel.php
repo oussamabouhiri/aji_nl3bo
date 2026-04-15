@@ -382,8 +382,10 @@ class SessionModel extends Database {
             $sql = "UPDATE reservations SET status = ? WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$status, $reservationId]);
+            return true;
         } catch (\Exception $e) {
-            // Silently fail
+            error_log("SessionModel::updateReservationStatus - " . $e->getMessage());
+            return false;
         }
     }
 

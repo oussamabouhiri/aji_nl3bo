@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS reservations (
 CREATE TABLE IF NOT EXISTS sessions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     reservation_id INT NOT NULL,
-    game_id INT NOT NULL,
+    game_id INT,
     duration INT NOT NULL,
     status ENUM('inactive', 'active', 'ended') DEFAULT 'inactive',
     started_at TIMESTAMP NULL,
