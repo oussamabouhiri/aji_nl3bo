@@ -1,54 +1,21 @@
+<?php
+$userName = $_SESSION['user_name'] ?? 'User';
+$baseUrl = \App\Helper\Utility::baseUrl();
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Sign In | The Tactile Archive</title>
+    <title>Dashboard | Aji L3bo</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
         rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet">
-    <style>
-        html {
-            font-size: 16px;
-        }
-
-        body {
-            font-size: 1rem;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-            display: inline-block;
-            line-height: 1;
-            text-transform: none;
-            letter-spacing: normal;
-            word-wrap: normal;
-            white-space: nowrap;
-            direction: ltr;
-        }
-
-        .brass-gradient {
-            background: linear-gradient(135deg, #e9c176 0%, #bd9852 100%);
-        }
-
-        .glass-panel {
-            background: rgba(32, 31, 31, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .text-glow:hover {
-            text-shadow: 0 0 15px rgba(233, 193, 118, 0.4);
-        }
-    </style>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -118,149 +85,128 @@
             }
         }
     </script>
+    <style>
+        html { font-size: 16px; }
+        body { font-size: 1rem; font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { background: rgba(32, 31, 31, 0.6); backdrop-filter: blur(16px); }
+        .brass-gradient { background: linear-gradient(135deg, #e9c176 0%, #bd9852 100%); }
+    </style>
 </head>
 
-<body
-    class="bg-surface text-on-surface font-body selection:bg-primary/30 selection:text-primary min-h-screen relative overflow-x-hidden">
-    <!-- Hero Background Immersive Overlay -->
-    <div class="fixed inset-0 z-0">
-        <div class="absolute inset-0 bg-surface/40 z-10 backdrop-blur-sm"></div>
-        <img alt="Luxury Board Game Background" class="w-full h-full object-cover grayscale opacity-40"
-            data-alt="Blurred atmospheric shot of a luxury board game cafe with wooden tables, soft brass lighting, and premium game pieces in shallow focus"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY14X5G68ccSloOlC0U8TpsBKggiEmxgDgzEIc4Qc1c0k94MzLal2WOJ5YNFZ3iX1_xI7gWKBEI77arU_lRgKWlBtacprbhngpMr0uofL-GuKj10oCbZYHyJ07ne-hfsZAy7pfbfUcbTrH356RepIlIgyxagxaout5aubsh9fU0D3S4TUE1kJj4D-eGim9ofZY-QRPfoOUtQy9Y5b6gqh8DEyMKu6qHlrtE5gCZw_rNNt9HZ8J0D51o2H487ora1mDGVgLmN4ZxTen">
-    </div>
-    <!-- Navigation suppressed per Destination Rule (Transactional Page) -->
-    <main class="relative z-20 flex min-h-screen items-center justify-center p-6 sm:p-12">
-        <div class="w-full max-w-[1200px] grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <!-- Branding/Editorial Column -->
-            <div class="hidden lg:flex flex-col space-y-8 pr-12">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-[1px] bg-primary"></div>
-                    <span class="text-primary font-headline tracking-[0.3em] uppercase text-xs font-bold">Aji L3bo
-                        Caf&eacute;</span>
+<body class="bg-background text-on-surface">
+    <aside class="h-screen w-64 fixed left-0 top-0 bg-[#0e0e0e] flex flex-col py-6 shadow-[16px_0_40px_-4px_rgba(0,0,0,0.5)] z-50">
+        <div class="px-8">
+            <div class="text-xl font-bold text-[#e9c176] mb-8">Aji L3bo</div>
+            <div class="flex items-center space-x-3 mb-10">
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-[#412d00] font-bold">
+                    <?= strtoupper(substr($userName, 0, 1)) ?>
                 </div>
-                <h1 class="font-headline text-7xl font-extrabold tracking-tighter leading-none text-on-surface">
-                    The <br> <span class="text-primary italic">Tactile</span> <br> Archive
-                </h1>
-                <p class="text-secondary max-w-md text-lg font-light leading-relaxed">
-                    Welcome back to the curated board gaming experience. Your collection, your strategy, and your legacy
-                    await within the archive.
-                </p>
-                <div class="flex items-center gap-6 mt-12">
-                    <div class="flex -space-x-4">
-                        <img class="w-12 h-12 rounded-full border-2 border-surface-container object-cover"
-                            data-alt="close-up portrait of a man in soft warm studio lighting"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEEGQxmUcnp2opNPZra8lI5gxkc5EQpI6H0KB7Mx2IVT7ygQ1MrdSXwUeRqdGGLStwVZ10hMuWGTAdbqpevUef1GkJMZ3s2GZRyxtG_xMLb0V-4YkGixB7uR0NJAZsJ_O37WS1-Ltjyu1AcqcNpejzRI5zyAJl_uAGnaslOh6flktsoHLBlFJ4yvPCX7YzeKEX82XpbjdLtP5lUZb6UX-0pf6lH9RJXPIyqYuKVVWV_ZZn5v9zs-PtU8kTUH_AdIZs9J2_lWJa0o6D">
-                        <img class="w-12 h-12 rounded-full border-2 border-surface-container object-cover"
-                            data-alt="close-up portrait of a woman smiling in soft natural light"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpRqoSuFRX_k3dnOu5fAchzhR3wMs8kl9HmTd0bY0TrQcIYrIeVISKZzNyCDMfh56rQ5jcK8u5bzFyC8m0zniE5jxUXrbp2JFCtM84bWUhHYPMdzT1gqi1MmMLTRkjIrGeiwIe6UWYdJY4Jhc_u6pmRjqGSJf2a4qWu1x05r14Py88k0DE_N2o-EanYQAUPe2AwaPXMsMtbfSqaDYWgc8HTOTbrE46dErocGbVURIpc77M_DrCp_ezehj7Lm4-Gc6BcbOVdDzI5mvg">
-                        <img class="w-12 h-12 rounded-full border-2 border-surface-container object-cover"
-                            data-alt="close-up portrait of a person with glasses in outdoor park lighting"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVcvkulrGLIBenIHDSu051Tdg_t0fNoiaajYbOTq7N19o8ZQ6oj768mcEgnyM8ahEBzqRp_4csYmEUVRqsLbcMywk5yFjl8j4ZLkeUMb6MeU_eCQd-PW0ARUDTN-US1ALpo4Dc4FxCVUq4XP_mxN8XYhMV_VJK_fcUcRIfIffjzqJCEcYcvVwM-BCCjbrkA6VD4UhyhR3NoFFbPegAzikVyJzGHJQ3hwbt9s0NqXzLpeWGLruhLg9JZIK76yfvEfBilJx63XpwsD6z">
-                    </div>
-                    <span class="text-sm text-outline font-medium tracking-wide">JOINED BY 2,400+ CURATORS</span>
+                <div>
+                    <p class="text-on-surface font-headline font-bold text-sm leading-none"><?= htmlspecialchars($userName) ?></p>
+                    <p class="text-secondary text-xs mt-1">Member</p>
                 </div>
             </div>
-            <!-- Login Form Column -->
-            <div class="flex justify-center lg:justify-end">
-                <div
-                    class="glass-panel w-full max-w-md p-8 md:p-12 rounded-[2rem] shadow-2xl shadow-black/80 border border-outline-variant/10 relative overflow-hidden">
-                    <!-- Subtle Glow Decorative Element -->
-                    <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[80px]"></div>
-                    <div class="mb-10 text-center lg:text-left">
-                        <h2 class="font-headline text-3xl font-bold text-on-surface mb-2">Sign In</h2>
-                        <p class="text-outline text-sm">Enter your credentials to access your table.</p>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center space-x-3" href="<?= $baseUrl ?>dashboard">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label">Dashboard</span>
+            </a>
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>games">
+                <span class="material-symbols-outlined">sports_esports</span>
+                <span class="font-label">Games</span>
+            </a>
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>reservation">
+                <span class="material-symbols-outlined">event_available</span>
+                <span class="font-label">Reservations</span>
+            </a>
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>profile">
+                <span class="material-symbols-outlined">person</span>
+                <span class="font-label">Profile</span>
+            </a>
+        </nav>
+        <div class="px-4 mt-auto pt-6 space-y-1">
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>logout">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="ml-64 p-10 min-h-screen">
+        <header class="flex justify-between items-end mb-12">
+            <div>
+                <h1 class="text-5xl font-extrabold tracking-tighter text-on-surface mb-2">Welcome, <?= htmlspecialchars($userName) ?></h1>
+                <p class="text-secondary font-medium italic">Your Gaming Dashboard</p>
+            </div>
+        </header>
+
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-surface-container p-8 rounded-xl shadow-2xl relative overflow-hidden group">
+                <div class="relative z-10">
+                    <p class="text-outline-variant font-label text-sm uppercase tracking-widest mb-4">Your Reservations</p>
+                    <h3 class="text-5xl font-headline font-extrabold text-on-surface">0</h3>
+                    <div class="mt-4 flex items-center text-primary text-sm font-semibold">
+                        <span>No upcoming sessions</span>
                     </div>
-                    <form class="space-y-6">
-                        <!-- Email Field -->
-                        <div class="space-y-2 group">
-                            <label
-                                class="text-xs font-headline uppercase tracking-widest text-primary/80 font-bold ml-1">Email
-                                Address</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/50 group-focus-within:text-primary transition-colors">mail</span>
-                                <input
-                                    class="w-full bg-surface-container-lowest border-none rounded-2xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="curator@archive.com" type="email">
-                            </div>
-                        </div>
-                        <!-- Password Field -->
-                        <div class="space-y-2 group">
-                            <div class="flex justify-between items-center ml-1">
-                                <label
-                                    class="text-xs font-headline uppercase tracking-widest text-primary/80 font-bold">Password</label>
-                                <a class="text-[10px] uppercase tracking-widest text-outline hover:text-primary transition-colors font-bold"
-                                    href="#">Forgot Password?</a>
-                            </div>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/50 group-focus-within:text-primary transition-colors">lock</span>
-                                <input
-                                    class="w-full bg-surface-container-lowest border-none rounded-2xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" type="password">
-                            </div>
-                        </div>
-                        <!-- Sign In Button -->
-                        <div class="pt-4">
-                            <button
-                                class="brass-gradient w-full py-4 rounded-full text-on-primary font-headline font-extrabold tracking-widest uppercase text-sm shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2">
-                                Sign In
-                                <span class="material-symbols-outlined"
-                                    style="font-variation-settings: 'wght' 700;">arrow_right_alt</span>
-                            </button>
-                        </div>
-                        <!-- Social Login Divider -->
-                        <div class="relative py-4">
-                            <div class="absolute inset-0 flex items-center">
-                                <div class="w-full h-[1px] bg-outline-variant/20"></div>
-                            </div>
-                            <div
-                                class="relative flex justify-center text-xs uppercase tracking-[0.2em] font-bold text-outline-variant">
-                                <span class="bg-surface-container px-4">Or continue with</span>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <button
-                                class="flex items-center justify-center gap-3 py-3 rounded-2xl bg-surface-container-highest/50 hover:bg-surface-container-highest transition-colors border border-outline-variant/10"
-                                type="button">
-                                <img alt="Google" class="w-5 h-5 opacity-80"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD79B7fmyw-l3asmDiDRTynL9bsmAYZBtTyXaDQip75NmPXzyb2gtZ1vX3fWBJp44kBtWNxaq83_iwmTgPlyiXXMFWT7Fs0haFFUNNBcJID_scTspskbI3_b9L0Esl3u6XlTlnl_cZRZCs9qLgJMxyj9k-Y8rtmUJqO9axAw7I-G1VQtTDews-ZQbmXdK_SerxLQosBLPlGIovOLOxcOEAChHCfM7E62O2adp8cEb9_lZiBYqAyXdE8mEXVIvrSG5hgTAwv97DZXtzz">
-                                <span class="text-xs font-bold uppercase tracking-tighter">Google</span>
-                            </button>
-                            <button
-                                class="flex items-center justify-center gap-3 py-3 rounded-2xl bg-surface-container-highest/50 hover:bg-surface-container-highest transition-colors border border-outline-variant/10"
-                                type="button">
-                                <span class="material-symbols-outlined text-xl opacity-80">ios</span>
-                                <span class="text-xs font-bold uppercase tracking-tighter">Apple</span>
-                            </button>
-                        </div>
-                    </form>
-                    <div class="mt-10 text-center">
-                        <p class="text-outline text-sm">
-                            New to the Archive?
-                            <a class="text-primary font-bold ml-1 hover:underline underline-offset-4 text-glow transition-all"
-                                href="#">Create an Account</a>
-                        </p>
+                </div>
+                <span class="material-symbols-outlined absolute -bottom-4 -right-4 text-primary/10 text-9xl">event</span>
+            </div>
+            <div class="bg-surface-container-high p-8 rounded-xl shadow-2xl relative overflow-hidden group">
+                <div class="relative z-10">
+                    <p class="text-outline-variant font-label text-sm uppercase tracking-widest mb-4">Available Games</p>
+                    <h3 class="text-5xl font-headline font-extrabold text-on-surface">12</h3>
+                    <div class="mt-4 flex items-center text-secondary text-sm font-semibold">
+                        <span>Ready to play</span>
                     </div>
+                </div>
+                <span class="material-symbols-outlined absolute -bottom-4 -right-4 text-secondary/10 text-9xl">sports_esports</span>
+            </div>
+            <div class="bg-surface-container p-8 rounded-xl shadow-2xl relative overflow-hidden group">
+                <div class="relative z-10">
+                    <p class="text-outline-variant font-label text-sm uppercase tracking-widest mb-4">Total Sessions</p>
+                    <h3 class="text-5xl font-headline font-extrabold text-on-surface">0</h3>
+                    <div class="mt-4 flex items-center text-tertiary text-sm font-semibold">
+                        <span>Start your first game</span>
+                    </div>
+                </div>
+                <span class="material-symbols-outlined absolute -bottom-4 -right-4 text-tertiary/10 text-9xl">timer</span>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="space-y-6">
+                <h2 class="text-2xl font-headline font-extrabold tracking-tight">Quick Actions</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="<?= $baseUrl ?>games" class="bg-surface-container p-6 rounded-xl hover:bg-surface-container-high transition-colors">
+                        <span class="material-symbols-outlined text-primary text-3xl mb-2">sports_esports</span>
+                        <p class="font-bold">Browse Games</p>
+                    </a>
+                    <a href="<?= $baseUrl ?>reservation" class="bg-surface-container p-6 rounded-xl hover:bg-surface-container-high transition-colors">
+                        <span class="material-symbols-outlined text-primary text-3xl mb-2">event_available</span>
+                        <p class="font-bold">Make Reservation</p>
+                    </a>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <h2 class="text-2xl font-headline font-extrabold tracking-tight">Your Profile</h2>
+                <div class="bg-surface-container p-6 rounded-xl">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-[#412d00] text-2xl font-bold">
+                            <?= strtoupper(substr($userName, 0, 1)) ?>
+                        </div>
+                        <div>
+                            <p class="text-xl font-bold"><?= htmlspecialchars($userName) ?></p>
+                            <p class="text-secondary text-sm">Member since now</p>
+                        </div>
+                    </div>
+                    <a href="<?= $baseUrl ?>profile" class="text-primary font-bold text-sm hover:underline">Edit Profile</a>
                 </div>
             </div>
         </div>
     </main>
-    <!-- Footer Decorative Detail -->
-    <footer class="fixed bottom-8 w-full px-12 hidden md:flex justify-between items-end z-20">
-        <div class="flex flex-col">
-            <span class="text-[10px] text-outline/40 uppercase tracking-[0.4em] font-bold">Security Grade</span>
-            <div class="flex gap-1 mt-1">
-                <div class="w-3 h-1 bg-primary rounded-full"></div>
-                <div class="w-3 h-1 bg-primary rounded-full"></div>
-                <div class="w-3 h-1 bg-primary rounded-full"></div>
-                <div class="w-3 h-1 bg-outline-variant/30 rounded-full"></div>
-            </div>
-        </div>
-        <p class="text-[10px] text-outline/40 uppercase tracking-[0.4em] font-bold">&copy; 2024 The Tactile Archive
-            &bull; Est. Aji L3bo</p>
-    </footer>
 </body>
 
 </html>
