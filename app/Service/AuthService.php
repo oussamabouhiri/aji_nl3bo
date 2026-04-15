@@ -79,6 +79,7 @@ class AuthService
             'id'   => $_SESSION['user_id'],
             'name' => $_SESSION['user_name'],
             'role' => $_SESSION['user_role'],
+            'image' => $_SESSION['user_image'] ?? '',
         ];
     }
 }

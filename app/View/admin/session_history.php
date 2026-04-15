@@ -1,3 +1,6 @@
+<?php
+$baseUrl = \App\Helper\Utility::baseUrl();
+?>
 <html>
 
 <head>
@@ -127,42 +130,41 @@
       </div>
       <nav class="flex-1 space-y-1 px-4">
         <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176]"
-          href="#">
+          href="<?= $baseUrl ?>admin/dashboard">
           <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
           <span class="text-sm font-medium">Dashboard</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176]"
-          href="#">
+          href="<?= $baseUrl ?>admin/games">
           <span class="material-symbols-outlined" data-icon="casino">casino</span>
           <span class="text-sm font-medium">Games</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176]"
-          href="#">
+          href="<?= $baseUrl ?>categories">
           <span class="material-symbols-outlined" data-icon="category">category</span>
           <span class="text-sm font-medium">Categories</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176]"
-          href="#">
+          href="<?= $baseUrl ?>admin/reservations">
           <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
           <span class="text-sm font-medium">Reservations</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176]"
-          href="#">
+          href="<?= $baseUrl ?>admin/sessions">
           <span class="material-symbols-outlined" data-icon="timer">timer</span>
           <span class="text-sm font-medium">Active Sessions</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#e9c176] font-bold border-r-2 border-[#e9c176] bg-gradient-to-r from-[#e9c176]/10 to-transparent"
-          href="#">
+          href="<?= $baseUrl ?>admin/session-history">
           <span class="material-symbols-outlined" data-icon="history">history</span>
           <span class="text-sm">History</span>
         </a>
       </nav>
       <div class="px-4 mt-auto">
-        <button
-          class="w-full brass-gradient text-on-primary font-bold py-3 px-4 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-primary/10 hover:scale-[0.98] transition-all">
-          <span class="material-symbols-outlined text-lg">add</span>
-          <span class="text-sm">New Reservation</span>
-        </button>
+        <a href="<?= $baseUrl ?>logout" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176]">
+          <span class="material-symbols-outlined">logout</span>
+          <span class="text-sm font-medium">Logout</span>
+        </a>
         <div class="mt-6 flex items-center gap-3 px-4 py-3 border-t border-[#414848]/15">
           <img alt="Admin Profile Picture" class="w-10 h-10 rounded-full object-cover grayscale"
             data-alt="Close-up portrait of a professional male administrator in a dark turtleneck with moody studio lighting"

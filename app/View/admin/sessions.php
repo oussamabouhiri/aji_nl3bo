@@ -1,3 +1,6 @@
+<?php
+$baseUrl = \App\Helper\Utility::baseUrl();
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -114,56 +117,46 @@
         <nav class="flex-1 space-y-1">
             <!-- Dashboard -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= $baseUrl ?>admin/dashboard">
                 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
                 <span class="font-medium text-sm">Dashboard</span>
             </a>
             <!-- Games -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= $baseUrl ?>admin/games">
                 <span class="material-symbols-outlined" data-icon="sports_esports">sports_esports</span>
                 <span class="font-medium text-sm">Games</span>
             </a>
             <!-- Categories -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= $baseUrl ?>categories">
                 <span class="material-symbols-outlined" data-icon="category">category</span>
                 <span class="font-medium text-sm">Categories</span>
             </a>
             <!-- Reservations -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= $baseUrl ?>admin/reservations">
                 <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
                 <span class="font-medium text-sm">Reservations</span>
             </a>
             <!-- Active Sessions (ACTIVE STATE LOGIC applied here) -->
             <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center gap-3 scale-98 transition-transform shadow-lg shadow-primary/20"
-                href="#">
+                href="<?= $baseUrl ?>admin/sessions">
                 <span class="material-symbols-outlined" data-icon="timer"
                     style="font-variation-settings: 'FILL' 1;">timer</span>
                 <span class="text-sm">Active Sessions</span>
             </a>
             <!-- History -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= $baseUrl ?>admin/session-history">
                 <span class="material-symbols-outlined" data-icon="history">history</span>
                 <span class="font-medium text-sm">History</span>
             </a>
         </nav>
         <div class="px-4 mt-auto space-y-4">
-            <button
-                class="w-full bg-primary text-on-primary font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/10">
-                <span class="material-symbols-outlined text-lg" data-icon="add">add</span>
-                New Session
-            </button>
             <div class="pt-4 space-y-1">
                 <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
-                    href="#">
-                    <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
-                    Settings
-                </a>
-                <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
-                    href="#">
+                    href="<?= $baseUrl ?>logout">
                     <span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
                     Logout
                 </a>
