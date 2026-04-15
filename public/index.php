@@ -1,19 +1,13 @@
 <?php
 
-session_start() === PHP_SESSION_NONE ? session_start() : null;
+session_start();
 
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Route\Router;
-use App\Controller\CategoryController;
 
+// Charger les routes
+require __DIR__ . '/../routes/web.php';
 
-// DEFINE ROUTES
-
-// For exemple 
-Router::get('categories', [CategoryController::class, 'index']);
-Router::post('categories/create', [CategoryController::class, 'create']);
-Router::post('categories/update/{id}', [CategoryController::class, 'update']);
-Router::post('categories/delete/{id}', [CategoryController::class, 'delete']);
-
+// Lancer le router
 Router::match();
