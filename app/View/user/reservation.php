@@ -1,3 +1,6 @@
+<?php
+$baseUrl = \App\Helper\Utility::baseUrl();
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -125,9 +128,9 @@
     <div class="flex items-center gap-8">
       <span class="text-2xl font-black tracking-tighter text-[#e9c176]">Aji L3bo</span>
       <div class="hidden md:flex items-center gap-6">
-        <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="#">Games</a>
-        <a class="text-[#e9c176] border-b-2 border-[#e9c176] pb-1 font-body text-sm" href="#">My Reservations</a>
-        <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="#">Profile</a>
+        <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= $baseUrl ?>games">Games</a>
+        <a class="text-[#e9c176] border-b-2 border-[#e9c176] pb-1 font-body text-sm" href="<?= $baseUrl ?>reservation">My Reservations</a>
+        <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= $baseUrl ?>profile">Profile</a>
       </div>
     </div>
     <div class="flex items-center gap-6">

@@ -59,5 +59,9 @@ Router::get('profile', [UserController::class, 'profile'])
     ->middleware('auth');
 Router::get('reservation', [UserController::class, 'reservation'])
     ->middleware('auth');
+Router::post('profile/update', [UserController::class, 'updateProfile'])
+    ->middleware('auth');
+Router::post('profile/password', [UserController::class, 'updatePassword'])
+    ->middleware('auth');
 
 Router::match();

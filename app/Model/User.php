@@ -41,4 +41,25 @@ class User extends Database
         $stmt->execute(['email' => $email]);
         return (int) $stmt->fetchColumn() > 0;
     }
+
+    public function updateProfile(int $id, array $data): bool
+    {
+        $stmt = $this->db->prepare("UPDATE users SET name = :name, email = :email, phone = :phone, image = :image WHERE id = :id");
+        return $stmt->execute([
+            'id'    => $id,
+            'name'  => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'] ?? null,
+            'image' => $data['image'] ?? null,
+        ]);
+    }
+
+    public function updatePassword(int $id, string $password): bool
+    {
+        $stmt = $this->db->prepare("UPDATE users SET password = :password WHERE id = :id");
+        return $stmt->execute([
+            'id'       => $id,
+            'password' => $password,
+        ]);
+    }
 }
