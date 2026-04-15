@@ -4,8 +4,18 @@ namespace App\Helper;
 
 class Utility {
     public static function view(string $path, array $data = []): void {
+        if (!defined('BASE_URL')) {
+            $config = require dirname(__DIR__) . '/../config/app.php';
+            define('BASE_URL', $config['base_url']);
+        }
+        
         extract($data);
-        include dirname(__DIR__) . '/View/' . $path . '.php';
+        $viewPath = dirname(__DIR__) . '/View/' . $path . '.php';
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        } else {
+            echo "View not found: $viewPath";
+        }
     }
 
     public static function redirect(string $url): void {
@@ -19,5 +29,25 @@ class Utility {
         http_response_code($code);
         include dirname(__DIR__) . '/app/View/errors/' . $code . '.php';
         exit;
+    }
+
+    public static function auth(): bool {
+        return isset($_SESSION['user_id']);
+    }
+
+    public static function requireAuth(): void {
+        if (!self::auth()) {
+            self::redirect('/login');
+        }
+    }
+
+    public static function isAdmin(): bool {
+        return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+    }
+
+    public static function requireAdmin(): void {
+        if (!self::isAdmin()) {
+            self::abort(403);
+        }
     }
 }

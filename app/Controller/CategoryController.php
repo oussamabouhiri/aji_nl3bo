@@ -34,21 +34,31 @@ class CategoryController {
             "description" => $_POST['description'] ?? ''
         ];
         $this->categoryModel->addCategory($category_date);
-        $this->utility->redirect('categories');
+        $this->utility->redirect('/admin/categories');
     }
 
-    public function update($id) {
+    public function update($params = []) {
+        $id = $params['id'] ?? $_POST['id'] ?? null;
+        if (!$id) {
+            $this->utility->redirect('/admin/categories');
+            return;
+        }
         $category_date = [
             "name" => $_POST['name'] ?? '',
             "description" => $_POST['description'] ?? ''
         ];
         $this->categoryModel->updateCategory($id, $category_date);
-        $this->utility->redirect('categories');
+        $this->utility->redirect('/admin/categories');
     }
 
-    public function delete($id) {
+    public function delete($params = []) {
+        $id = $params['id'] ?? $_POST['id'] ?? $_GET['id'] ?? null;
+        if (!$id) {
+            $this->utility->redirect('/admin/categories');
+            return;
+        }
         $this->categoryModel->deleteCategory($id);
-        $this->utility->redirect('categories');
+        $this->utility->redirect('/admin/categories');
     }
 
 }

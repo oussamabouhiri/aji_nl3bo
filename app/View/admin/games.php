@@ -136,45 +136,62 @@
             <h1 class="text-2xl font-black tracking-tight text-[#e9c176] font-headline">The Tactile Archive</h1>
             <p class="text-[10px] uppercase tracking-[0.2em] text-secondary/50 mt-1">Digital Curator</p>
         </div>
-        <nav class="flex-1 space-y-2 px-4">
-            <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
-                <span class="material-symbols-outlined text-xl">dashboard</span>
-                <span class="font-medium">Dashboard</span>
+        <nav class="flex-1 space-y-1">
+            <!-- Dashboard -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span class="font-medium text-sm">Dashboard</span>
             </a>
-            <!-- Active State: Games -->
-            <a class="flex items-center gap-3 px-4 py-3 text-[#e9c176] font-bold border-r-2 border-[#e9c176] bg-gradient-to-r from-[#e9c176]/10 to-transparent transition-all duration-300 ease-out rounded-l-xl"
-                href="#">
-                <span class="material-symbols-outlined text-xl">casino</span>
-                <span class="font-medium">Games</span>
+            <!-- Games -->
+            <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center gap-3 shadow-lg shadow-primary/20"
+                href="<?= BASE_URL ?>/admin/games">
+                <span class="material-symbols-outlined" data-icon="sports_esports">sports_esports</span>
+                <span class="text-sm">Games</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
-                <span class="material-symbols-outlined text-xl">category</span>
-                <span class="font-medium">Categories</span>
+            <!-- Categories -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin/categories">
+                <span class="material-symbols-outlined" data-icon="category">category</span>
+                <span class="font-medium text-sm">Categories</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
-                <span class="material-symbols-outlined text-xl">event_available</span>
-                <span class="font-medium">Reservations</span>
+            <!-- Reservations -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin/reservations">
+                <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+                <span class="font-medium text-sm">Reservations</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
-                <span class="material-symbols-outlined text-xl">timer</span>
-                <span class="font-medium">Active Sessions</span>
+            <!-- Active Sessions -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin/sessions">
+                <span class="material-symbols-outlined" data-icon="timer">timer</span>
+                <span class="font-medium text-sm">Active Sessions</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] transition-all duration-300 ease-out rounded-xl group"
-                href="#">
-                <span class="material-symbols-outlined text-xl">history</span>
-                <span class="font-medium">History</span>
+            <!-- History -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin/sessions/history">
+                <span class="material-symbols-outlined" data-icon="history">history</span>
+                <span class="font-medium text-sm">History</span>
             </a>
         </nav>
-        <div class="px-6 mt-auto">
-            <button
-                class="w-full brass-gradient text-on-primary font-bold py-4 rounded-full shadow-lg shadow-primary/10 hover:scale-[0.98] transition-transform flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined">add_circle</span>
+        <div class="px-4 mt-auto space-y-4">
+            <a href="<?= BASE_URL ?>/admin/reservations"
+                class="w-full bg-primary text-on-primary font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/10">
+                <span class="material-symbols-outlined text-lg" data-icon="add">add</span>
                 New Reservation
-            </button>
+            </a>
+            <div class="pt-4 space-y-1">
+                <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+                    href="<?= BASE_URL ?>/admin/settings">
+                    <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+                    Settings
+                </a>
+                <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+                    href="<?= BASE_URL ?>/logout">
+                    <span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+                    Logout
+                </a>
+            </div>
         </div>
     </aside>
     <!-- TopNavBar Anchor -->
@@ -228,7 +245,7 @@
             </div>
             <a href="<?= BASE_URL ?>/admin/games/create"
                 class="brass-gradient text-on-primary px-8 py-4 rounded-full font-bold flex items-center gap-2 shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                <span class="material-symbols-outlined">library_add</span>
+                <span class="material-symbols-outlined">add</span>
                 Add New Game
             </a>
         </div>
@@ -287,7 +304,7 @@
                         <span class="text-[10px] text-secondary/40 uppercase tracking-widest">Duration</span>
                         <div class="flex items-center gap-2 text-on-surface-variant font-medium">
                             <span class="material-symbols-outlined text-lg text-secondary">schedule</span>
-                            <?= $game['duration_minutes'] ?? 60 ?> min
+                            <?= $game['duration'] ?? 60 ?> min
                         </div>
                     </div>
                     <div class="flex flex-col gap-1">

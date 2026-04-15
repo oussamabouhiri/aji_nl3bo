@@ -127,11 +127,11 @@
   <!-- TopNavBar (JSON Anchor) -->
   <nav
     class="fixed top-0 w-full z-50 bg-[#131313]/60 backdrop-blur-xl flex justify-between items-center px-8 py-4 max-w-full shadow-[0_16px_40px_-4px_rgba(0,0,0,0.1)]">
-    <div class="text-2xl font-bold tracking-tighter text-[#e9c176]">The Tactile Archive</div>
+    <a href="<?= BASE_URL ?>/" class="text-2xl font-bold tracking-tighter text-[#e9c176]">Aji L3bo</a>
     <div class="hidden md:flex items-center gap-8">
-      <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="#">Library</a>
-      <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="#">Reservations</a>
-      <a class="text-[#e9c176] border-b-2 border-[#e9c176] pb-1" href="#">Profile</a>
+      <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="<?= BASE_URL ?>/games">Games</a>
+      <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="<?= BASE_URL ?>/my-reservations">My Reservations</a>
+      <a class="text-[#e9c176] border-b-2 border-[#e9c176] pb-1" href="<?= BASE_URL ?>/profile">Profile</a>
     </div>
     <div class="flex items-center gap-4">
       <button
@@ -151,24 +151,24 @@
     </div>
     <div class="flex-1 px-4 space-y-2">
       <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] opacity-70 hover:bg-[#201f1f] hover:text-[#e9c176] rounded-xl transition-all"
-        href="#">
+        href="<?= BASE_URL ?>/">
         <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
         <span class="font-medium">Dashboard</span>
       </a>
       <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] opacity-70 hover:bg-[#201f1f] hover:text-[#e9c176] rounded-xl transition-all"
-        href="#">
+        href="<?= BASE_URL ?>/games">
         <span class="material-symbols-outlined" data-icon="casino">casino</span>
         <span class="font-medium">Game Library</span>
       </a>
       <a class="flex items-center gap-3 px-4 py-3 text-[#abcdcc] opacity-70 hover:bg-[#201f1f] hover:text-[#e9c176] rounded-xl transition-all"
-        href="#">
+        href="<?= BASE_URL ?>/my-reservations">
         <span class="material-symbols-outlined" data-icon="event_note">event_note</span>
         <span class="font-medium">My Bookings</span>
       </a>
       <a class="flex items-center gap-3 px-4 py-3 text-[#e9c176] bg-[#201f1f] rounded-r-full font-bold translate-x-1 duration-200"
-        href="#">
+        href="<?= BASE_URL ?>/profile">
         <span class="material-symbols-outlined" data-icon="settings">settings</span>
-        <span class="font-medium">Settings</span>
+        <span class="font-medium">Profile</span>
       </a>
     </div>
     <div class="mt-auto px-6 space-y-6">
@@ -186,7 +186,7 @@
           <span class="text-sm">Support</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-2 text-[#abcdcc] opacity-70 hover:text-[#e9c176] transition-colors"
-          href="#">
+          href="<?= BASE_URL ?>/logout">
           <span class="material-symbols-outlined" data-icon="logout">logout</span>
           <span class="text-sm">Logout</span>
         </a>
@@ -211,13 +211,11 @@
         <div class="relative z-10 flex-1 space-y-2">
           <div class="flex items-center gap-3">
             <span
-              class="px-3 py-1 rounded-full bg-primary-container text-primary text-[10px] font-bold uppercase tracking-widest">Master
-              Strategist</span>
-            <span class="text-secondary/50 text-sm font-medium">Member since Oct 2023</span>
+              class="px-3 py-1 rounded-full bg-primary-container text-primary text-[10px] font-bold uppercase tracking-widest">Member</span>
+            <span class="text-secondary/50 text-sm font-medium"><?= htmlspecialchars($userEmail) ?></span>
           </div>
-          <h1 class="text-5xl font-extrabold tracking-tighter text-on-surface">Julian Sterling</h1>
-          <p class="text-secondary font-medium text-lg italic opacity-80">"The true archive is found in the move you
-            haven't made yet."</p>
+          <h1 class="text-5xl font-extrabold tracking-tighter text-on-surface"><?= htmlspecialchars($userName) ?></h1>
+          <p class="text-secondary font-medium text-lg italic opacity-80">Welcome to Aji L3bo</p>
         </div>
         <div class="relative z-10 flex gap-3">
           <button

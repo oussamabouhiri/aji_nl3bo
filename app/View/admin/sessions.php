@@ -1,3 +1,4 @@
+<?php date_default_timezone_set('Africa/Casablanca'); ?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -114,56 +115,56 @@
         <nav class="flex-1 space-y-1">
             <!-- Dashboard -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= BASE_URL ?>/admin">
                 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
                 <span class="font-medium text-sm">Dashboard</span>
             </a>
             <!-- Games -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= BASE_URL ?>/admin/games">
                 <span class="material-symbols-outlined" data-icon="sports_esports">sports_esports</span>
                 <span class="font-medium text-sm">Games</span>
             </a>
             <!-- Categories -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= BASE_URL ?>/admin/categories">
                 <span class="material-symbols-outlined" data-icon="category">category</span>
                 <span class="font-medium text-sm">Categories</span>
             </a>
             <!-- Reservations -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= BASE_URL ?>/admin/reservations">
                 <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
                 <span class="font-medium text-sm">Reservations</span>
             </a>
             <!-- Active Sessions (ACTIVE STATE LOGIC applied here) -->
             <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center gap-3 scale-98 transition-transform shadow-lg shadow-primary/20"
-                href="#">
+                href="<?= BASE_URL ?>/admin/sessions">
                 <span class="material-symbols-outlined" data-icon="timer"
                     style="font-variation-settings: 'FILL' 1;">timer</span>
                 <span class="text-sm">Active Sessions</span>
             </a>
             <!-- History -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
-                href="#">
+                href="<?= BASE_URL ?>/admin/sessions/history">
                 <span class="material-symbols-outlined" data-icon="history">history</span>
                 <span class="font-medium text-sm">History</span>
             </a>
         </nav>
         <div class="px-4 mt-auto space-y-4">
-            <button
+            <a href="<?= BASE_URL ?>/admin/reservations"
                 class="w-full bg-primary text-on-primary font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/10">
                 <span class="material-symbols-outlined text-lg" data-icon="add">add</span>
-                New Session
-            </button>
+                New Reservation
+            </a>
             <div class="pt-4 space-y-1">
                 <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
-                    href="#">
+                    href="<?= BASE_URL ?>/admin/settings">
                     <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
                     Settings
                 </a>
                 <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
-                    href="#">
+                    href="<?= BASE_URL ?>/logout">
                     <span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
                     Logout
                 </a>
@@ -206,312 +207,407 @@
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             <?php 
             $tables = $tables ?? [];
-            $maxTables = 6;
-            $allTables = array_merge($tables, range(count($tables) + 1, $maxTables));
-            foreach ($allTables as $index => $table): 
-                $tableNum = is_array($table) ? ($table['table_number'] ?? $index + 1) : ($index + 1);
-                $session = is_array($table) ? ($table['session'] ?? null) : null;
-                $isActive = $session !== null;
+            $activeSessions = $activeSessions ?? [];
+            $todayReservations = $todayReservations ?? [];
+            
+            function isGameAvailableForReservation($game, $reservation, $allReservations) {
+                if ($game['status'] !== 'available') {
+                    return false;
+                }
+                $gameId = $game['id'];
+                $resStart = $reservation['start_time'];
+                $resEnd = $reservation['end_time'];
+                
+                foreach ($allReservations as $res) {
+                    if ($res['game_id'] == $gameId && $res['id'] != $reservation['id']) {
+                        $otherStart = $res['start_time'];
+                        $otherEnd = $res['end_time'];
+                        if (!($resEnd <= $otherStart || $resStart >= $otherEnd)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            
+            // Index active sessions by table_id
+            $sessionByTable = [];
+            foreach ($activeSessions as $session) {
+                $sessionByTable[$session['table_id']] = $session;
+            }
+            
+            // Group reservations by table
+            $reservationsByTable = [];
+            foreach ($todayReservations as $res) {
+                $tableId = $res['table_id'];
+                if (!isset($reservationsByTable[$tableId])) {
+                    $reservationsByTable[$tableId] = [];
+                }
+                $reservationsByTable[$tableId][] = $res;
+            }
+            
+            foreach ($tables as $table): 
+                $tableId = $table['id'];
+                $tableRef = $table['reference'];
+                $session = $sessionByTable[$tableId] ?? null;
+                $reservations = $reservationsByTable[$tableId] ?? [];
+                
+                // Find the NEXT reservation for this table (active session takes priority)
+                $reservation = null;
+                if (!empty($reservations)) {
+                    // Sort by start time
+                    usort($reservations, function($a, $b) {
+                        return strtotime($a['start_time']) - strtotime($b['start_time']);
+                    });
+                    
+                    foreach ($reservations as $res) {
+                        // If there's an active session for this reservation, show it
+                        if ($session !== null && $res['id'] === $session['reservation_id']) {
+                            $reservation = $res;
+                            break;
+                        }
+                        
+                        // Show FIRST reservation if no active session
+                        if ($session === null && $reservation === null) {
+                            $reservation = $res;
+                            break;
+                        }
+                    }
+                }
+                
+                // Determine status
+                $status = 'empty';
+                if ($session !== null) {
+                    $status = 'active';
+                } elseif ($reservation !== null) {
+                    $startTime = $reservation['start_time'];
+                    $currentTime = date('H:i');
+                    
+                    if ($currentTime >= $startTime) {
+                        $status = 'timeup';
+                    } else {
+                        $status = 'reserved';
+                    }
+                }
             ?>
-            <?php if ($isActive): ?>
-            <div class="bg-surface-container rounded-xl p-6 glow-teal border-t-2 border-secondary/20 relative group transition-all duration-300">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-secondary tracking-widest uppercase mb-1">Table</span>
-                        <span class="text-5xl font-black font-headline text-primary"><?= $tableNum ?></span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-secondary/10 px-3 py-1.5 rounded-full">
-                        <div class="w-2 h-2 rounded-full bg-secondary animate-pulse shadow-[0_0_8px_rgba(171,205,204,1)]"></div>
-                        <span class="text-[10px] font-bold text-secondary uppercase">Active</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 mb-8">
-                    <img class="w-16 h-16 rounded-xl object-cover ring-2 ring-primary/20"
-                        src="<?= $session['game_image'] ?? 'https://lh3.googleusercontent.com/aida-public/AB6AXuDNmFKxsAnPdaN50AjJftuVdjICX0Z3r3EAKwHjjQqSmroZziOyYa8x0BV8d_yeY2zAkt9jLRLH-KhHN8j-EqqtmXh8VUZ0K1CAWLXoF5jNbXMcwUR_pXF2JajYWllhemgrlJoW-o6jpqHgw_fPsNSN-uqQSO_s0n6ROFMGoU9OQnYshAMkdquM-X0kmHDrXS9hGV8heOhuiyPmaiawoDKUA5zzIvaIHU33-EleatIrYvTydqQfZDN4LLlNdjUbvEWGOuaTHg_qzVkF' ?>">
-                    <div>
-                        <h4 class="font-headline font-bold text-lg leading-tight"><?= $session['game_name'] ?? 'Game Name' ?></h4>
-                        <div class="flex items-center gap-2 text-secondary/70 text-sm mt-1">
-                            <span class="material-symbols-outlined text-base">groups</span>
-                            <span><?= $session['player_count'] ?? 1 ?> Players</span>
+            
+            <?php if ($status === 'active'): ?>
+            <!-- Active Session Card - Modern Glassmorphism -->
+            <div class="relative group">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-secondary/50 via-[#7dd3d2]/50 to-secondary/50 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+                <div class="relative bg-[#0d1a1a]/90 backdrop-blur-xl rounded-2xl p-5 border border-white/5">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/5 flex items-center justify-center">
+                                <span class="text-3xl font-black font-headline text-primary"><?= str_replace('Table ', '', $tableRef) ?></span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-secondary/40 uppercase tracking-widest font-semibold"><?= $table['capacity'] ?? 0 ?> seats</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-secondary/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-secondary/20">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+                            </span>
+                            <span class="text-[10px] font-bold text-secondary uppercase tracking-wider">Live</span>
                         </div>
                     </div>
-                </div>
-                <div class="bg-surface-container-low rounded-xl p-4 mb-6">
-                    <div class="flex justify-between items-center">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] text-secondary/50 font-bold uppercase">Time Elapsed</span>
-                            <span class="text-2xl font-headline font-bold tabular-nums"><?= $session['elapsed'] ?? '00:00:00' ?></span>
+                    
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 mb-4">
+                        <?php if (!empty($session['game_name'])): ?>
+                        <img class="w-12 h-12 rounded-xl object-cover shadow-lg" src="<?= $session['game_image'] ?? '' ?>">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm text-on-surface truncate"><?= $session['game_name'] ?? '' ?></h4>
+                            <p class="text-xs text-secondary/60 truncate"><?= $session['customer_name'] ?? '' ?></p>
                         </div>
-                        <div class="w-10 h-10 rounded-full border-2 border-secondary/20 border-t-secondary flex items-center justify-center">
-                            <span class="material-symbols-outlined text-secondary text-sm">update</span>
+                        <?php else: ?>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm text-secondary/60">No Game Selected</h4>
+                            <p class="text-xs text-secondary/60 truncate"><?= $session['customer_name'] ?? '' ?></p>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-secondary/10 via-secondary/5 to-transparent border border-secondary/10 mb-4">
+                        <div>
+                            <p class="text-[10px] text-secondary/40 uppercase tracking-wider font-semibold mb-1">Remaining</p>
+                            <p class="text-2xl font-black font-mono tabular-nums text-secondary" id="timer-<?= $session['id'] ?>">--:--</p>
+                        </div>
+                        <div class="w-11 h-11 rounded-full bg-secondary/10 border border-secondary/20 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-secondary text-lg animate-spin" style="animation-duration: 3s;">progress_activity</span>
                         </div>
                     </div>
+                    
+                    <!-- Price Display -->
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-primary/10 border border-primary/20 mb-4">
+                        <div>
+                            <p class="text-[10px] text-primary/60 uppercase tracking-wider font-semibold">Total Price</p>
+                            <p class="text-xl font-black text-primary"><?= number_format($session['total_price'] ?? 0, 2) ?> DH</p>
+                        </div>
+                        <span class="material-symbols-outlined text-primary text-xl">payments</span>
+                    </div>
+                    
+                    <!-- Game Selector Form -->
+                    <form method="POST" action="<?= BASE_URL ?>/admin/sessions/changeGame" class="mb-3">
+                        <input type="hidden" name="session_id" value="<?= $session['id'] ?? 0 ?>">
+                        <label class="text-[10px] text-secondary/60 uppercase tracking-wider font-semibold mb-2 block">Change Game</label>
+                        <div class="flex gap-2">
+                            <div class="relative flex-1">
+                                <select name="game_id" class="w-full appearance-none bg-[#1a2a2a] border border-secondary/30 rounded-xl px-4 py-3 pr-10 text-sm text-on-surface focus:ring-2 focus:ring-secondary/40 cursor-pointer hover:bg-[#1f3535] transition-all">
+                                    <option value="">Choose a game...</option>
+                                    <?php foreach ($availableGames as $game): ?>
+                                    <?php if ($game['status'] === 'available' || $game['id'] === ($session['game_id'] ?? null)): ?>
+                                    <option value="<?= $game['id'] ?>" <?= ($game['id'] === ($session['game_id'] ?? null)) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($game['name']) ?> - <?= number_format($game['price'], 2) ?> DH
+                                    </option>
+                                    <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </select>
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary/60 text-lg pointer-events-none">expand_more</span>
+                            </div>
+                            <button type="submit" class="px-5 py-3 bg-secondary/20 hover:bg-secondary/30 border border-secondary/40 text-secondary rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:scale-105 active:scale-95">
+                                <span class="material-symbols-outlined text-lg">sync</span>
+                                Change
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Session Games History -->
+                    <?php if (!empty($session['session_games'])): ?>
+                    <div class="mb-4">
+                        <p class="text-[10px] text-secondary/40 uppercase tracking-wider font-semibold mb-2">Games Played</p>
+                        <div class="flex flex-wrap gap-1">
+                            <?php foreach ($session['session_games'] as $sg): ?>
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] <?= $sg['is_active'] ? 'bg-secondary/20 text-secondary' : 'bg-white/5 text-secondary/40' ?>">
+                                <?= htmlspecialchars($sg['game_name'] ?? 'Unknown') ?>
+                                <?php if (!$sg['is_active']): ?>
+                                <span class="material-symbols-outlined text-xs">check</span>
+                                <?php endif; ?>
+                            </span>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <form method="POST" action="<?= BASE_URL ?>/admin/sessions/end">
+                        <input type="hidden" name="id" value="<?= $session['id'] ?? 0 ?>">
+                        <button type="submit" class="w-full py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                            <span class="material-symbols-outlined text-lg">stop</span>
+                            End Session
+                        </button>
+                    </form>
                 </div>
-                <form method="POST" action="<?= BASE_URL ?>/admin/sessions/end/<?= $session['id'] ?? 0 ?>">
-                    <button type="submit" class="w-full bg-error-container/20 hover:bg-error-container text-error font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-xl">stop_circle</span>
-                        End Session
-                    </button>
-                </form>
             </div>
+            
+            <?php elseif ($status === 'timeup'): ?>
+            <!-- Time's Up Card - Attention Seeking -->
+            <div class="relative group">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-yellow-500/50 via-amber-400/50 to-yellow-500/50 rounded-2xl blur opacity-40 group-hover:opacity-70 transition duration-500 animate-pulse"></div>
+                <div class="relative bg-[#1a1508]/95 backdrop-blur-xl rounded-2xl p-5 border border-yellow-500/20">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 flex items-center justify-center">
+                                <span class="text-3xl font-black font-headline text-primary"><?= str_replace('Table ', '', $tableRef) ?></span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-yellow-400/50 uppercase tracking-widest font-semibold"><?= $table['capacity'] ?? 0 ?> seats</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-yellow-500/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-yellow-500/30">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-400"></span>
+                            </span>
+                            <span class="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Ready</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 mb-4">
+                        <?php if (!empty($reservation['game_name'])): ?>
+                        <img class="w-12 h-12 rounded-xl object-cover shadow-lg ring-2 ring-yellow-500/20" src="<?= $reservation['game_image'] ?? '' ?>">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm text-on-surface truncate"><?= $reservation['game_name'] ?? '' ?></h4>
+                            <p class="text-xs text-yellow-400/60 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
+                        </div>
+                        <?php else: ?>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm text-yellow-400/60">No Game Selected</h4>
+                            <p class="text-xs text-yellow-400/60 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <!-- Game Selector for Start -->
+                    <form method="POST" action="<?= BASE_URL ?>/admin/sessions/start" class="mb-4">
+                        <input type="hidden" name="reservation_id" value="<?= $reservation['id'] ?? '' ?>">
+                        <div class="mb-4">
+                            <label class="text-[10px] text-yellow-400/60 uppercase tracking-wider font-semibold mb-2 flex items-center gap-1 block">
+                                <span class="material-symbols-outlined text-sm">sports_esports</span>
+                                Select Game
+                            </label>
+                            <div class="relative">
+                                <select name="game_id" class="w-full appearance-none bg-[#2a2010] border border-yellow-500/30 rounded-xl px-4 py-3 pr-10 text-sm text-on-surface focus:ring-2 focus:ring-yellow-500/40 cursor-pointer hover:bg-[#352515] transition-all">
+                                    <option value="">Choose a game to start...</option>
+                                    <?php foreach ($availableGames as $game): ?>
+                                    <?php if (isGameAvailableForReservation($game, $reservation, $todayReservations)): ?>
+                                    <option value="<?= $game['id'] ?>" <?= ($game['id'] === ($reservation['game_id'] ?? null)) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($game['name']) ?> - <?= number_format($game['price'], 2) ?> DH
+                                    </option>
+                                    <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </select>
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-yellow-400/60 text-lg pointer-events-none">expand_more</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-yellow-500/5 border border-yellow-500/10 mb-4">
+                            <div class="text-center">
+                                <p class="text-[10px] text-yellow-400/50 uppercase tracking-wider font-semibold flex items-center justify-center gap-1">
+                                    <span class="material-symbols-outlined text-xs">schedule</span>
+                                    Starts
+                                </p>
+                                <p class="text-lg font-black text-yellow-400"><?= date('H:i', strtotime($reservation['start_time'])) ?></p>
+                            </div>
+                            <div class="text-center border-l border-yellow-500/10">
+                                <p class="text-[10px] text-yellow-400/50 uppercase tracking-wider font-semibold flex items-center justify-center gap-1">
+                                    <span class="material-symbols-outlined text-xs">hourglass_empty</span>
+                                    Duration
+                                </p>
+                                <p class="text-lg font-black text-yellow-400"><?= $reservation['planned_duration'] ?? 60 ?><span class="text-xs">min</span></p>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-500 text-[#1a1200] font-bold text-sm shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                            <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            Start Session
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <?php elseif ($status === 'reserved'): ?>
+            <!-- Reserved Card - Calm & Organized -->
+            <div class="relative group">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500/30 via-green-400/30 to-emerald-500/30 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                <div class="relative bg-[#0a1515]/90 backdrop-blur-xl rounded-2xl p-5 border border-white/5">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-green-500/5 flex items-center justify-center">
+                                <span class="text-3xl font-black font-headline text-primary"><?= str_replace('Table ', '', $tableRef) ?></span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-green-400/50 uppercase tracking-widest font-semibold"><?= $table['capacity'] ?? 0 ?> seats</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-green-500/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-green-500/20">
+                            <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                            <span class="text-[10px] font-bold text-green-400 uppercase tracking-wider">Booked</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 mb-4">
+                        <img class="w-12 h-12 rounded-xl object-cover shadow-lg" src="<?= $reservation['game_image'] ?? '' ?>">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm text-on-surface truncate"><?= $reservation['game_name'] ?? 'Game' ?></h4>
+                            <p class="text-xs text-green-400/60 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="flex-1 p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
+                            <p class="text-[10px] text-secondary/40 uppercase tracking-wider font-semibold">From</p>
+                            <p class="text-sm font-bold text-on-surface"><?= date('H:i', strtotime($reservation['start_time'])) ?></p>
+                        </div>
+                        <div class="flex items-center justify-center w-8">
+                            <svg class="w-4 h-4 text-secondary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                        <div class="flex-1 p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
+                            <p class="text-[10px] text-secondary/40 uppercase tracking-wider font-semibold">Until</p>
+                            <p class="text-sm font-bold text-on-surface"><?= date('H:i', strtotime($reservation['end_time'])) ?></p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-green-500/10 border border-green-500/10 text-center min-w-[60px]">
+                            <p class="text-[10px] text-secondary/40 uppercase tracking-wider font-semibold">Pax</p>
+                            <p class="text-sm font-bold text-green-400"><?= $reservation['spots'] ?? 0 ?></p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-green-500/5 border border-green-500/10">
+                        <span class="material-symbols-outlined text-sm text-green-400">schedule</span>
+                        <span class="text-xs font-medium text-green-400/80">Starts in <?= floor($reservation['minutes_until_start'] / 60) ?>h <?= $reservation['minutes_until_start'] % 60 ?>m</span>
+                    </div>
+                </div>
+            </div>
+            
             <?php else: ?>
-            <div class="bg-surface-container-low/50 border-2 border-dashed border-white/5 rounded-xl p-6 relative group hover:bg-surface-container transition-all duration-300">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-on-surface-variant/40 tracking-widest uppercase mb-1">Table</span>
-                        <span class="text-5xl font-black font-headline text-on-surface-variant/20"><?= $tableNum ?></span>
+            <!-- Empty Card - Minimal & Clean -->
+            <div class="relative group">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-white/5 via-white/10 to-white/5 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <div class="relative bg-[#0a0a0a]/50 backdrop-blur-xl rounded-2xl p-5 border-2 border-dashed border-white/5 hover:border-white/10 transition-all duration-300 group-hover:bg-[#0f0f0f]/70">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center">
+                                <span class="text-3xl font-black font-headline text-on-surface-variant/15"><?= str_replace('Table ', '', $tableRef) ?></span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant/25 uppercase tracking-widest font-semibold"><?= $table['capacity'] ?? 0 ?> seats</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+                            <div class="w-2 h-2 rounded-full bg-on-surface-variant/20"></div>
+                            <span class="text-[10px] font-medium text-on-surface-variant/30 uppercase tracking-wider">Free</span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full">
-                        <div class="w-2 h-2 rounded-full bg-on-surface-variant/20"></div>
-                        <span class="text-[10px] font-bold text-on-surface-variant/40 uppercase">Empty</span>
+                    
+                    <div class="h-28 flex flex-col items-center justify-center mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-white/[0.03] flex items-center justify-center mb-3 group-hover:bg-primary/5 group-hover:scale-110 transition-all duration-300">
+                            <span class="material-symbols-outlined text-2xl text-on-surface-variant/15 group-hover:text-primary/40 transition-colors">weekend</span>
+                        </div>
+                        <p class="text-xs text-on-surface-variant/25 font-medium">Available</p>
                     </div>
+                    
+                    <a href="<?= BASE_URL ?>/admin/reservations?table=<?= $tableId ?>"
+                        class="block w-full py-3 rounded-xl bg-white/[0.03] hover:bg-primary/20 border border-white/5 hover:border-primary/20 text-on-surface-variant/50 hover:text-primary font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                        <span class="material-symbols-outlined text-lg">add</span>
+                        Reserve
+                    </a>
                 </div>
-                <div class="h-40 flex flex-col items-center justify-center text-center px-4 mb-6">
-                    <span class="material-symbols-outlined text-4xl text-on-surface-variant/20 mb-2">desktop_access_disabled</span>
-                    <p class="text-sm text-on-surface-variant/40 font-medium">No active session at this table.</p>
-                </div>
-                <a href="<?= BASE_URL ?>/admin/sessions/start/<?= $tableNum ?>"
-                    class="w-full bg-surface-container-highest hover:bg-primary hover:text-on-primary text-on-surface-variant font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-xl">play_circle</span>
-                    Start Session
-                </a>
             </div>
             <?php endif; ?>
             <?php endforeach; ?>
         </div>
-                    <div class="flex items-center gap-2 bg-secondary/10 px-3 py-1.5 rounded-full">
-                        <div
-                            class="w-2 h-2 rounded-full bg-secondary animate-pulse shadow-[0_0_8px_rgba(171,205,204,1)]">
-                        </div>
-                        <span class="text-[10px] font-bold text-secondary uppercase">Active</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="relative">
-                        <img class="w-16 h-16 rounded-xl object-cover ring-2 ring-primary/20"
-                            data-alt="modern aesthetic box art for a futuristic competitive video game with neon blue and pink lighting effects"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNmFKxsAnPdaN50AjJftuVdjICX0Z3r3EAKwHjjQqSmroZziOyYa8x0BV8d_yeY2zAkt9jLRLH-KhHN8j-EqqtmXh8VUZ0K1CAWLXoF5jNbXMcwUR_pXF2JajYWllhemgrlJoW-o6jpqHgw_fPsNSN-uqQSO_s0n6ROFMGoU9OQnYshAMkdquM-X0kmHDrXS9hGV8heOhuiyPmaiawoDKUA5zzIvaIHU33-EleatIrYvTydqQfZDN4LLlNdjUbvEWGOuaTHg_qzVkF">
-                    </div>
-                    <div>
-                        <h4 class="font-headline font-bold text-lg leading-tight">Valorant Champions</h4>
-                        <div class="flex items-center gap-2 text-secondary/70 text-sm mt-1">
-                            <span class="material-symbols-outlined text-base" data-icon="groups">groups</span>
-                            <span>5 Players</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-surface-container-low rounded-xl p-4 mb-6">
-                    <div class="flex justify-between items-center">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] text-secondary/50 font-bold uppercase">Time Elapsed</span>
-                            <span class="text-2xl font-headline font-bold tabular-nums">01:42:15</span>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-full border-2 border-secondary/20 border-t-secondary flex items-center justify-center">
-                            <span class="material-symbols-outlined text-secondary text-sm"
-                                data-icon="update">update</span>
-                        </div>
-                    </div>
-                </div>
-                <button
-                    class="w-full bg-error-container/20 hover:bg-error-container text-error font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-error/10">
-                    <span class="material-symbols-outlined text-xl" data-icon="stop_circle">stop_circle</span>
-                    End Session
-                </button>
-            </div>
-            <!-- Active Table 02 -->
-            <div
-                class="bg-surface-container rounded-xl p-6 glow-teal border-t-2 border-secondary/20 relative group transition-all duration-300">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-secondary tracking-widest uppercase mb-1">Table</span>
-                        <span class="text-5xl font-black font-headline text-primary">02</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-secondary/10 px-3 py-1.5 rounded-full">
-                        <div
-                            class="w-2 h-2 rounded-full bg-secondary animate-pulse shadow-[0_0_8px_rgba(171,205,204,1)]">
-                        </div>
-                        <span class="text-[10px] font-bold text-secondary uppercase">Active</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 mb-8">
-                    <img class="w-16 h-16 rounded-xl object-cover ring-2 ring-primary/20"
-                        data-alt="colorful artwork for a high-fantasy roleplaying game featuring mythical landscapes and vibrant magical elements"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCERtl4SvAezdhMO6DbmPuYNGEZQOfwGr7L-5njv8tG6ExAaywGd_jeOXZE-8-B13cSoZGFrD1VukFQiyc-y1sVyCTRKNHOr7lPhSUsJG_YLS8An6vKeOi-8szHENOhPL9fDi6Jb6RoTysA_klw8Mzy17GUc1YBaM-hF5wXty5haQLM-R90PeXxHkXrrVVcsCylL0_KFgLyAofhckKpRtKM2jfGDzt9UxmZqB-AXEkLJyKSE4PfvRs3Lx0YheSrjVv_b6i-RFYaTTD8">
-                    <div>
-                        <h4 class="font-headline font-bold text-lg leading-tight">Elden Ring DLC</h4>
-                        <div class="flex items-center gap-2 text-secondary/70 text-sm mt-1">
-                            <span class="material-symbols-outlined text-base" data-icon="person">person</span>
-                            <span>1 Player</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-surface-container-low rounded-xl p-4 mb-6">
-                    <div class="flex justify-between items-center">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] text-secondary/50 font-bold uppercase">Time Elapsed</span>
-                            <span class="text-2xl font-headline font-bold tabular-nums">03:10:42</span>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-full border-2 border-secondary/20 border-t-secondary flex items-center justify-center">
-                            <span class="material-symbols-outlined text-secondary text-sm"
-                                data-icon="update">update</span>
-                        </div>
-                    </div>
-                </div>
-                <button
-                    class="w-full bg-error-container/20 hover:bg-error-container text-error font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-xl" data-icon="stop_circle">stop_circle</span>
-                    End Session
-                </button>
-            </div>
-            <!-- Empty Table 03 -->
-            <div
-                class="bg-surface-container-low/50 border-2 border-dashed border-white/5 rounded-xl p-6 relative group hover:bg-surface-container transition-all duration-300">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex flex-col">
-                        <span
-                            class="text-xs font-bold text-on-surface-variant/40 tracking-widest uppercase mb-1">Table</span>
-                        <span class="text-5xl font-black font-headline text-on-surface-variant/20">03</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full">
-                        <div class="w-2 h-2 rounded-full bg-on-surface-variant/20"></div>
-                        <span class="text-[10px] font-bold text-on-surface-variant/40 uppercase">Empty</span>
-                    </div>
-                </div>
-                <div class="h-40 flex flex-col items-center justify-center text-center px-4 mb-6">
-                    <span class="material-symbols-outlined text-4xl text-on-surface-variant/20 mb-2"
-                        data-icon="desktop_access_disabled">desktop_access_disabled</span>
-                    <p class="text-sm text-on-surface-variant/40 font-medium">No active session at this table.</p>
-                </div>
-                <button
-                    class="w-full bg-surface-container-highest hover:bg-primary hover:text-on-primary text-on-surface-variant font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-xl" data-icon="play_circle">play_circle</span>
-                    Start Session
-                </button>
-            </div>
-            <!-- Active Table 04 -->
-            <div
-                class="bg-surface-container rounded-xl p-6 glow-teal border-t-2 border-secondary/20 relative group transition-all duration-300">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-secondary tracking-widest uppercase mb-1">Table</span>
-                        <span class="text-5xl font-black font-headline text-primary">04</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-secondary/10 px-3 py-1.5 rounded-full">
-                        <div
-                            class="w-2 h-2 rounded-full bg-secondary animate-pulse shadow-[0_0_8px_rgba(171,205,204,1)]">
-                        </div>
-                        <span class="text-[10px] font-bold text-secondary uppercase">Active</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 mb-8">
-                    <img class="w-16 h-16 rounded-xl object-cover ring-2 ring-primary/20"
-                        data-alt="close-up of a retro gaming console controller with warm nostalgic lighting and soft background bokeh"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGFQFLCEbu-Etc91xFSHjHjXB0dpgVCTdOlWQlSAM8k51RYembpnFe9OPnVGUEvTN-tKWw4dVLfbQ9LtRPcRxgpq1iPSDkkdKe_XQRx-RCKhW1ngc_dzzVg0oeY_hNgvYO65fvl0nkBkcgifJ7N4Q2bffox-bdp5dFkUhuYMoqbkOaNgy7Intw4TzstfL1C03OsEKTfsopzTAD5xKr-dl8Cd8shH2WB0Bkv4hm2scdGV-isWIbkNcMvjgWnBAvXaCEmpyP40TceDqy">
-                    <div>
-                        <h4 class="font-headline font-bold text-lg leading-tight">FC 24 Tournament</h4>
-                        <div class="flex items-center gap-2 text-secondary/70 text-sm mt-1">
-                            <span class="material-symbols-outlined text-base" data-icon="groups">groups</span>
-                            <span>2 Players</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-surface-container-low rounded-xl p-4 mb-6">
-                    <div class="flex justify-between items-center">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] text-secondary/50 font-bold uppercase">Time Elapsed</span>
-                            <span class="text-2xl font-headline font-bold tabular-nums">00:22:09</span>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-full border-2 border-secondary/20 border-t-secondary flex items-center justify-center">
-                            <span class="material-symbols-outlined text-secondary text-sm"
-                                data-icon="update">update</span>
-                        </div>
-                    </div>
-                </div>
-                <button
-                    class="w-full bg-error-container/20 hover:bg-error-container text-error font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-xl" data-icon="stop_circle">stop_circle</span>
-                    End Session
-                </button>
-            </div>
-            <!-- Active Table 05 -->
-            <div
-                class="bg-surface-container rounded-xl p-6 glow-teal border-t-2 border-secondary/20 relative group transition-all duration-300">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-secondary tracking-widest uppercase mb-1">Table</span>
-                        <span class="text-5xl font-black font-headline text-primary">05</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-secondary/10 px-3 py-1.5 rounded-full">
-                        <div
-                            class="w-2 h-2 rounded-full bg-secondary animate-pulse shadow-[0_0_8px_rgba(171,205,204,1)]">
-                        </div>
-                        <span class="text-[10px] font-bold text-secondary uppercase">Active</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 mb-8">
-                    <img class="w-16 h-16 rounded-xl object-cover ring-2 ring-primary/20"
-                        data-alt="dramatic close-up of high-performance gaming hardware with glowing internal RGB components in deep purple and cyan"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoAhln3gX0lmgKsd0s3bK3oIsXvKJ7xqHRmlUkZFbfuSOZxVDvAqTG8rE-gh4ZabcezA4gRHAMNwX0x5NFEjFslMTNEA4OJwQUHnnqnDx2Up5QHSEgUDcpgXxaZbqo6UBX3Vze0raAf_usCwjizxR1IpTOIgyRO1hm1p9X_2N2nuWZTlJ_z8m7qHp-6Sdvj3nP7SEWdwIxIbLKDO26I6YF9EC_4g-5FGG-MRoM8zH-9hlj8VjRMdnYTVBZst4yKzR2u7qZkB4NG6ve">
-                    <div>
-                        <h4 class="font-headline font-bold text-lg leading-tight">League of Legends</h4>
-                        <div class="flex items-center gap-2 text-secondary/70 text-sm mt-1">
-                            <span class="material-symbols-outlined text-base" data-icon="groups">groups</span>
-                            <span>10 Players</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-surface-container-low rounded-xl p-4 mb-6">
-                    <div class="flex justify-between items-center">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] text-secondary/50 font-bold uppercase">Time Elapsed</span>
-                            <span class="text-2xl font-headline font-bold tabular-nums">00:55:30</span>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-full border-2 border-secondary/20 border-t-secondary flex items-center justify-center">
-                            <span class="material-symbols-outlined text-secondary text-sm"
-                                data-icon="update">update</span>
-                        </div>
-                    </div>
-                </div>
-                <button
-                    class="w-full bg-error-container/20 hover:bg-error-container text-error font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-xl" data-icon="stop_circle">stop_circle</span>
-                    End Session
-                </button>
-            </div>
-            <!-- Empty Table 06 -->
-            <div
-                class="bg-surface-container-low/50 border-2 border-dashed border-white/5 rounded-xl p-6 relative group hover:bg-surface-container transition-all duration-300">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex flex-col">
-                        <span
-                            class="text-xs font-bold text-on-surface-variant/40 tracking-widest uppercase mb-1">Table</span>
-                        <span class="text-5xl font-black font-headline text-on-surface-variant/20">06</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full">
-                        <div class="w-2 h-2 rounded-full bg-on-surface-variant/20"></div>
-                        <span class="text-[10px] font-bold text-on-surface-variant/40 uppercase">Empty</span>
-                    </div>
-                </div>
-                <div class="h-40 flex flex-col items-center justify-center text-center px-4 mb-6">
-                    <span class="material-symbols-outlined text-4xl text-on-surface-variant/20 mb-2"
-                        data-icon="desktop_access_disabled">desktop_access_disabled</span>
-                    <p class="text-sm text-on-surface-variant/40 font-medium">No active session at this table.</p>
-                </div>
-                <button
-                    class="w-full bg-surface-container-highest hover:bg-primary hover:text-on-primary text-on-surface-variant font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-xl" data-icon="play_circle">play_circle</span>
-                    Start Session
-                </button>
-            </div>
-        </div>
+        
+        <script>
+        // Update timers every second
+        function updateTimers() {
+            document.querySelectorAll('[id^="timer-"]').forEach(timer => {
+                const sessionId = timer.id.replace('timer-', '');
+                const secondsRemaining = parseInt(timer.dataset.seconds || 0);
+                if (secondsRemaining > 0) {
+                    const mins = Math.floor(secondsRemaining / 60);
+                    const secs = secondsRemaining % 60;
+                    timer.textContent = mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+                    timer.dataset.seconds = secondsRemaining - 1;
+                } else {
+                    timer.textContent = '00:00';
+                }
+            });
+        }
+        
+        // Initialize timers from server data
+        <?php foreach ($activeSessions as $session): ?>
+        document.getElementById('timer-<?= $session['id'] ?>').dataset.seconds = <?= max(0, $session['seconds_remaining']) ?>;
+        <?php endforeach; ?>
+        
+        setInterval(updateTimers, 1000);
+        updateTimers();
+        </script>
         <!-- Floating Quick Action for Admin -->
-        <button
-            class="fixed bottom-10 right-10 bg-primary text-on-primary w-16 h-16 rounded-full flex items-center justify-center shadow-[0_20px_50px_rgba(233,193,118,0.3)] hover:scale-110 active:scale-95 transition-all z-50">
-            <span class="material-symbols-outlined text-3xl font-bold" data-icon="add_task">add_task</span>
+        <button class="fixed bottom-10 right-10 group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-primary/50 to-amber-400/50 rounded-full blur opacity-40 group-hover:opacity-70 transition duration-500"></div>
+            <div class="relative w-14 h-14 bg-gradient-to-br from-primary to-amber-400 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 active:scale-95 transition-all duration-300">
+                <span class="material-symbols-outlined text-2xl text-[#1a1200] font-bold">add</span>
+            </div>
         </button>
     </main>
     <!-- Footer Subtle Status Bar -->

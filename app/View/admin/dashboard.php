@@ -133,54 +133,61 @@
       </div>
     </div>
     <nav class="flex-1 space-y-1">
-      <!-- Active Tab: Dashboard -->
-      <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center space-x-3 scale-98 transition-transform"
-        href="#">
+      <!-- Dashboard -->
+      <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center gap-3 shadow-lg shadow-primary/20"
+        href="<?= BASE_URL ?>/admin">
         <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-        <span class="font-label">Dashboard</span>
+        <span class="text-sm">Dashboard</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
+      <!-- Games -->
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+        href="<?= BASE_URL ?>/admin/games">
         <span class="material-symbols-outlined" data-icon="sports_esports">sports_esports</span>
-        <span class="font-label">Games</span>
+        <span class="font-medium text-sm">Games</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
+      <!-- Categories -->
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+        href="<?= BASE_URL ?>/admin/categories">
         <span class="material-symbols-outlined" data-icon="category">category</span>
-        <span class="font-label">Categories</span>
+        <span class="font-medium text-sm">Categories</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
+      <!-- Reservations -->
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+        href="<?= BASE_URL ?>/admin/reservations">
         <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
-        <span class="font-label">Reservations</span>
+        <span class="font-medium text-sm">Reservations</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
+      <!-- Active Sessions -->
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+        href="<?= BASE_URL ?>/admin/sessions">
         <span class="material-symbols-outlined" data-icon="timer">timer</span>
-        <span class="font-label">Active Sessions</span>
+        <span class="font-medium text-sm">Active Sessions</span>
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
+      <!-- History -->
+      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+        href="<?= BASE_URL ?>/admin/sessions/history">
         <span class="material-symbols-outlined" data-icon="history">history</span>
-        <span class="font-label">History</span>
+        <span class="font-medium text-sm">History</span>
       </a>
     </nav>
-    <div class="px-4 mt-auto pt-6 space-y-1">
-      <button
-        class="w-full brass-gradient text-on-primary font-headline font-extrabold py-3 rounded-full mb-6 hover:opacity-90 transition-all flex items-center justify-center space-x-2">
-        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
-        <span>New Session</span>
-      </button>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="settings">settings</span>
-        <span class="font-label">Settings</span>
+    <div class="px-4 mt-auto space-y-4">
+      <a href="<?= BASE_URL ?>/admin/reservations"
+        class="w-full bg-primary text-on-primary font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/10">
+        <span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+        New Reservation
       </a>
-      <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3"
-        href="#">
-        <span class="material-symbols-outlined" data-icon="logout">logout</span>
-        <span class="font-label">Logout</span>
-      </a>
+      <div class="pt-4 space-y-1">
+        <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+          href="<?= BASE_URL ?>/admin/settings">
+          <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+          Settings
+        </a>
+        <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+          href="<?= BASE_URL ?>/logout">
+          <span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+          Logout
+        </a>
+      </div>
     </div>
   </aside>
   <!-- Main Content Area -->

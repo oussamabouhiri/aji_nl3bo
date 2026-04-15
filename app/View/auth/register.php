@@ -152,7 +152,12 @@
                     <p class="text-secondary opacity-70 font-body">Join our curated circle of enthusiasts and curators.
                     </p>
                 </div>
-                <form class="space-y-4">
+                <form method="POST" action="<?= BASE_URL ?>/register" class="space-y-4">
+                    <?php if (isset($error)): ?>
+                    <div class="bg-error-container/20 border border-error/30 rounded-xl p-4 text-error text-sm">
+                        <?= htmlspecialchars($error) ?>
+                    </div>
+                    <?php endif; ?>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Full Name -->
                         <div class="space-y-2">
@@ -162,7 +167,7 @@
                             <div class="relative">
                                 <input
                                     class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 px-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="Alexander Thorne" type="text">
+                                    placeholder="Alexander Thorne" type="text" name="name" required>
                             </div>
                         </div>
                         <!-- Phone Number -->
@@ -173,7 +178,7 @@
                             <div class="relative">
                                 <input
                                     class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 px-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="+1 (555) 000-0000" type="tel">
+                                    placeholder="+212 600 000 000" type="tel" name="phone">
                             </div>
                         </div>
                     </div>
@@ -183,7 +188,7 @@
                          <div class="relative">
                              <input
                                  class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 px-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                 placeholder="curator@aji-l3bo.com" type="email">
+                                 placeholder="curator@aji-l3bo.com" type="email" name="email" required>
                          </div>
                     </div>
                     <!-- Password -->
@@ -192,7 +197,7 @@
                         <div class="relative">
                             <input
                                 class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 px-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                placeholder="••••••••••••" type="password">
+                                placeholder="••••••••••••" type="password" name="password" required>
                             <div class="absolute right-4 top-1/2 -translate-y-1/2 text-secondary/40 cursor-pointer">
                                 <span class="material-symbols-outlined text-lg">visibility</span>
                             </div>

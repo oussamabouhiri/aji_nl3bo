@@ -155,7 +155,12 @@
                         <h2 class="font-headline text-3xl font-bold text-on-surface mb-2">Sign In</h2>
                         <p class="text-outline text-sm">Enter your credentials to access your table.</p>
                     </div>
-                    <form class="space-y-6">
+                    <form method="POST" action="<?= BASE_URL ?>/login" class="space-y-6">
+                        <?php if (isset($error)): ?>
+                        <div class="bg-error-container/20 border border-error/30 rounded-xl p-4 text-error text-sm">
+                            <?= htmlspecialchars($error) ?>
+                        </div>
+                        <?php endif; ?>
                         <!-- Email Field -->
                         <div class="space-y-2 group">
                             <label
@@ -167,7 +172,7 @@
                                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/50 group-focus-within:text-primary transition-colors">mail</span>
                                 <input
                                     class="w-full bg-surface-container-lowest border-none rounded-2xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="curator@archive.com" type="email">
+                                    placeholder="curator@archive.com" type="email" name="email" required>
                             </div>
                         </div>
                         <!-- Password Field -->
@@ -183,7 +188,7 @@
                                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/50 group-focus-within:text-primary transition-colors">lock</span>
                                 <input
                                     class="w-full bg-surface-container-lowest border-none rounded-2xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/30 focus:ring-1 focus:ring-primary/40 transition-all duration-300"
-                                    placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" type="password">
+                                    placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" type="password" name="password" required>
                             </div>
                         </div>
                         <!-- Sign In Button -->
@@ -200,7 +205,7 @@
                         <p class="text-outline text-sm">
                             New to the Archive?
                             <a class="text-primary font-bold ml-1 hover:underline underline-offset-4 text-glow transition-all"
-                                href="#">Create an Account</a>
+                                href="<?= BASE_URL ?>/register">Create an Account</a>
                         </p>
                     </div>
                 </div>

@@ -118,15 +118,15 @@
     </style>
 </head>
 
-<body class="bg-background text-on-surface">
+    <body class="bg-background text-on-surface">
     <!-- TopNavBar -->
     <nav class="fixed top-0 w-full z-50 glass-nav shadow-2xl shadow-black/40">
         <div class="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
-            <div class="text-2xl font-black tracking-tighter text-[#e9c176] font-headline">Aji L3bo</div>
+            <a href="/" class="text-2xl font-black tracking-tighter text-[#e9c176] font-headline">Aji L3bo</a>
             <div class="hidden md:flex items-center space-x-8">
-                <a class="font-body text-[#e9c176] border-b-2 border-[#e9c176] pb-1" href="#">Games</a>
-                <a class="font-body text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="#">My Reservations</a>
-                <a class="font-body text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="#">Profile</a>
+                <a class="font-body text-[#e9c176] border-b-2 border-[#e9c176] pb-1" href="<?= BASE_URL ?>/games">Games</a>
+                <a class="font-body text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="<?= BASE_URL ?>/my-reservations">My Reservations</a>
+                <a class="font-body text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="<?= BASE_URL ?>/profile">Profile</a>
             </div>
             <div class="flex items-center space-x-6">
                 <div class="relative hidden lg:block">
@@ -278,15 +278,15 @@
                 <!-- Bento Style Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                     <?php foreach ($games as $game): ?>
+                    <?php $isAvailable = ($game['status'] ?? 'available') === 'available'; ?>
                     <div class="group bg-surface-container rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-black/60">
                         <div class="relative h-64 overflow-hidden">
                             <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                src="<?= $game['image_url'] ?? 'https://lh3.googleusercontent.com/aida-public/AB6AXuCTrTxX8S43i-RNAXBetfh5IMVPwJinep70kRV8Ju9ahb8kkpQVaxx41s5MXZKNpRdLKBjJa4KtEEJnWrpf9Qc8kVNADV_YaKzVSDMkCoWVUjJpLn9NZ0pNaSQNI-4teQ5yi7PYTrKnOFgy9hqBwX4doN80G1kTt-FeNvTsTjQq1N6Mq_v35rJ8GnoF4FIJj-QjfYegjYenOZKhVZ_WCk-67TvDLrXTzLi2tgrc2QTH5XqwJUDZxZnSAphb1IsDAE8F1MIMHjZypbDP' ?>">
+                                src="<?= $game['image_url'] ?? 'https://picsum.photos/seed/' . $game['id'] . '/400/300' ?>">
                             <div class="absolute top-4 left-4">
-                                <span class="bg-primary/90 text-on-primary text-[10px] font-black uppercase tracking-tighter px-3 py-1 rounded-full backdrop-blur-md"><?= $game['category_name'] ?? 'Category' ?></span>
+                                <span class="bg-primary/90 text-on-primary text-[10px] font-black uppercase tracking-tighter px-3 py-1 rounded-full backdrop-blur-md"><?= $game['category_name'] ?? 'Board Game' ?></span>
                             </div>
                             <div class="absolute top-4 right-4">
-                                <?php $isAvailable = ($game['is_available'] ?? true); ?>
                                 <div class="bg-black/40 backdrop-blur-md flex items-center gap-1 px-3 py-1 rounded-full">
                                     <div class="w-2 h-2 rounded-full <?= $isAvailable ? 'bg-green-400 glow-orb' : 'bg-orange-400' ?>"></div>
                                     <span class="text-[10px] font-bold text-white uppercase"><?= $isAvailable ? 'Available' : 'In Use' ?></span>
@@ -296,96 +296,23 @@
                         <div class="p-8">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="font-headline text-2xl font-bold group-hover:text-primary transition-colors">
-                                    Super Cortex</h3>
-                                <div class="flex text-primary">
-                                    <span class="material-symbols-outlined text-sm" data-icon="star"
-                                        style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="material-symbols-outlined text-sm" data-icon="star"
-                                        style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="material-symbols-outlined text-sm" data-icon="star"
-                                        style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="material-symbols-outlined text-sm" data-icon="star"
-                                        style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="material-symbols-outlined text-sm"
-                                        data-icon="star_half">star_half</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-wrap gap-4 mb-8">
-                                <div
-                                    class="flex items-center gap-2 text-on-surface-variant bg-surface-container-high px-3 py-1.5 rounded-xl">
-                                    <span class="material-symbols-outlined text-lg" data-icon="groups">groups</span>
-                                    <span class="text-xs font-medium">2-6 Players</span>
-                                </div>
-                                <div
-                                    class="flex items-center gap-2 text-on-surface-variant bg-surface-container-high px-3 py-1.5 rounded-xl">
-                                    <span class="material-symbols-outlined text-lg" data-icon="timer">timer</span>
-                                    <span class="text-xs font-medium">15 min</span>
-                                </div>
-                                <div
-                                    class="flex items-center gap-2 text-on-surface-variant bg-surface-container-high px-3 py-1.5 rounded-xl">
-                                    <span class="material-symbols-outlined text-lg"
-                                        data-icon="psychology">psychology</span>
-                                    <span class="text-xs font-medium">Beginner</span>
-                                </div>
-                            </div>
-                            <button
-                                class="w-full bg-surface-container-highest hover:bg-primary hover:text-on-primary text-on-surface font-bold py-4 rounded-2xl transition-all flex justify-center items-center gap-2 group-hover:shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
-                                View Details
-                                <span class="material-symbols-outlined" data-icon="arrow_outward">arrow_outward</span>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Game Card 2 -->
-                    <div
-                        class="group bg-surface-container rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-black/60">
-                        <div class="relative h-64 overflow-hidden">
-                            <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                data-alt="vintage Catan board game setup with hexagonal tiles and wooden settlements in warm sunset lighting"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqTCvXQ8gRQciA40BVuULPq6oxapwRYuQjjWKFYQEUNn1TkR_rYW1wUrAi9weqTdBhoAz02i9EK_6yoOSjosz-HU0R1pxrGbm65gJnW9jMwGTGfI1_QUPzlSHRsqJC_rxCTkcGUzpGzMOny__ayGFksue3cC5-kXtaHQ4rUUR6tKP5iqNRmhM8t8ckk5r8VMIfhzld2ctk5qDut90H-ICuF9QlXdDJ5Py35xN2o6mnsnqfRs2-ig1xyKC18rOp7UQ7KS3lGqm6mirt">
-                            <div class="absolute top-4 left-4">
-                                <span
-                                    class="bg-primary/90 text-on-primary text-[10px] font-black uppercase tracking-tighter px-3 py-1 rounded-full backdrop-blur-md">Strategy</span>
-                            </div>
-                            <div class="absolute top-4 right-4">
-                                <div
-                                    class="bg-black/40 backdrop-blur-md flex items-center gap-1 px-3 py-1 rounded-full">
-                                    <div class="w-2 h-2 rounded-full bg-green-400 glow-orb"></div>
-                                    <span class="text-[10px] font-bold text-white uppercase">Available</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="font-headline text-2xl font-bold group-hover:text-primary transition-colors">
-                                    Catan</h3>
-                                <div class="flex text-primary">
-                                    <span class="material-symbols-outlined text-sm" data-icon="star"
-                                        style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="material-symbols-outlined text-sm" data-icon="star"
-                                        style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="material-symbols-outlined text-sm" data-icon="star"
-                                        style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="material-symbols-outlined text-sm" data-icon="star"
-                                        style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="material-symbols-outlined text-sm" data-icon="star"
-                                        style="font-variation-settings: 'FILL' 1;">star</span>
-                                </div>
+                                    <?= htmlspecialchars($game['name']) ?></h3>
                             </div>
                             <div class="flex flex-wrap gap-4 mb-8">
                                 <div class="flex items-center gap-2 text-on-surface-variant bg-surface-container-high px-3 py-1.5 rounded-xl">
                                     <span class="material-symbols-outlined text-lg">groups</span>
-                                    <span class="text-xs font-medium"><?= $game['min_players'] ?? 1 ?>-<?= $game['max_players'] ?? 4 ?> Players</span>
+                                    <span class="text-xs font-medium"><?= $game['min_players'] ?? 2 ?>-<?= $game['max_players'] ?? 4 ?> Players</span>
                                 </div>
                                 <div class="flex items-center gap-2 text-on-surface-variant bg-surface-container-high px-3 py-1.5 rounded-xl">
                                     <span class="material-symbols-outlined text-lg">timer</span>
-                                    <span class="text-xs font-medium"><?= $game['duration_minutes'] ?? 60 ?> min</span>
+                                    <span class="text-xs font-medium"><?= $game['duration'] ?? 60 ?> min</span>
                                 </div>
                                 <div class="flex items-center gap-2 text-on-surface-variant bg-surface-container-high px-3 py-1.5 rounded-xl">
                                     <span class="material-symbols-outlined text-lg">psychology</span>
                                     <span class="text-xs font-medium"><?= ucfirst($game['difficulty'] ?? 'medium') ?></span>
                                 </div>
                             </div>
-                            <a href="<?= BASE_URL ?>/user/games/<?= $game['id'] ?? 0 ?>"
+                            <a href="<?= BASE_URL ?>/games/<?= $game['id'] ?>"
                                 class="w-full bg-surface-container-highest hover:bg-primary hover:text-on-primary text-on-surface font-bold py-4 rounded-2xl transition-all flex justify-center items-center gap-2 group-hover:shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
                                 View Details
                                 <span class="material-symbols-outlined">arrow_outward</span>

@@ -1,3 +1,4 @@
+<?php date_default_timezone_set('Africa/Casablanca'); ?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -118,45 +119,62 @@
             <h1 class="text-2xl font-black tracking-tight text-[#e9c176] font-manrope">The Tactile Archive</h1>
             <p class="text-secondary text-xs uppercase tracking-widest mt-1 opacity-70">Digital Curator</p>
         </div>
-        <nav class="flex-1 space-y-1 px-4">
-            <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
-                <span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
-                <span class="font-medium">Dashboard</span>
+        <nav class="flex-1 space-y-1">
+            <!-- Dashboard -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span class="font-medium text-sm">Dashboard</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
-                <span class="material-symbols-outlined text-xl" data-icon="casino">casino</span>
-                <span class="font-medium">Games</span>
+            <!-- Games -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin/games">
+                <span class="material-symbols-outlined" data-icon="sports_esports">sports_esports</span>
+                <span class="font-medium text-sm">Games</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
-                <span class="material-symbols-outlined text-xl" data-icon="category">category</span>
-                <span class="font-medium">Categories</span>
+            <!-- Categories -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin/categories">
+                <span class="material-symbols-outlined" data-icon="category">category</span>
+                <span class="font-medium text-sm">Categories</span>
             </a>
-            <!-- Active State: Reservations -->
-            <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#e9c176] font-bold border-r-2 border-[#e9c176] bg-gradient-to-r from-[#e9c176]/10 to-transparent"
-                href="#">
-                <span class="material-symbols-outlined text-xl" data-icon="event_available">event_available</span>
-                <span class="font-medium">Reservations</span>
+            <!-- Reservations -->
+            <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center gap-3 shadow-lg shadow-primary/20"
+                href="<?= BASE_URL ?>/admin/reservations">
+                <span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+                <span class="text-sm">Reservations</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
-                <span class="material-symbols-outlined text-xl" data-icon="timer">timer</span>
-                <span class="font-medium">Active Sessions</span>
+            <!-- Active Sessions -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin/sessions">
+                <span class="material-symbols-outlined" data-icon="timer">timer</span>
+                <span class="font-medium text-sm">Active Sessions</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-[#abcdcc] hover:bg-[#353534]/50 hover:text-[#e9c176] group"
-                href="#">
-                <span class="material-symbols-outlined text-xl" data-icon="history">history</span>
-                <span class="font-medium">History</span>
+            <!-- History -->
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
+                href="<?= BASE_URL ?>/admin/sessions/history">
+                <span class="material-symbols-outlined" data-icon="history">history</span>
+                <span class="font-medium text-sm">History</span>
             </a>
         </nav>
-        <div class="px-4 mt-auto">
-            <button
-                class="w-full brass-gradient text-[#412d00] font-bold py-3 px-4 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
-                <span class="material-symbols-outlined" data-icon="add">add</span>
-                <span>New Reservation</span>
-            </button>
+        <div class="px-4 mt-auto space-y-4">
+            <a href="<?= BASE_URL ?>/admin/reservations"
+                class="w-full bg-primary text-on-primary font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/10">
+                <span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+                New Reservation
+            </a>
+            <div class="pt-4 space-y-1">
+                <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+                    href="<?= BASE_URL ?>/admin/settings">
+                    <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+                    Settings
+                </a>
+                <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+                    href="<?= BASE_URL ?>/logout">
+                    <span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+                    Logout
+                </a>
+            </div>
         </div>
     </aside>
     <!-- TopNavBar -->
@@ -275,10 +293,13 @@
                                 Customer Name</th>
                             <th
                                 class="px-8 py-4 text-[10px] uppercase tracking-[0.2em] font-black text-secondary border-b border-outline-variant/10">
-                                Pax</th>
+                                Time</th>
                             <th
                                 class="px-8 py-4 text-[10px] uppercase tracking-[0.2em] font-black text-secondary border-b border-outline-variant/10">
-                                Date / Time</th>
+                                Table</th>
+                            <th
+                                class="px-8 py-4 text-[10px] uppercase tracking-[0.2em] font-black text-secondary border-b border-outline-variant/10">
+                                Pax</th>
                             <th
                                 class="px-8 py-4 text-[10px] uppercase tracking-[0.2em] font-black text-secondary border-b border-outline-variant/10">
                                 Status</th>
@@ -287,73 +308,87 @@
                                 Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-outline-variant/5">
-                        <?php foreach ($reservations as $res): ?>
-                        <tr class="hover:bg-surface-container-highest/30 transition-colors group <?= ($res['status'] ?? '') === 'cancelled' ? 'opacity-60' : '' ?>">
-                            <td class="px-8 py-5">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full <?= in_array($res['status'] ?? '', ['confirmed', 'in_lobby']) ? 'brass-gradient' : 'bg-surface-container-highest' ?> flex items-center justify-center text-[10px] font-black <?= in_array($res['status'] ?? '', ['confirmed', 'in_lobby']) ? 'text-on-primary' : 'text-on-surface border border-outline-variant/20' ?>">
-                                        <?= strtoupper(substr($res['customer_name'] ?? 'CU', 0, 2)) ?></div>
+                    <tbody>
+                        <?php 
+                        $listReservations = $reservations ?? [];
+                        foreach ($listReservations as $res): 
+                            $status = $res['status'] ?? 'pending';
+                            $statusColors = [
+                                'confirmed' => ['bg' => 'bg-green-400', 'text' => 'text-green-400'],
+                                'pending' => ['bg' => 'bg-yellow-400', 'text' => 'text-yellow-400'],
+                                'cancelled' => ['bg' => 'bg-error', 'text' => 'text-error'],
+                                'completed' => ['bg' => 'bg-secondary', 'text' => 'text-secondary']
+                            ];
+                            $style = $statusColors[$status] ?? $statusColors['pending'];
+                        ?>
+                        <tr class="hover:bg-surface-container-highest/30 transition-colors group <?= $status === 'cancelled' ? 'opacity-60' : '' ?>">
+                            <td class="p-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full <?= $status === 'confirmed' ? 'brass-gradient' : 'bg-surface-container-highest' ?> flex items-center justify-center text-xs font-black <?= $status === 'confirmed' ? 'text-on-primary' : 'text-on-surface border border-outline-variant/20' ?>">
+                                        <?= strtoupper(substr($res['customer_name'] ?? 'CU', 0, 2)) ?>
+                                    </div>
                                     <div>
-                                        <p class="font-bold text-on-surface"><?= $res['customer_name'] ?? 'Customer Name' ?></p>
-                                        <p class="text-xs text-secondary"><?= $res['phone'] ?? '+1 (555) 000-0000' ?></p>
+                                        <p class="font-bold text-on-surface"><?= $res['customer_name'] ?></p>
+                                        <p class="text-xs text-secondary"><?= $res['phone'] ?></p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-8 py-5">
-                                <span class="bg-surface-dim px-3 py-1 rounded-full text-sm font-medium border border-outline-variant/10"><?= $res['pax'] ?? 2 ?></span>
+                            <td class="p-6">
+                                <p class="font-bold text-on-surface"><?= date('H:i', strtotime($res['start_time'])) ?></p>
                             </td>
-                            <td class="px-8 py-5">
-                                <div>
-                                    <p class="text-sm font-bold <?= ($res['status'] ?? '') === 'in_lobby' ? 'text-primary italic' : '' ?>"><?= ($res['status'] ?? '') === 'in_lobby' ? 'In Lobby' : 'Today' ?></p>
-                                    <p class="text-xs text-secondary"><?= date('H:i', strtotime($res['reservation_time'] ?? '19:00:00')) ?> PM</p>
+                            <td class="p-6">
+                                <span class="bg-surface-dim px-3 py-1 rounded-full text-xs font-bold border border-outline-variant/10">#<?= $res['table_id'] ?? 1 ?></span>
+                            </td>
+                            <td class="p-6">
+                                <span class="bg-surface-dim px-3 py-1 rounded-full text-xs font-bold border border-outline-variant/10"><?= $res['spots'] ?></span>
+                            </td>
+                            <td class="p-6">
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-2 h-2 rounded-full <?= $style['bg'] ?>"></div>
+                                    <span class="text-xs font-bold uppercase <?= $style['text'] ?>"><?= ucfirst($status) ?></span>
                                 </div>
                             </td>
-                            <td class="px-8 py-5">
-                                <div class="flex items-center gap-2">
-                                    <?php 
-                                    $status = $res['status'] ?? 'pending';
-                                    $statusColors = [
-                                        'confirmed' => 'bg-green-400',
-                                        'in_lobby' => 'bg-green-400',
-                                        'pending' => 'bg-yellow-400',
-                                        'cancelled' => 'bg-error'
-                                    ];
-                                    $statusTextColors = [
-                                        'confirmed' => 'text-green-400/90',
-                                        'in_lobby' => 'text-green-400/90',
-                                        'pending' => 'text-yellow-400/90',
-                                        'cancelled' => 'text-error'
-                                    ];
-                                    ?>
-                                    <div class="w-2 h-2 rounded-full <?= $statusColors[$status] ?? 'bg-yellow-400' ?> shadow-[0_0_8px_rgba(74,222,128,0.5)] <?= $status === 'in_lobby' ? 'animate-pulse' : '' ?>">
-                                    </div>
-                                    <span class="text-xs font-bold uppercase tracking-wider <?= $statusTextColors[$status] ?? 'text-yellow-400/90' ?>"><?= ucfirst($status) ?></span>
-                                </div>
-                            </td>
-                            <td class="px-8 py-5 text-right">
-                                <div class="flex justify-end gap-3">
-                                    <?php if (in_array($status, ['confirmed', 'in_lobby'])): ?>
-                                    <a href="<?= BASE_URL ?>/admin/reservations/edit/<?= $res['id'] ?? 0 ?>" class="text-xs font-black uppercase tracking-widest text-primary hover:underline">Details</a>
-                                    <button class="brass-gradient px-4 py-2 rounded-full text-xs font-black text-on-primary uppercase tracking-widest shadow-lg shadow-primary/10">Start Session</button>
-                                    <?php elseif ($status === 'pending'): ?>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/reservations/confirm/<?= $res['id'] ?? 0 ?>" class="inline">
-                                        <button type="submit" class="px-4 py-2 rounded-full text-xs font-black bg-surface-dim border border-green-500/30 text-green-400 uppercase tracking-widest hover:bg-green-500/10 transition-colors">Confirm</button>
+                            <td class="p-6 text-right">
+                                <div class="flex justify-end gap-1">
+                                    <?php if ($status === 'confirmed'): ?>
+                                    <a href="<?= BASE_URL ?>/admin/reservations/view/<?= $res['id'] ?>" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-primary/10 transition-colors" title="View Details">
+                                        <span class="material-symbols-outlined text-sm">visibility</span>
+                                    </a>
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/reservations/start-session/<?= $res['id'] ?>" class="inline">
+                                        <button type="submit" class="w-8 h-8 rounded-full flex items-center justify-center bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors" title="Start Session">
+                                            <span class="material-symbols-outlined text-sm">play_arrow</span>
+                                        </button>
                                     </form>
-                                    <button type="button" onclick="document.getElementById('cancelModal-<?= $res['id'] ?? 0 ?>').showModal()" class="px-4 py-2 rounded-full text-xs font-black bg-surface-dim border border-error/30 text-error uppercase tracking-widest hover:bg-error/10 transition-colors">Cancel</button>
-                                    <dialog id="cancelModal-<?= $res['id'] ?? 0 ?>" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50">
+                                    <?php elseif ($status === 'pending'): ?>
+                                    <a href="<?= BASE_URL ?>/admin/reservations/view/<?= $res['id'] ?>" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-primary/10 transition-colors" title="View Details">
+                                        <span class="material-symbols-outlined text-sm">visibility</span>
+                                    </a>
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/reservations/confirm/<?= $res['id'] ?>" class="inline">
+                                        <button type="submit" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-green-400 hover:bg-green-500/10 transition-colors" title="Confirm">
+                                            <span class="material-symbols-outlined text-sm">check</span>
+                                        </button>
+                                    </form>
+                                    <button type="button" onclick="document.getElementById('cancelModal-<?= $res['id'] ?>').showModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-error hover:bg-error/10 transition-colors" title="Cancel">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                    <dialog id="cancelModal-<?= $res['id'] ?>" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50">
                                         <h3 class="text-xl font-bold text-primary mb-4">Cancel Reservation</h3>
-                                        <p class="text-secondary mb-6">Are you sure you want to cancel this reservation for <?= $res['customer_name'] ?? 'this customer' ?>?</p>
+                                        <p class="text-secondary mb-6">Cancel reservation for <strong><?= $res['customer_name'] ?></strong>?</p>
                                         <div class="flex justify-end gap-4">
-                                            <button onclick="document.getElementById('cancelModal-<?= $res['id'] ?? 0 ?>').close()" class="px-4 py-2 rounded-full text-secondary hover:bg-surface-container">Keep</button>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/reservations/cancel/<?= $res['id'] ?? 0 ?>" class="inline">
+                                            <button onclick="document.getElementById('cancelModal-<?= $res['id'] ?>').close()" class="px-4 py-2 rounded-full text-secondary hover:bg-surface-container">Keep</button>
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/reservations/cancel/<?= $res['id'] ?>" class="inline">
                                                 <button type="submit" class="px-4 py-2 bg-error text-on-error rounded-full hover:opacity-90">Cancel Reservation</button>
                                             </form>
                                         </div>
                                     </dialog>
                                     <?php elseif ($status === 'cancelled'): ?>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/reservations/restore/<?= $res['id'] ?? 0 ?>" class="inline">
-                                        <button type="submit" class="text-xs font-black uppercase tracking-widest text-secondary hover:text-on-surface">Restore</button>
+                                    <a href="<?= BASE_URL ?>/admin/reservations/view/<?= $res['id'] ?>" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-primary/10 transition-colors" title="View Details">
+                                        <span class="material-symbols-outlined text-sm">visibility</span>
+                                    </a>
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/reservations/restore/<?= $res['id'] ?>" class="inline">
+                                        <button type="submit" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-primary/10 transition-colors" title="Restore">
+                                            <span class="material-symbols-outlined text-sm">restore</span>
+                                        </button>
                                     </form>
                                     <?php endif; ?>
                                 </div>
@@ -362,25 +397,27 @@
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-                <div
-                    class="p-6 bg-surface-container-low border-t border-outline-variant/10 flex justify-between items-center">
-                    <p class="text-xs text-secondary font-medium">Showing 1-<?= count($reservations ?? [1,2,3]) ?> of <?= $totalReservations ?? 42 ?> reservations</p>
+                <div class="p-6 bg-surface-container-low border-t border-outline-variant/10 flex justify-between items-center">
+                    <p class="text-sm text-secondary">Showing <?= count($listReservations) ?> of <?= $totalReservations ?? 0 ?> reservations</p>
+                    <?php if (isset($totalPages) && $totalPages > 1): ?>
                     <div class="flex gap-2">
-                        <button
-                            class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">
-                            <span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
-                        </button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary/10 border border-primary/30 text-primary font-bold">1</button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">2</button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">3</button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">
-                            <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
-                        </button>
+                        <?php if ($currentPage > 1): ?>
+                        <a href="?page=<?= $currentPage - 1 ?>" class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </a>
+                        <?php endif; ?>
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <a href="?page=<?= $i ?>" class="w-10 h-10 flex items-center justify-center rounded-lg <?= $i === $currentPage ? 'bg-primary/10 border border-primary/30 text-primary font-bold' : 'border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary' ?>">
+                            <?= $i ?>
+                        </a>
+                        <?php endfor; ?>
+                        <?php if ($currentPage < $totalPages): ?>
+                        <a href="?page=<?= $currentPage + 1 ?>" class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </a>
+                        <?php endif; ?>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
