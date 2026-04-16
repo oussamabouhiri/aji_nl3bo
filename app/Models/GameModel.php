@@ -32,6 +32,70 @@ class GameModel extends Database {
         }
     }
 
+    public function getPaginated(int $page = 1, int $perPage = 12, ?int $categoryId = null, ?string $search = null): array
+    {
+        try {
+            $offset = ($page - 1) * $perPage;
+            $params = [];
+            $whereClause = "WHERE g.status = 'available'";
+            
+            if ($categoryId) {
+                $whereClause .= " AND g.category_id = :category_id";
+                $params['category_id'] = $categoryId;
+            }
+            
+            if ($search) {
+                $whereClause .= " AND g.name LIKE :search";
+                $params['search'] = "%$search%";
+            }
+            
+            $countSql = "SELECT COUNT(*) FROM games g $whereClause";
+            $stmt = $this->db->prepare($countSql);
+            $stmt->execute($params);
+            $totalGames = (int) $stmt->fetchColumn();
+            
+            $sql = "SELECT g.*, c.name as category_name 
+                    FROM games g 
+                    LEFT JOIN categories c ON g.category_id = c.id
+                    $whereClause
+                    ORDER BY g.name ASC
+                    LIMIT :limit OFFSET :offset";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':limit', $perPage, \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+            
+            if ($categoryId) {
+                $stmt->bindValue(':category_id', $categoryId, \PDO::PARAM_INT);
+            }
+            if ($search) {
+                $stmt->bindValue(':search', "%$search%");
+            }
+            
+            $stmt->execute();
+            $games = $stmt->fetchAll();
+            
+            $totalPages = (int) ceil($totalGames / $perPage);
+            
+            return [
+                'games' => $games,
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'totalGames' => $totalGames,
+                'perPage' => $perPage
+            ];
+        } catch (\Exception $e) {
+            error_log("GameModel::getPaginated - " . $e->getMessage());
+            return [
+                'games' => [],
+                'currentPage' => 1,
+                'totalPages' => 0,
+                'totalGames' => 0,
+                'perPage' => $perPage
+            ];
+        }
+    }
+
     public function getAllWithCategories($limit = null) {
         try {
             $sql = "SELECT g.*, c.name as category_name 

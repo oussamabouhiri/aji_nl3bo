@@ -73,7 +73,23 @@
       <div class="lg:col-span-2 space-y-6">
         <!-- Game Selection -->
         <div class="bg-surface-container rounded-2xl p-6">
-          <h2 class="font-headline text-xl font-bold text-primary mb-4">Select Game</h2>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-headline text-xl font-bold text-primary">Select Game</h2>
+            <span class="text-sm text-secondary"><?= $pagination['totalGames'] ?? 0 ?> games</span>
+          </div>
+          
+          <!-- Search -->
+          <form method="GET" class="mb-4">
+            <div class="flex gap-2">
+              <input type="text" name="search" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" 
+                class="flex-1 bg-surface-high border-none rounded-xl py-2 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
+              <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90">Search</button>
+              <?php if (isset($_GET['search']) || isset($_GET['category'])): ?>
+              <a href="<?= BASE_URL ?>/reservation" class="px-4 py-2 bg-surface-high text-secondary rounded-xl hover:bg-surface-highest">Clear</a>
+              <?php endif; ?>
+            </div>
+          </form>
+          
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- No game selected option -->
             <label class="game-option cursor-pointer">
@@ -116,6 +132,37 @@
             </label>
             <?php endforeach; ?>
           </div>
+          
+          <?php if (($pagination['totalPages'] ?? 0) > 1): ?>
+          <!-- Pagination -->
+          <div class="flex items-center justify-center gap-2 mt-6">
+            <?php if (($pagination['currentPage'] ?? 1) > 1): ?>
+            <a href="?page=<?= ($pagination['currentPage'] ?? 1) - 1 ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
+               class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </a>
+            <?php endif; ?>
+            
+            <?php 
+            $start = max(1, ($pagination['currentPage'] ?? 1) - 2);
+            $end = min($pagination['totalPages'] ?? 1, $start + 4);
+            if ($end - $start < 4) $start = max(1, $end - 4);
+            for ($i = $start; $i <= $end; $i++): 
+            ?>
+              <a href="?page=<?= $i ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
+                 class="px-4 py-2 rounded-xl <?= $i == ($pagination['currentPage'] ?? 1) ? 'bg-primary text-on-primary' : 'bg-surface-high hover:bg-surface-highest' ?> transition-colors">
+                <?= $i ?>
+              </a>
+            <?php endfor; ?>
+            
+            <?php if (($pagination['currentPage'] ?? 1) < ($pagination['totalPages'] ?? 1)): ?>
+            <a href="?page=<?= ($pagination['currentPage'] ?? 1) + 1 ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
+               class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </a>
+            <?php endif; ?>
+          </div>
+          <?php endif; ?>
         </div>
 
         <!-- Table Selection -->
