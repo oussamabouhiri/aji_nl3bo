@@ -2,12 +2,20 @@
 
 namespace App\Helper;
 
-class Utility
-{
-    public static function view(string $path, array $data = []): void
-    {
+class Utility {
+    public static function view(string $path, array $data = []): void {
+        if (!defined('BASE_URL')) {
+            $config = require dirname(__DIR__) . '/../config/app.php';
+            define('BASE_URL', $config['base_url']);
+        }
+        
         extract($data);
-        include dirname(__DIR__) . '/View/' . $path . '.php';
+        $viewPath = dirname(__DIR__) . '/Views/' . $path . '.php';
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        } else {
+            echo "View not found: $viewPath";
+        }
     }
 
     public static function redirect(string $url): void {
@@ -17,21 +25,35 @@ class Utility
         exit;
     }
 
-    public static function abort(int $code = 404): void
-    {
+    public static function abort(int $code = 404): void {
         http_response_code($code);
-        include dirname(__DIR__) . '/View/errors/' . $code . '.php';
+        include dirname(__DIR__, 2) . '/Views/errors/' . $code . '.php';
         exit;
     }
 
-    public static function old(string $key, array $old = []): string
-    {
-        return htmlspecialchars($old[$key] ?? '', ENT_QUOTES, 'UTF-8');
+    public static function auth(): bool {
+        return isset($_SESSION['user_id']);
     }
 
-    public static function baseUrl(): string
-    {
-        $config = require dirname(__DIR__, 2) . '/config/app.php';
-        return rtrim($config['base_url'], '/') . '/';
+    public static function requireAuth(): void {
+        if (!self::auth()) {
+            self::redirect('/login');
+        }
     }
+
+    public static function isAdmin(): bool {
+        return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+    }
+
+    public static function requireAdmin(): void {
+        if (!self::isAdmin()) {
+            self::abort(403);
+        }
+    }
+
+    public static function url(string $path): string {
+        $config = require dirname(__DIR__) . '/../config/app.php';
+        return $config['base_url'] . $path;
+    }
+
 }

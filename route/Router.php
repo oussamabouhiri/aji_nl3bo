@@ -49,15 +49,23 @@ class Router {
     }
 
     static public function request(): array {
-        $basePath = rtrim(self::$config['base_path'], '/');
-        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $path = strtolower($path);
-        $path = preg_replace('#^' . preg_quote(strtolower($basePath), '#') . '#', '', $path);
-        $path = trim($path, '/');
-        
+        if (isset($_GET['url'])) {
+            $path = '/' . rtrim(ltrim($_GET['url'], '/'), '/');
+            if ($path === '') $path = '/';
+        } else {
+            $basePath = self::$config['base_path'] ?? '/';
+            $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+            $path = parse_url($requestUri, PHP_URL_PATH) ?: '/';
+            // Use case-insensitive replace to prevent 404s when folder name case doesn't match URL
+            $path = str_ireplace($basePath, '', $path);
+            $path = '/' . ltrim($path, '/');
+            $path = rtrim($path, '/');
+            if ($path === '') $path = '/';
+        }
+
         return [
-            'path' => $path ?: '/', 
-            'method' => $_SERVER['REQUEST_METHOD']
+            'path' => $path, 
+            'method' => $_SERVER['REQUEST_METHOD'] ?? 'CLI'
         ];
     }
 
@@ -88,13 +96,25 @@ class Router {
                 
                 [$class, $method] = $route['callback'];
                 $controller = new $class();
-                call_user_func_array([$controller, $method], $params);
+                if (!empty($params)) {
+                    call_user_func_array([$controller, $method], [$params]);
+                } else {
+                    call_user_func_array([$controller, $method], []);
+                }
                 return;
             }
         }
 
-        // Utility::abort();
-        echo '404 Not Found';
+        // Show debug info
+        echo '<pre>';
+        echo '404 Not Found' . PHP_EOL;
+        echo 'Path: ' . $request['path'] . PHP_EOL;
+        echo 'Method: ' . $request['method'] . PHP_EOL;
+        echo 'Routes defined:' . PHP_EOL;
+        foreach (self::$routes as $r) {
+            echo '  ' . $r['method'] . ' ' . $r['pattern'] . PHP_EOL;
+        }
+        echo '</pre>';
     }
 }
 
