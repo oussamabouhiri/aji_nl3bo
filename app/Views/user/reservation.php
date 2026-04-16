@@ -102,10 +102,14 @@
                   <div class="flex-1">
                     <h3 class="font-bold text-on-surface">No Game Selected</h3>
                     <p class="text-xs text-secondary">Choose game at the cafe</p>
+                    <div class="flex items-center gap-3 mt-2 text-xs text-secondary">
+                      <span>-</span>
+                      <span>-</span>
+                    </div>
                   </div>
-                  <div class="text-right">
-                    <span class="text-lg font-bold text-secondary">0 MAD</span>
-                  </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-outline-variant/10">
+                  <span class="text-lg font-bold text-secondary">0 MAD</span>
                 </div>
               </div>
             </label>
