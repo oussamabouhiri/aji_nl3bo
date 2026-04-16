@@ -67,30 +67,29 @@
       <p class="text-secondary max-w-xl mx-auto">Reserve your gaming session. Select a game, table, date, and time to get started.</p>
     </header>
 
+    <!-- Search Form - Separate from reservation form -->
+    <div class="bg-surface-container rounded-2xl p-6 mb-6 max-w-4xl mx-auto">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-headline text-xl font-bold text-primary">Select Game</h2>
+        <span class="text-sm text-secondary"><?= $pagination['totalGames'] ?? 0 ?> games</span>
+      </div>
+      <form method="GET" action="<?= BASE_URL ?>/reservation" class="flex gap-2">
+        <input type="text" name="search" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" 
+          class="flex-1 bg-surface-high border-none rounded-xl py-2 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
+        <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90">Search</button>
+        <?php if (isset($_GET['search']) || isset($_GET['category'])): ?>
+        <a href="<?= BASE_URL ?>/reservation" class="px-4 py-2 bg-surface-high text-secondary rounded-xl hover:bg-surface-highest">Clear</a>
+        <?php endif; ?>
+      </form>
+    </div>
+
     <form method="POST" action="<?= BASE_URL ?>/reservation/create" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <?= Csrf::field() ?>
       <!-- Left: Form -->
       <div class="lg:col-span-2 space-y-6">
-        <!-- Game Selection -->
-        <div class="bg-surface-container rounded-2xl p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="font-headline text-xl font-bold text-primary">Select Game</h2>
-            <span class="text-sm text-secondary"><?= $pagination['totalGames'] ?? 0 ?> games</span>
-          </div>
-          
-          <!-- Search - Inside the section -->
-          <form method="GET" class="mb-4 pb-4 border-b border-outline-variant/20">
-            <div class="flex gap-2">
-              <input type="text" name="search" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" 
-                class="flex-1 bg-surface-high border-none rounded-xl py-2 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
-              <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90">Search</button>
-              <?php if (isset($_GET['search']) || isset($_GET['category'])): ?>
-              <a href="<?= BASE_URL ?>/reservation" class="px-4 py-2 bg-surface-high text-secondary rounded-xl hover:bg-surface-highest">Clear</a>
-              <?php endif; ?>
-            </div>
-          </form>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <!-- Game Selection - Just the cards -->
+        <div class="bg-surface-container rounded-2xl p-6 pt-0">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <?php if (($pagination['currentPage'] ?? 1) === 1): ?>
             <!-- No game selected option - only on first page -->
             <label class="game-option cursor-pointer h-full">
