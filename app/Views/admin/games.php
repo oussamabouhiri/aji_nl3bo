@@ -175,7 +175,7 @@
             </a>
         </nav>
         <div class="px-4 mt-auto space-y-4">
-            <a href="<?= BASE_URL ?>/admin/reservations"
+            <a href="<?= BASE_URL ?>/reservation"
                 class="w-full bg-primary text-on-primary font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/10">
                 <span class="material-symbols-outlined text-lg" data-icon="add">add</span>
                 New Reservation
@@ -252,6 +252,7 @@
         <!-- Filter Bar -->
         <form method="GET" action=""
             class="flex items-center gap-4 mb-8 bg-surface-container-low/40 p-2 rounded-2xl border border-outline-variant/10">
+            <input type="hidden" name="page" value="1">
             <button class="bg-surface-container-highest text-primary px-6 py-2.5 rounded-xl text-sm font-medium">All
                 Games</button>
             <select name="category"
@@ -347,28 +348,53 @@
             <?php endforeach; ?>
         </div>
         <!-- Footer / Pagination -->
+        <?php 
+        $currentPage = $pagination['currentPage'] ?? 1;
+        $totalPages = $pagination['totalPages'] ?? 1;
+        $totalGames = $pagination['totalGames'] ?? 0;
+        $perPage = $pagination['perPage'] ?? 6;
+        $start = ($currentPage - 1) * $perPage + 1;
+        $end = min($currentPage * $perPage, $totalGames);
+        ?>
         <div class="mt-12 flex items-center justify-between">
-            <p class="text-secondary/40 text-sm italic">Showing <?= count($games ?? [1,2,3,4]) ?> of <?= $totalGames ?? 124 ?> curated experiences</p>
+            <p class="text-secondary/40 text-sm italic">Showing <?= $start ?> - <?= $end ?> of <?= $totalGames ?> curated experiences</p>
+            <?php if ($totalPages > 1): ?>
             <div class="flex items-center gap-4">
-                <button
+                <?php if ($currentPage > 1): ?>
+                <a href="?page=<?= $currentPage - 1 ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?><?= isset($_GET['difficulty']) ? '&difficulty=' . $_GET['difficulty'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?>"
                     class="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center text-secondary hover:text-primary hover:border-primary/50 transition-all">
                     <span class="material-symbols-outlined">chevron_left</span>
+                </a>
+                <?php else: ?>
+                <button disabled class="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center text-secondary/30">
+                    <span class="material-symbols-outlined">chevron_left</span>
                 </button>
-                <div class="flex gap-2">
-                    <button class="w-10 h-10 rounded-lg bg-primary/10 text-primary font-bold">1</button>
-                    <button
-                        class="w-10 h-10 rounded-lg hover:bg-surface-container transition-colors text-secondary/60">2</button>
-                    <button
-                        class="w-10 h-10 rounded-lg hover:bg-surface-container transition-colors text-secondary/60">3</button>
-                    <span class="px-2 text-secondary/30 self-end mb-2">...</span>
-                    <button
-                        class="w-10 h-10 rounded-lg hover:bg-surface-container transition-colors text-secondary/60">32</button>
-                </div>
-                <button
+                <?php endif; ?>
+                
+                <?php 
+                $pageStart = max(1, $currentPage - 2);
+                $pageEnd = min($totalPages, $pageStart + 4);
+                if ($pageEnd - $pageStart < 4) $pageStart = max(1, $pageEnd - 4);
+                for ($i = $pageStart; $i <= $pageEnd; $i++): 
+                ?>
+                    <a href="?page=<?= $i ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?><?= isset($_GET['difficulty']) ? '&difficulty=' . $_GET['difficulty'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?>"
+                        class="w-10 h-10 rounded-lg <?= $i == $currentPage ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-surface-container transition-colors text-secondary/60' ?>">
+                        <?= $i ?>
+                    </a>
+                <?php endfor; ?>
+                
+                <?php if ($currentPage < $totalPages): ?>
+                <a href="?page=<?= $currentPage + 1 ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?><?= isset($_GET['difficulty']) ? '&difficulty=' . $_GET['difficulty'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?>"
                     class="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center text-secondary hover:text-primary hover:border-primary/50 transition-all">
                     <span class="material-symbols-outlined">chevron_right</span>
+                </a>
+                <?php else: ?>
+                <button disabled class="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center text-secondary/30">
+                    <span class="material-symbols-outlined">chevron_right</span>
                 </button>
+                <?php endif; ?>
             </div>
+            <?php endif; ?>
         </div>
     </main>
     <!-- Contextual "New" FAB Suppression applied (FAB only on Home/Dashboard, not management screens) -->

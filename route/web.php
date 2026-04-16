@@ -40,8 +40,9 @@ Router::get('/dashboard', [UserController::class, 'dashboard'])->middleware('aut
 
 // Reservation (auth required)
 Router::get('/reservation', [UserController::class, 'reservation'])->middleware('auth');
-Router::post('/reservation/create', [UserController::class, 'createReservation'])->middleware('auth');
+Router::post('/reservation/create', [ReservationController::class, 'createUser'])->middleware('auth');
 Router::post('/reservation/cancel', [UserController::class, 'cancelReservation'])->middleware('auth');
+Router::get('/reservation/available', [UserController::class, 'getAvailable'])->middleware('auth');
 
 // My Reservations (auth required)
 Router::get('/my-reservations', [UserController::class, 'myReservations'])->middleware('auth');
@@ -71,11 +72,11 @@ Router::get('/admin/reservations', [ReservationController::class, 'index'])->mid
 Router::get('/admin/reservations/view/{id}', [ReservationController::class, 'view'])->middleware('admin');
 Router::post('/admin/reservations/create', [ReservationController::class, 'create'])->middleware('admin');
 Router::post('/admin/reservations/update', [ReservationController::class, 'update'])->middleware('admin');
-Router::post('/admin/reservations/confirm', [ReservationController::class, 'confirm'])->middleware('admin');
-Router::post('/admin/reservations/cancel', [ReservationController::class, 'cancel'])->middleware('admin');
-Router::post('/admin/reservations/restore', [ReservationController::class, 'restore'])->middleware('admin');
+Router::post('/admin/reservations/confirm/{id}', [ReservationController::class, 'confirm'])->middleware('admin');
+Router::post('/admin/reservations/cancel/{id}', [ReservationController::class, 'cancel'])->middleware('admin');
+Router::post('/admin/reservations/restore/{id}', [ReservationController::class, 'restore'])->middleware('admin');
 Router::post('/admin/reservations/start-session/{id}', [ReservationController::class, 'startSession'])->middleware('admin');
-Router::post('/admin/reservations/delete', [ReservationController::class, 'delete'])->middleware('admin');
+Router::post('/admin/reservations/delete/{id}', [ReservationController::class, 'delete'])->middleware('admin');
 
 // Sessions (admin)
 Router::get('/admin/sessions', [SessionController::class, 'index'])->middleware('admin');

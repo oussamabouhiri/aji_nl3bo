@@ -69,33 +69,47 @@ class UserController {
         $perPage = ($page === 1) ? 3 : 4;
         $result = $this->gameModel->getPaginated($page, $perPage, $categoryId, $search ?: null);
         
-        $tables = $this->tableModel->getAll();
+        $tablePage = max(1, intval($_GET['table_page'] ?? 1));
+        $tableResult = $this->tableModel->getPaginated($tablePage, 6);
         
         $this->utility->view("user/reservation", [
             'games' => $result['games'],
-            'tables' => $tables,
+            'tables' => $tableResult['tables'],
             'pagination' => [
                 'currentPage' => $result['currentPage'],
                 'totalPages' => $result['totalPages'],
                 'totalGames' => $result['totalGames'],
                 'perPage' => $result['perPage']
+            ],
+            'tablePagination' => [
+                'currentPage' => $tableResult['currentPage'],
+                'totalPages' => $tableResult['totalPages'],
+                'totalTables' => $tableResult['totalTables'],
+                'perPage' => $tableResult['perPage']
             ]
         ]);
     }
 
     public function createReservation() {
         if (!Csrf::validate()) {
+            error_log("CSRF validation failed");
             $this->utility->redirect('/reservation');
             return;
         }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            error_log("POST data: " . print_r($_POST, true));
+            
             $userId = $_SESSION['user_id'] ?? 1;
             
             $date = $_POST['date'] ?? null;
             $startTime = $_POST['start_time'] ?? null;
             $duration = intval($_POST['duration'] ?? 2);
             $gameId = $_POST['game_id'] ?? null;
+            $tableId = $_POST['table_id'] ?? null;
+            $spots = intval($_POST['spots'] ?? 0);
+            
+            error_log("Parsed: date=$date, time=$startTime, gameId=$gameId, tableId=$tableId, spots=$spots");
             
             $endTime = null;
             if ($startTime) {
@@ -105,28 +119,34 @@ class UserController {
             }
             
             $price = 0;
-            if ($gameId) {
+            if ($gameId && $gameId !== '0') {
                 $game = $this->gameModel->getById($gameId);
                 $price = $game['price'] ?? 0;
+                error_log("Game price: $price");
             }
             
             $data = [
                 'user_id' => $userId,
-                'table_id' => $_POST['table_id'] ?? null,
-                'game_id' => $gameId ?: null,
+                'table_id' => $tableId,
+                'game_id' => ($gameId && $gameId !== '0') ? $gameId : null,
                 'date' => $date,
                 'start_time' => $startTime,
                 'end_time' => $endTime,
-                'spots' => intval($_POST['spots'] ?? 0),
+                'spots' => $spots,
                 'price' => $price
             ];
             
+            error_log("Data to insert: " . print_r($data, true));
+            
             if ($data['table_id'] && $data['date'] && $data['start_time'] && $data['spots'] > 0) {
                 $id = $this->reservationModel->create($data);
+                error_log("Insert result: " . ($id ? "ID: $id" : "Failed"));
                 if ($id) {
                     $this->utility->redirect('/my-reservations');
                     return;
                 }
+            } else {
+                error_log("Validation failed: table_id={$data['table_id']}, date={$data['date']}, start_time={$data['start_time']}, spots={$data['spots']}");
             }
         }
         
@@ -241,6 +261,34 @@ class UserController {
         }
         
         $this->utility->view("auth/register");
+    }
+
+    public function getAvailable() {
+        header('Content-Type: application/json');
+        
+        $date = $_GET['date'] ?? null;
+        $time = $_GET['time'] ?? null;
+        $duration = intval($_GET['duration'] ?? 2);
+        
+        if (!$date || !$time) {
+            echo json_encode(['games' => [], 'tables' => [], 'error' => 'Date and time required']);
+            return;
+        }
+        
+        $startTime = $time;
+        $start = new \DateTime($time);
+        $end = $start->modify("+{$duration} hours");
+        $endTime = $end->format('H:i:s');
+        
+        $gamesResult = $this->gameModel->getAvailableGames($date, $startTime, $endTime, 1, 100, null, null);
+        $availableTables = $this->tableModel->getAvailableTables($date, $startTime, $endTime);
+        
+        echo json_encode([
+            'games' => $gamesResult['games'],
+            'tables' => $availableTables,
+            'totalGames' => $gamesResult['totalGames'],
+            'totalTables' => count($availableTables)
+        ]);
     }
 
     public function logout() {

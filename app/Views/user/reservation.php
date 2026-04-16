@@ -40,6 +40,9 @@
     .font-headline { font-family: 'Manrope', sans-serif; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .glass-panel { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .search-wrapper form {
+      display: contents;
+    }
   </style>
 </head>
 
@@ -62,38 +65,82 @@
   </nav>
 
   <main class="pt-28 pb-20 px-4 md:px-8 max-w-6xl mx-auto">
-    <header class="mb-10 text-center">
+    <header class="mb-6 text-center">
       <h1 class="text-4xl md:text-5xl font-headline font-extrabold tracking-tight text-on-surface mb-3">Book Your Table</h1>
       <p class="text-secondary max-w-xl mx-auto">Reserve your gaming session. Select a game, table, date, and time to get started.</p>
     </header>
 
-    <!-- Search Form - Separate from reservation form -->
-    <div class="bg-surface-container rounded-2xl p-6 mb-6 max-w-4xl mx-auto">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="font-headline text-xl font-bold text-primary">Select Game</h2>
-        <span class="text-sm text-secondary"><?= $pagination['totalGames'] ?? 0 ?> games</span>
-      </div>
-      <form method="GET" action="<?= BASE_URL ?>/reservation" class="flex gap-2">
-        <input type="text" name="search" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" 
-          class="flex-1 bg-surface-high border-none rounded-xl py-2 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
-        <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90">Search</button>
-        <?php if (isset($_GET['search']) || isset($_GET['category'])): ?>
-        <a href="<?= BASE_URL ?>/reservation" class="px-4 py-2 bg-surface-high text-secondary rounded-xl hover:bg-surface-highest">Clear</a>
-        <?php endif; ?>
-      </form>
+    <?php if (isset($_SESSION['error'])): ?>
+    <div class="mb-6 p-4 bg-error/10 border border-error/30 rounded-xl text-error text-center">
+      <?= $_SESSION['error']; unset($_SESSION['error']); ?>
     </div>
+    <?php endif; ?>
 
-    <form method="POST" action="<?= BASE_URL ?>/reservation/create" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <?= Csrf::field() ?>
-      <!-- Left: Form -->
-      <div class="lg:col-span-2 space-y-6">
-        <!-- Game Selection - Just the cards -->
-        <div class="bg-surface-container rounded-2xl p-6 pt-0">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Search Form - will be moved via JS into game selection -->
+    <form method="GET" action="<?= BASE_URL ?>/reservation" id="searchForm">
+      <div class="flex gap-2">
+        <input type="text" name="search" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" 
+          class="flex-1 bg-surface-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
+        <button type="submit" class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90">Search</button>
+        <?php if (isset($_GET['search']) || isset($_GET['category'])): ?>
+        <a href="<?= BASE_URL ?>/reservation" class="px-4 py-3 bg-surface-high text-secondary rounded-xl hover:bg-surface-highest">Clear</a>
+        <?php endif; ?>
+      </div>
+    </form>
+
+    <form method="POST" action="<?= BASE_URL ?>/reservation/create" class="grid grid-cols-1 lg:grid-cols-3 gap-8" id="reservationForm" autocomplete="off">
+        <?= Csrf::field() ?>
+        <!-- Left: Form -->
+        <div class="lg:col-span-2 space-y-6">
+          
+          <!-- Date & Time - First so user selects before seeing availability -->
+          <div class="bg-surface-container rounded-2xl p-6">
+            <h2 class="font-headline text-xl font-bold text-primary mb-4">Date & Time</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm text-secondary mb-2">Date</label>
+                <input type="date" name="date" id="date" required min="<?= date('Y-m-d') ?>"
+                  class="w-full bg-surface-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
+              </div>
+              <div>
+                <label class="block text-sm text-secondary mb-2">Start Time</label>
+                <select name="start_time" id="start_time" required class="w-full bg-surface-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
+                  <?php for ($h = 10; $h <= 22; $h++): ?>
+                    <?php for ($m = 0; $m < 60; $m += 30): ?>
+                      <option value="<?= sprintf('%02d:%02d:00', $h, $m) ?>"><?= sprintf('%02d:%02d', $h, $m) ?></option>
+                    <?php endfor; ?>
+                  <?php endfor; ?>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm text-secondary mb-2">Duration (hours)</label>
+                <select name="duration" id="duration" class="w-full bg-surface-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
+                  <option value="1">1 hour</option>
+                  <option value="2" selected>2 hours</option>
+                  <option value="3">3 hours</option>
+                  <option value="4">4 hours</option>
+                </select>
+              </div>
+            </div>
+            <div id="availability-hint" class="mt-3 text-sm text-secondary hidden">
+              <span id="availability-text"></span>
+            </div>
+          </div>
+          
+          <!-- Game Selection -->
+          <div class="bg-surface-container rounded-2xl p-6 relative">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-headline text-xl font-bold text-primary">Select Game</h2>
+            <span class="text-sm text-secondary" id="games-count"><?= $pagination['totalGames'] ?? 0 ?> games</span>
+            </div>
+            
+            <div class="search-wrapper mb-4"></div>
+            
+            <div id="games-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <?php if (($pagination['currentPage'] ?? 1) === 1): ?>
             <!-- No game selected option - only on first page -->
             <label class="game-option cursor-pointer h-full">
-              <input type="radio" name="game_id" value="" class="hidden peer" checked>
+              <input type="radio" name="game_id" value="0" class="hidden peer" checked>
               <div class="p-4 rounded-xl border-2 border-outline-variant/10 peer-checked:border-secondary peer-checked:bg-secondary/5 transition-all h-full flex flex-col justify-center">
                 <div class="flex items-center gap-4 justify-center">
                   <div class="w-16 h-16 rounded-lg bg-surface-high flex items-center justify-center">
@@ -165,8 +212,11 @@
 
         <!-- Table Selection -->
         <div class="bg-surface-container rounded-2xl p-6">
-          <h2 class="font-headline text-xl font-bold text-primary mb-4">Select Table</h2>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-headline text-xl font-bold text-primary">Select Table</h2>
+            <span class="text-sm text-secondary"><?= $tablePagination['totalTables'] ?? 0 ?> tables</span>
+          </div>
+          <div id="tables-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <?php foreach ($tables ?? [] as $table): ?>
             <label class="table-option cursor-pointer">
               <input type="radio" name="table_id" value="<?= $table['id'] ?>" class="hidden peer" required>
@@ -180,37 +230,36 @@
             </label>
             <?php endforeach; ?>
           </div>
-        </div>
-
-        <!-- Date & Time -->
-        <div class="bg-surface-container rounded-2xl p-6">
-          <h2 class="font-headline text-xl font-bold text-primary mb-4">Date & Time</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-sm text-secondary mb-2">Date</label>
-              <input type="date" name="date" required min="<?= date('Y-m-d') ?>"
-                class="w-full bg-surface-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
-            </div>
-            <div>
-              <label class="block text-sm text-secondary mb-2">Start Time</label>
-              <select name="start_time" required class="w-full bg-surface-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
-                <?php for ($h = 10; $h <= 22; $h++): ?>
-                  <?php for ($m = 0; $m < 60; $m += 30): ?>
-                    <option value="<?= sprintf('%02d:%02d:00', $h, $m) ?>"><?= sprintf('%02d:%02d', $h, $m) ?></option>
-                  <?php endfor; ?>
-                <?php endfor; ?>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm text-secondary mb-2">Duration (hours)</label>
-              <select name="duration" id="duration" class="w-full bg-surface-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
-                <option value="1">1 hour</option>
-                <option value="2" selected>2 hours</option>
-                <option value="3">3 hours</option>
-                <option value="4">4 hours</option>
-              </select>
-            </div>
+          
+          <?php if (($tablePagination['totalPages'] ?? 0) > 1): ?>
+          <div class="flex items-center justify-center gap-2 mt-6">
+            <?php if (($tablePagination['currentPage'] ?? 1) > 1): ?>
+            <a href="?table_page=<?= ($tablePagination['currentPage'] ?? 1) - 1 ?><?= isset($_GET['page']) ? '&page=' . $_GET['page'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
+               class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </a>
+            <?php endif; ?>
+            
+            <?php 
+            $start = max(1, ($tablePagination['currentPage'] ?? 1) - 2);
+            $end = min($tablePagination['totalPages'] ?? 1, $start + 4);
+            if ($end - $start < 4) $start = max(1, $end - 4);
+            for ($i = $start; $i <= $end; $i++): 
+            ?>
+              <a href="?table_page=<?= $i ?><?= isset($_GET['page']) ? '&page=' . $_GET['page'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
+                 class="px-4 py-2 rounded-xl <?= $i == ($tablePagination['currentPage'] ?? 1) ? 'bg-primary text-on-primary' : 'bg-surface-high hover:bg-surface-highest' ?> transition-colors">
+                <?= $i ?>
+              </a>
+            <?php endfor; ?>
+            
+            <?php if (($tablePagination['currentPage'] ?? 1) < ($tablePagination['totalPages'] ?? 1)): ?>
+            <a href="?table_page=<?= ($tablePagination['currentPage'] ?? 1) + 1 ?><?= isset($_GET['page']) ? '&page=' . $_GET['page'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
+               class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </a>
+            <?php endif; ?>
           </div>
+          <?php endif; ?>
         </div>
 
         <!-- Guest Details -->
@@ -223,7 +272,7 @@
                 <button type="button" onclick="changeSpots(-1)" class="w-12 h-12 rounded-xl bg-surface-high flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all">
                   <span class="material-symbols-outlined">remove</span>
                 </button>
-                <input type="number" name="spots" id="spots" value="2" min="1" max="8" required
+                <input type="number" name="spots" id="spots" value="2" min="1" max="20" required
                   class="w-full bg-surface-high border-none rounded-xl py-3 px-4 text-center text-xl font-bold text-on-surface focus:ring-2 focus:ring-primary/50">
                 <button type="button" onclick="changeSpots(1)" class="w-12 h-12 rounded-xl bg-surface-high flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all">
                   <span class="material-symbols-outlined">add</span>
@@ -231,7 +280,7 @@
               </div>
             </div>
             <div class="flex items-end">
-              <p class="text-sm text-secondary">Select the number of players for your session</p>
+              <p class="text-sm text-secondary">Select the number of players (max: 20)</p>
             </div>
           </div>
         </div>
@@ -287,15 +336,108 @@
   </main>
 
   <script>
+    // Move search form into game selection wrapper
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchForm = document.getElementById('searchForm');
+      const searchWrapper = document.querySelector('.search-wrapper');
+      if (searchForm && searchWrapper) {
+        searchWrapper.appendChild(searchForm);
+      }
+      
+      // Restore saved selections
+      restoreSelections();
+    });
+
     const games = <?= json_encode($games ?? []) ?>;
     const tables = <?= json_encode($tables ?? []) ?>;
+
+    // Save selections to sessionStorage
+    function saveSelections() {
+      const selectedGame = document.querySelector('input[name="game_id"]:checked');
+      const selectedTable = document.querySelector('input[name="table_id"]:checked');
+      const dateInput = document.querySelector('input[name="date"]');
+      const timeInput = document.querySelector('select[name="start_time"]');
+      const durationInput = document.getElementById('duration');
+      const spotsInput = document.getElementById('spots');
+      
+      const selections = {
+        gameId: selectedGame?.value ?? null,
+        tableId: selectedTable?.value ?? null,
+        date: dateInput?.value || null,
+        time: timeInput?.value || null,
+        duration: durationInput?.value || '2',
+        spots: spotsInput?.value || '2'
+      };
+      
+      sessionStorage.setItem('reservationSelections', JSON.stringify(selections));
+    }
+
+    // Restore selections from sessionStorage
+    function restoreSelections() {
+      const saved = sessionStorage.getItem('reservationSelections');
+      if (!saved) return;
+      
+      const selections = JSON.parse(saved);
+      
+      // Restore game selection (including "0" for no game selected)
+      if (selections.gameId !== null && selections.gameId !== undefined) {
+        const gameRadio = document.querySelector(`input[name="game_id"][value="${selections.gameId}"]`);
+        if (gameRadio) {
+          gameRadio.checked = true;
+        }
+      }
+      
+      // Restore table selection
+      if (selections.tableId !== null && selections.tableId !== undefined) {
+        const tableRadio = document.querySelector(`input[name="table_id"][value="${selections.tableId}"]`);
+        if (tableRadio) {
+          tableRadio.checked = true;
+        }
+      }
+      
+      // Restore date
+      if (selections.date) {
+        const dateInput = document.querySelector('input[name="date"]');
+        if (dateInput) {
+          dateInput.value = selections.date;
+        }
+      }
+      
+      // Restore time
+      if (selections.time) {
+        const timeInput = document.querySelector('select[name="start_time"]');
+        if (timeInput) {
+          timeInput.value = selections.time;
+        }
+      }
+      
+      // Restore duration
+      if (selections.duration) {
+        const durationInput = document.getElementById('duration');
+        if (durationInput) {
+          durationInput.value = selections.duration;
+        }
+      }
+      
+      // Restore spots
+      if (selections.spots) {
+        const spotsInput = document.getElementById('spots');
+        if (spotsInput) {
+          spotsInput.value = selections.spots;
+        }
+      }
+      
+      // Update summary after restoring
+      updateSummary();
+    }
 
     function changeSpots(delta) {
       const input = document.getElementById('spots');
       let val = parseInt(input.value) + delta;
       if (val < 1) val = 1;
-      if (val > 8) val = 8;
+      if (val > 20) val = 20;
       input.value = val;
+      saveSelections();
       updateSummary();
     }
 
@@ -304,7 +446,9 @@
       const selectedGame = document.querySelector('input[name="game_id"]:checked');
       const gameEl = document.getElementById('summary-game');
       const totalEl = document.getElementById('summary-total');
-      if (selectedGame) {
+      gameEl.textContent = 'No Game Selected';
+      
+      if (selectedGame && selectedGame.value && selectedGame.value !== '0') {
         const game = games.find(g => g.id == selectedGame.value);
         if (game) {
           gameEl.textContent = game.name;
@@ -349,7 +493,7 @@
       document.getElementById('summary-spots').textContent = document.getElementById('spots').value;
 
       // Total (price is just the game price, no relation with duration)
-      if (selectedGame) {
+      if (selectedGame && selectedGame.value && selectedGame.value !== '0') {
         const game = games.find(g => g.id == selectedGame.value);
         const total = parseFloat(game?.price) || 0;
         totalEl.textContent = total.toFixed(2) + ' MAD';
@@ -358,13 +502,208 @@
       }
     }
 
-    // Listen for changes
-    document.querySelectorAll('input[name="game_id"], input[name="table_id"], input[name="date"], select[name="start_time"], #duration, #spots').forEach(el => {
-      el.addEventListener('change', updateSummary);
+    // Listen for changes and save
+    document.querySelectorAll('input[name="game_id"], input[name="table_id"], input[name="date"]').forEach(el => {
+      el.addEventListener('change', function() {
+        saveSelections();
+        updateSummary();
+      });
     });
+    
+    document.querySelectorAll('select[name="start_time"], #duration').forEach(el => {
+      el.addEventListener('change', function() {
+        saveSelections();
+        updateSummary();
+      });
+    });
+    
+    // Spots - listen for both input and change events
+    const spotsInput = document.getElementById('spots');
+    if (spotsInput) {
+      spotsInput.addEventListener('input', function() {
+        saveSelections();
+        updateSummary();
+      });
+      spotsInput.addEventListener('change', function() {
+        saveSelections();
+        updateSummary();
+      });
+    }
 
     // Initial update
     updateSummary();
+
+    // Fetch available games and tables when date/time changes
+    async function fetchAvailability() {
+      const date = document.getElementById('date')?.value;
+      const time = document.getElementById('start_time')?.value;
+      const duration = document.getElementById('duration')?.value || 2;
+      
+      if (!date || !time) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`<?= BASE_URL ?>/reservation/available?date=${date}&time=${time}&duration=${duration}`);
+        const data = await response.json();
+        
+        updateGamesGrid(data.games);
+        updateTablesGrid(data.tables);
+        
+        // Update counts
+        const gamesCount = document.getElementById('games-count');
+        if (gamesCount) {
+          gamesCount.textContent = `${data.totalGames || 0} games`;
+        }
+        
+        // Update availability hint
+        const availabilityHint = document.getElementById('availability-hint');
+        const availabilityText = document.getElementById('availability-text');
+        if (availabilityHint && availabilityText) {
+          availabilityHint.classList.remove('hidden');
+          availabilityText.textContent = `${data.totalGames || 0} games and ${data.totalTables || 0} tables available for this time slot`;
+        }
+      } catch (error) {
+        console.error('Error fetching availability:', error);
+      }
+    }
+
+    function updateGamesGrid(games) {
+      const container = document.getElementById('games-grid');
+      if (!container) return;
+      
+      if (games.length === 0) {
+        container.innerHTML = '<p class="text-secondary col-span-2 text-center py-8">No games available for this time slot</p>';
+        return;
+      }
+      
+      let html = `
+        <label class="game-option cursor-pointer h-full">
+          <input type="radio" name="game_id" value="0" class="hidden peer" checked>
+          <div class="p-4 rounded-xl border-2 border-outline-variant/10 peer-checked:border-secondary peer-checked:bg-secondary/5 transition-all h-full flex flex-col justify-center">
+            <div class="flex items-center gap-4 justify-center">
+              <div class="w-16 h-16 rounded-lg bg-surface-high flex items-center justify-center">
+                <span class="material-symbols-outlined text-3xl text-secondary">help_outline</span>
+              </div>
+              <div>
+                <h3 class="font-bold text-on-surface">No Game Selected</h3>
+                <p class="text-xs text-secondary">Choose game at the cafe</p>
+              </div>
+            </div>
+          </div>
+        </label>
+      `;
+      
+      games.forEach(game => {
+        html += `
+          <label class="game-option cursor-pointer">
+            <input type="radio" name="game_id" value="${game.id}" class="hidden peer">
+            <div class="p-4 rounded-xl border-2 border-outline-variant/10 peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+              <div class="flex items-center gap-4">
+                <img src="${game.image_url || 'https://picsum.photos/seed/' + game.id + '/100/100'}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0">
+                <div class="flex-1">
+                  <h3 class="font-bold text-on-surface">${game.name}</h3>
+                  <p class="text-xs text-secondary">${game.category_name || 'Board Game'}</p>
+                  <div class="flex items-center gap-3 mt-2 text-xs text-secondary">
+                    <span>${game.min_players}-${game.max_players} players</span>
+                    <span>${game.duration} min</span>
+                    <span class="text-primary">${game.available_spots} available</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-3 pt-3 border-t border-outline-variant/10">
+                <span class="text-lg font-bold text-primary">${parseFloat(game.price).toFixed(2)} MAD</span>
+              </div>
+            </div>
+          </label>
+        `;
+      });
+      
+      container.innerHTML = html;
+      
+      // Re-attach event listeners
+      container.querySelectorAll('input[name="game_id"]').forEach(el => {
+        el.addEventListener('change', function() {
+          saveSelections();
+          updateSummary();
+        });
+      });
+    }
+
+    function updateTablesGrid(tables) {
+      const container = document.getElementById('tables-grid');
+      if (!container) return;
+      
+      if (tables.length === 0) {
+        container.innerHTML = '<p class="text-secondary col-span-full text-center py-8">No tables available for this time slot</p>';
+        return;
+      }
+      
+      let html = '';
+      tables.forEach(table => {
+        html += `
+          <label class="table-option cursor-pointer">
+            <input type="radio" name="table_id" value="${table.id}" class="hidden peer">
+            <div class="p-4 rounded-xl border-2 border-outline-variant/10 peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-center">
+              <div class="w-16 h-16 mx-auto mb-2 rounded-xl bg-surface-high flex items-center justify-center">
+                <span class="text-2xl font-black text-primary">${table.reference.replace('Table ', '')}</span>
+              </div>
+              <p class="font-bold text-on-surface">${table.reference}</p>
+              <p class="text-xs text-secondary">${table.capacity} seats</p>
+            </div>
+          </label>
+        `;
+      });
+      
+      container.innerHTML = html;
+      
+      // Re-attach event listeners
+      container.querySelectorAll('input[name="table_id"]').forEach(el => {
+        el.addEventListener('change', function() {
+          saveSelections();
+          updateSummary();
+        });
+      });
+    }
+
+    // Listen for date/time changes
+    const dateInput = document.getElementById('date');
+    const timeInput = document.getElementById('start_time');
+    const durationInput = document.getElementById('duration');
+    
+    if (dateInput) {
+      dateInput.addEventListener('change', function() {
+        saveSelections();
+        fetchAvailability();
+      });
+    }
+    
+    if (timeInput) {
+      timeInput.addEventListener('change', function() {
+        saveSelections();
+        fetchAvailability();
+      });
+    }
+    
+    if (durationInput) {
+      durationInput.addEventListener('change', function() {
+        saveSelections();
+        fetchAvailability();
+      });
+    }
+
+    // Fetch availability on page load if date is already set
+    if (document.getElementById('date')?.value && document.getElementById('start_time')?.value) {
+      fetchAvailability();
+    }
+
+    // Form submission
+    const form = document.getElementById('reservationForm');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        // Remove the alert, let form submit normally
+      });
+    }
   </script>
 </body>
 

@@ -104,6 +104,13 @@ date_default_timezone_set('Africa/Casablanca');
         .glow-teal {
             box-shadow: 0 0 15px -2px rgba(171, 205, 204, 0.4);
         }
+        .status-tab {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(229, 226, 225, 0.7);
+        }
+        .status-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 
@@ -206,8 +213,58 @@ date_default_timezone_set('Africa/Casablanca');
                 </div>
             </div>
         </header>
-<!-- Session Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+
+        <!-- Status Tabs -->
+        <div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+            <button onclick="filterTables('all')" class="status-tab active flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="all">
+                <span class="material-symbols-outlined text-lg">grid_view</span>
+                All Tables
+                <span class="px-2 py-0.5 rounded-full text-xs bg-white/10"><?= count($tables) ?></span>
+            </button>
+            <button onclick="filterTables('active')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="active">
+                <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">radio_button_checked</span>
+                Occupied
+                <span class="px-2 py-0.5 rounded-full text-xs bg-secondary/20 text-secondary"><?php 
+                    $activeCount = 0;
+                    foreach ($tables as $t) {
+                        $tid = $t['id'];
+                        if (isset($sessionByTable[$tid])) $activeCount++;
+                    }
+                    echo $activeCount;
+                ?></span>
+            </button>
+            <button onclick="filterTables('booked')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="booked">
+                <span class="material-symbols-outlined text-lg">event_busy</span>
+                Booked
+                <span class="px-2 py-0.5 rounded-full text-xs bg-primary/20 text-primary"><?php 
+                    $bookedCount = 0;
+                    foreach ($tables as $t) {
+                        $tid = $t['id'];
+                        $session = $sessionByTable[$tid] ?? null;
+                        $reservations = $reservationsByTable[$tid] ?? [];
+                        if ($session === null && !empty($reservations)) $bookedCount++;
+                    }
+                    echo $bookedCount;
+                ?></span>
+            </button>
+            <button onclick="filterTables('free')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="free">
+                <span class="material-symbols-outlined text-lg">weekend</span>
+                Free
+                <span class="px-2 py-0.5 rounded-full text-xs bg-green-500/20 text-green-400"><?php 
+                    $freeCount = 0;
+                    foreach ($tables as $t) {
+                        $tid = $t['id'];
+                        $session = $sessionByTable[$tid] ?? null;
+                        $reservations = $reservationsByTable[$tid] ?? [];
+                        if ($session === null && empty($reservations)) $freeCount++;
+                    }
+                    echo $freeCount;
+                ?></span>
+            </button>
+        </div>
+
+        <!-- Session Grid -->
+        <div id="tables-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             <?php 
             $tables = $tables ?? [];
             $activeSessions = $activeSessions ?? [];
@@ -279,24 +336,17 @@ date_default_timezone_set('Africa/Casablanca');
                 }
                 
                 // Determine status
-                $status = 'empty';
+                $status = 'free';
                 if ($session !== null) {
                     $status = 'active';
                 } elseif ($reservation !== null) {
-                    $startTime = $reservation['start_time'];
-                    $currentTime = date('H:i');
-                    
-                    if ($currentTime >= $startTime) {
-                        $status = 'timeup';
-                    } else {
-                        $status = 'reserved';
-                    }
+                    $status = 'booked';
                 }
             ?>
             
             <?php if ($status === 'active'): ?>
             <!-- Active Session Card - Modern Glassmorphism -->
-            <div class="relative group">
+            <div class="table-card relative group" data-status="<?= $status ?>">
                 <div class="absolute -inset-0.5 bg-gradient-to-r from-secondary/50 via-[#7dd3d2]/50 to-secondary/50 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
                 <div class="relative bg-[#0d1a1a]/90 backdrop-blur-xl rounded-2xl p-5 border border-white/5">
                     <div class="flex items-start justify-between mb-4">
@@ -405,11 +455,11 @@ date_default_timezone_set('Africa/Casablanca');
                 </div>
             </div>
             
-            <?php elseif ($status === 'timeup'): ?>
-            <!-- Time's Up Card - Attention Seeking -->
-            <div class="relative group">
-                <div class="absolute -inset-0.5 bg-gradient-to-r from-yellow-500/50 via-amber-400/50 to-yellow-500/50 rounded-2xl blur opacity-40 group-hover:opacity-70 transition duration-500 animate-pulse"></div>
-                <div class="relative bg-[#1a1508]/95 backdrop-blur-xl rounded-2xl p-5 border border-yellow-500/20">
+            <?php elseif ($status === 'booked'): ?>
+            <!-- Booked Card - Has Reservation -->
+            <div class="table-card relative group" data-status="<?= $status ?>">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-primary/50 via-amber-400/50 to-primary/50 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+                <div class="relative bg-[#1a1508]/95 backdrop-blur-xl rounded-2xl p-5 border border-primary/20">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center gap-3">
                             <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 flex items-center justify-center">
@@ -492,62 +542,9 @@ date_default_timezone_set('Africa/Casablanca');
                 </div>
             </div>
             
-            <?php elseif ($status === 'reserved'): ?>
-            <!-- Reserved Card - Calm & Organized -->
-            <div class="relative group">
-                <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500/30 via-green-400/30 to-emerald-500/30 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-                <div class="relative bg-[#0a1515]/90 backdrop-blur-xl rounded-2xl p-5 border border-white/5">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-green-500/5 flex items-center justify-center">
-                                <span class="text-3xl font-black font-headline text-primary"><?= str_replace('Table ', '', $tableRef) ?></span>
-                            </div>
-                            <div>
-                                <p class="text-[10px] text-green-400/50 uppercase tracking-widest font-semibold"><?= $table['capacity'] ?? 0 ?> seats</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-1.5 bg-green-500/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-green-500/20">
-                            <div class="w-2 h-2 rounded-full bg-green-400"></div>
-                            <span class="text-[10px] font-bold text-green-400 uppercase tracking-wider">Booked</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 mb-4">
-                        <img class="w-12 h-12 rounded-xl object-cover shadow-lg" src="<?= $reservation['game_image'] ?? '' ?>">
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-sm text-on-surface truncate"><?= $reservation['game_name'] ?? 'Game' ?></h4>
-                            <p class="text-xs text-green-400/60 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="flex-1 p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                            <p class="text-[10px] text-secondary/40 uppercase tracking-wider font-semibold">From</p>
-                            <p class="text-sm font-bold text-on-surface"><?= date('H:i', strtotime($reservation['start_time'])) ?></p>
-                        </div>
-                        <div class="flex items-center justify-center w-8">
-                            <svg class="w-4 h-4 text-secondary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </div>
-                        <div class="flex-1 p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                            <p class="text-[10px] text-secondary/40 uppercase tracking-wider font-semibold">Until</p>
-                            <p class="text-sm font-bold text-on-surface"><?= date('H:i', strtotime($reservation['end_time'])) ?></p>
-                        </div>
-                        <div class="p-3 rounded-xl bg-green-500/10 border border-green-500/10 text-center min-w-[60px]">
-                            <p class="text-[10px] text-secondary/40 uppercase tracking-wider font-semibold">Pax</p>
-                            <p class="text-sm font-bold text-green-400"><?= $reservation['spots'] ?? 0 ?></p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-green-500/5 border border-green-500/10">
-                        <span class="material-symbols-outlined text-sm text-green-400">schedule</span>
-                        <span class="text-xs font-medium text-green-400/80">Starts in <?= floor($reservation['minutes_until_start'] / 60) ?>h <?= $reservation['minutes_until_start'] % 60 ?>m</span>
-                    </div>
-                </div>
-            </div>
-            
-            <?php else: ?>
-            <!-- Empty Card - Minimal & Clean -->
-            <div class="relative group">
+            <?php elseif ($status === 'free'): ?>
+            <!-- Free Card - Empty -->
+            <div class="table-card relative group" data-status="free">
                 <div class="absolute -inset-0.5 bg-gradient-to-r from-white/5 via-white/10 to-white/5 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
                 <div class="relative bg-[#0a0a0a]/50 backdrop-blur-xl rounded-2xl p-5 border-2 border-dashed border-white/5 hover:border-white/10 transition-all duration-300 group-hover:bg-[#0f0f0f]/70">
                     <div class="flex items-start justify-between mb-4">
@@ -558,10 +555,6 @@ date_default_timezone_set('Africa/Casablanca');
                             <div>
                                 <p class="text-[10px] text-on-surface-variant/25 uppercase tracking-widest font-semibold"><?= $table['capacity'] ?? 0 ?> seats</p>
                             </div>
-                        </div>
-                        <div class="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
-                            <div class="w-2 h-2 rounded-full bg-on-surface-variant/20"></div>
-                            <span class="text-[10px] font-medium text-on-surface-variant/30 uppercase tracking-wider">Free</span>
                         </div>
                     </div>
                     
@@ -579,6 +572,7 @@ date_default_timezone_set('Africa/Casablanca');
                     </a>
                 </div>
             </div>
+            
             <?php endif; ?>
             <?php endforeach; ?>
         </div>
@@ -607,6 +601,54 @@ date_default_timezone_set('Africa/Casablanca');
         
         setInterval(updateTimers, 1000);
         updateTimers();
+        
+        // Table filter functionality
+        function filterTables(status) {
+            const tabs = document.querySelectorAll('.status-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('bg-primary', 'text-on-primary', 'bg-secondary/20', 'text-secondary', 'bg-primary/20', 'text-primary', 'bg-green-500/20', 'text-green-400');
+                if (tab.dataset.status === 'all') {
+                    tab.classList.add('bg-white/10', 'text-on-surface');
+                } else if (tab.dataset.status === 'active') {
+                    tab.classList.add('text-secondary');
+                } else if (tab.dataset.status === 'booked') {
+                    tab.classList.add('text-primary');
+                } else if (tab.dataset.status === 'free') {
+                    tab.classList.add('text-green-400');
+                }
+            });
+            
+            const activeTab = document.querySelector(`.status-tab[data-status="${status}"]`);
+            if (activeTab) {
+                activeTab.classList.remove('bg-white/10', 'text-on-surface', 'text-secondary', 'text-primary', 'text-green-400');
+                if (status === 'all') {
+                    activeTab.classList.add('bg-primary', 'text-on-primary');
+                } else if (status === 'active') {
+                    activeTab.classList.add('bg-secondary/20', 'text-secondary');
+                } else if (status === 'booked') {
+                    activeTab.classList.add('bg-primary/20', 'text-primary');
+                } else if (status === 'free') {
+                    activeTab.classList.add('bg-green-500/20', 'text-green-400');
+                }
+            }
+            
+            const cards = document.querySelectorAll('.table-card');
+            cards.forEach(card => {
+                const cardStatus = card.dataset.status;
+                if (status === 'all') {
+                    card.style.display = '';
+                } else if (cardStatus === status) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Initialize filter tabs styling
+        document.addEventListener('DOMContentLoaded', function() {
+            filterTables('all');
+        });
         </script>
         <!-- Floating Quick Action for Admin -->
         <button class="fixed bottom-10 right-10 group">

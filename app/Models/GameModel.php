@@ -32,12 +32,12 @@ class GameModel extends Database {
         }
     }
 
-    public function getPaginated(int $page = 1, int $perPage = 12, ?int $categoryId = null, ?string $search = null): array
+    public function getPaginated(int $page = 1, int $perPage = 12, ?int $categoryId = null, ?string $search = null, ?string $difficulty = null, bool $includeUnavailable = false): array
     {
         try {
             $offset = ($page - 1) * $perPage;
             $params = [];
-            $whereClause = "WHERE g.status = 'available'";
+            $whereClause = $includeUnavailable ? "WHERE 1=1" : "WHERE g.status = 'available'";
             
             if ($categoryId) {
                 $whereClause .= " AND g.category_id = :category_id";
@@ -47,6 +47,11 @@ class GameModel extends Database {
             if ($search) {
                 $whereClause .= " AND g.name LIKE :search";
                 $params['search'] = "%$search%";
+            }
+            
+            if ($difficulty) {
+                $whereClause .= " AND g.difficulty = :difficulty";
+                $params['difficulty'] = $difficulty;
             }
             
             $countSql = "SELECT COUNT(*) FROM games g $whereClause";
@@ -70,6 +75,9 @@ class GameModel extends Database {
             }
             if ($search) {
                 $stmt->bindValue(':search', "%$search%");
+            }
+            if ($difficulty) {
+                $stmt->bindValue(':difficulty', $difficulty);
             }
             
             $stmt->execute();
@@ -263,6 +271,112 @@ class GameModel extends Database {
             return $stmt->fetch()['total'] ?? 0;
         } catch (\Exception $e) {
             return 0;
+        }
+    }
+
+    public function getAvailableGames($date, $startTime, $endTime, $page = 1, $perPage = 12, $categoryId = null, $search = null) {
+        try {
+            $offset = ($page - 1) * $perPage;
+            $params = [];
+            
+            $baseWhere = "WHERE g.status = 'available'";
+            
+            if ($categoryId) {
+                $baseWhere .= " AND g.category_id = :category_id";
+                $params['category_id'] = $categoryId;
+            }
+            
+            if ($search) {
+                $baseWhere .= " AND g.name LIKE :search";
+                $params['search'] = "%$search%";
+            }
+            
+            $sql = "SELECT g.*, c.name as category_name,
+                    g.spots - COALESCE((
+                        SELECT COUNT(*) FROM reservations r
+                        WHERE r.game_id = g.id
+                        AND r.date = :date
+                        AND r.status NOT IN ('cancelled', 'completed')
+                        AND (
+                            (r.start_time <= :start_time AND r.end_time > :start_time)
+                            OR (r.start_time < :end_time AND r.end_time >= :end_time)
+                            OR (r.start_time >= :start_time AND r.end_time <= :end_time)
+                        )
+                    ), 0) as available_spots
+                    FROM games g
+                    LEFT JOIN categories c ON g.category_id = c.id
+                    $baseWhere
+                    HAVING available_spots > 0
+                    ORDER BY g.name ASC
+                    LIMIT :limit OFFSET :offset";
+            
+            $params['date'] = $date;
+            $params['start_time'] = $startTime;
+            $params['end_time'] = $endTime;
+            $params['limit'] = $perPage;
+            $params['offset'] = $offset;
+            
+            $stmt = $this->db->prepare($sql);
+            foreach ($params as $key => $value) {
+                if (in_array($key, ['limit', 'offset', 'category_id'])) {
+                    $stmt->bindValue(":$key", $value, \PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue(":$key", $value);
+                }
+            }
+            $stmt->execute();
+            $games = $stmt->fetchAll();
+            
+            $countSql = "SELECT COUNT(*) as total FROM (
+                SELECT g.id,
+                g.spots - COALESCE((
+                    SELECT COUNT(*) FROM reservations r
+                    WHERE r.game_id = g.id
+                    AND r.date = :date
+                    AND r.status NOT IN ('cancelled', 'completed')
+                    AND (
+                        (r.start_time <= :start_time2 AND r.end_time > :start_time2)
+                        OR (r.start_time < :end_time2 AND r.end_time >= :end_time2)
+                        OR (r.start_time >= :start_time2 AND r.end_time <= :end_time2)
+                    )
+                ), 0) as available_spots
+                FROM games g
+                $baseWhere
+                HAVING available_spots > 0
+            ) as available_games";
+            
+            $countParams = [
+                'date' => $date,
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'start_time2' => $startTime,
+                'end_time2' => $endTime
+            ];
+            if ($categoryId) $countParams['category_id'] = $categoryId;
+            if ($search) $countParams['search'] = "%$search%";
+            
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($countParams);
+            $totalGames = (int) $countStmt->fetchColumn();
+            
+            $totalPages = max(1, ceil($totalGames / $perPage));
+            
+            return [
+                'games' => $games,
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'totalGames' => $totalGames,
+                'perPage' => $perPage
+            ];
+        } catch (\Exception $e) {
+            error_log("GameModel::getAvailableGames - " . $e->getMessage());
+            return [
+                'games' => [],
+                'currentPage' => 1,
+                'totalPages' => 0,
+                'totalGames' => 0,
+                'perPage' => $perPage
+            ];
         }
     }
 }

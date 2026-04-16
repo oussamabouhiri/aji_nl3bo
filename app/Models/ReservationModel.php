@@ -99,10 +99,11 @@ class ReservationModel extends Database {
 
     public function create($data) {
         try {
+            error_log("Executing INSERT query");
             $sql = "INSERT INTO reservations (user_id, table_id, game_id, date, start_time, end_time, spots, status, price) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([
+            $result = $stmt->execute([
                 $data['user_id'],
                 $data['table_id'],
                 $data['game_id'] ?? null,
@@ -112,8 +113,12 @@ class ReservationModel extends Database {
                 $data['spots'],
                 $data['price'] ?? 0
             ]);
-            return $this->db->lastInsertId();
+            error_log("Query executed, result: " . ($result ? "success" : "failed"));
+            $id = $this->db->lastInsertId();
+            error_log("Last insert ID: " . $id);
+            return $id;
         } catch (\Exception $e) {
+            error_log("Exception in create: " . $e->getMessage());
             return false;
         }
     }
@@ -180,6 +185,65 @@ class ReservationModel extends Database {
             return $stmt->execute([$id]);
         } catch (\Exception $e) {
             return false;
+        }
+    }
+
+    public function getActiveReservationsForGame($gameId, $date, $startTime, $endTime) {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM reservations 
+                    WHERE game_id = ? 
+                    AND date = ? 
+                    AND status NOT IN ('cancelled', 'completed')
+                    AND (
+                        (start_time <= ? AND end_time > ?) 
+                        OR (start_time < ? AND end_time >= ?)
+                        OR (start_time >= ? AND end_time <= ?)
+                    )";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$gameId, $date, $startTime, $startTime, $endTime, $endTime, $startTime, $endTime]);
+            return (int) $stmt->fetch()['count'];
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    public function isGameAvailable($gameId, $date, $startTime, $endTime) {
+        try {
+            $sql = "SELECT g.spots FROM games g WHERE g.id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$gameId]);
+            $game = $stmt->fetch();
+            
+            if (!$game) {
+                return false;
+            }
+            
+            $totalSpots = (int) $game['spots'];
+            $reservedSpots = $this->getActiveReservationsForGame($gameId, $date, $startTime, $endTime);
+            
+            return $reservedSpots < $totalSpots;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function getAvailableSpots($gameId, $date, $startTime, $endTime) {
+        try {
+            $sql = "SELECT g.spots FROM games g WHERE g.id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$gameId]);
+            $game = $stmt->fetch();
+            
+            if (!$game) {
+                return 0;
+            }
+            
+            $totalSpots = (int) $game['spots'];
+            $reservedSpots = $this->getActiveReservationsForGame($gameId, $date, $startTime, $endTime);
+            
+            return max(0, $totalSpots - $reservedSpots);
+        } catch (\Exception $e) {
+            return 0;
         }
     }
 }

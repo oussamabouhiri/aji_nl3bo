@@ -135,7 +135,7 @@ class SessionModel extends Database {
                     LEFT JOIN users u ON r.user_id = u.id
                     LEFT JOIN games g ON r.game_id = g.id
                     LEFT JOIN game_tables t ON r.table_id = t.id
-                    WHERE r.date = ? AND r.status IN ('pending', 'confirmed')
+                    WHERE r.date = ? AND r.status = 'confirmed'
                     ORDER BY r.start_time ASC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$today]);

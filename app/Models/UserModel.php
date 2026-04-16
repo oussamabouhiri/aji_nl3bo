@@ -140,6 +140,10 @@ class UserModel extends Database
 
     public function setAdmin(string $name, string $email, string $password): int|false
     {
+        $name = trim($name);
+        $email = trim($email);
+        $password = trim($password);
+
         if (empty($name) || empty($email) || empty($password)) {
             error_log("UserModel::setAdmin - Missing required fields");
             return false;

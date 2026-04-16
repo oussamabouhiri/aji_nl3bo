@@ -18,23 +18,25 @@ class GameController {
     }
 
     public function index() {
+        $page = max(1, intval($_GET['page'] ?? 1));
+        $perPage = 6;
         $category = $_GET['category'] ?? null;
         $difficulty = $_GET['difficulty'] ?? null;
         $search = $_GET['search'] ?? null;
         
-        if ($category || $difficulty || $search) {
-            $games = $this->gameModel->filter($category, $difficulty, $search);
-        } else {
-            $games = $this->gameModel->getAllWithCategories();
-        }
+        $result = $this->gameModel->getPaginated($page, $perPage, $category, $search, $difficulty, true);
         
         $categories = $this->categoryModel->getCategories();
-        $totalGames = $this->gameModel->count(true);
         
         $this->utility->view("admin/games", [
-            'games' => $games,
+            'games' => $result['games'],
             'categories' => $categories,
-            'totalGames' => $totalGames
+            'pagination' => [
+                'currentPage' => $result['currentPage'],
+                'totalPages' => $result['totalPages'],
+                'totalGames' => $result['totalGames'],
+                'perPage' => $result['perPage']
+            ]
         ]);
     }
 

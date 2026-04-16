@@ -14,6 +14,73 @@ class ReservationController {
         $this->utility = new Utility();
     }
 
+    public function createUser() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/reservation');
+            return;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userId = $_SESSION['user_id'] ?? null;
+            $user = $_SESSION['user'] ?? null;
+            
+            if (!$userId || !$user) {
+                $this->utility->redirect('/login');
+                return;
+            }
+            
+            $date = $_POST['date'] ?? null;
+            $startTime = $_POST['start_time'] ?? null;
+            $duration = intval($_POST['duration'] ?? 2);
+            $gameId = $_POST['game_id'] ?? null;
+            $tableId = $_POST['table_id'] ?? null;
+            $spots = intval($_POST['spots'] ?? 0);
+            
+            $endTime = null;
+            if ($startTime) {
+                $start = new \DateTime($startTime);
+                $end = $start->modify("+{$duration} hours");
+                $endTime = $end->format('H:i:s');
+            }
+            
+            if ($gameId && $gameId !== '0') {
+                $gameModel = new \App\Models\GameModel();
+                $game = $gameModel->getById($gameId);
+                
+                if (!$this->reservationModel->isGameAvailable($gameId, $date, $startTime, $endTime)) {
+                    $_SESSION['error'] = "Sorry, the selected game is not available for the requested time slot. All copies are already reserved.";
+                    $this->utility->redirect('/reservation');
+                    return;
+                }
+                
+                $price = $game['price'] ?? 0;
+            } else {
+                $price = 0;
+            }
+            
+            $data = [
+                'user_id' => $userId,
+                'table_id' => $tableId,
+                'game_id' => ($gameId && $gameId !== '0') ? $gameId : null,
+                'date' => $date,
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'spots' => $spots,
+                'price' => $price
+            ];
+            
+            if ($data['table_id'] && $data['date'] && $data['start_time'] && $data['spots'] > 0) {
+                $id = $this->reservationModel->create($data);
+                if ($id) {
+                    $this->utility->redirect('/my-reservations');
+                    return;
+                }
+            }
+        }
+        
+        $this->utility->redirect('/reservation');
+    }
+
     public function index() {
         $page = $_GET['page'] ?? 1;
         $perPage = 10;
@@ -104,13 +171,13 @@ class ReservationController {
         $this->utility->redirect('/admin/reservations/view/' . $id);
     }
 
-    public function confirm() {
+    public function confirm($params = []) {
         if (!Csrf::validate()) {
             $this->utility->redirect('/admin/reservations');
             return;
         }
         
-        $id = $_POST['id'] ?? $_GET['id'] ?? null;
+        $id = $params['id'] ?? $_POST['id'] ?? null;
         
         if ($id) {
             $this->reservationModel->confirm($id);
@@ -119,13 +186,13 @@ class ReservationController {
         $this->utility->redirect('/admin/reservations');
     }
 
-    public function cancel() {
+    public function cancel($params = []) {
         if (!Csrf::validate()) {
             $this->utility->redirect('/admin/reservations');
             return;
         }
         
-        $id = $_POST['id'] ?? $_GET['id'] ?? null;
+        $id = $params['id'] ?? $_POST['id'] ?? null;
         
         if ($id) {
             $this->reservationModel->cancel($id);
@@ -134,13 +201,13 @@ class ReservationController {
         $this->utility->redirect('/admin/reservations');
     }
 
-    public function restore() {
+    public function restore($params = []) {
         if (!Csrf::validate()) {
             $this->utility->redirect('/admin/reservations');
             return;
         }
         
-        $id = $_POST['id'] ?? $_GET['id'] ?? null;
+        $id = $params['id'] ?? $_POST['id'] ?? null;
         
         if ($id) {
             $this->reservationModel->restore($id);
@@ -157,13 +224,13 @@ class ReservationController {
         $this->utility->redirect('/admin/sessions');
     }
 
-    public function delete() {
+    public function delete($params = []) {
         if (!Csrf::validate()) {
             $this->utility->redirect('/admin/reservations');
             return;
         }
         
-        $id = $_POST['id'] ?? $_GET['id'] ?? null;
+        $id = $params['id'] ?? $_POST['id'] ?? null;
         
         if ($id) {
             $this->reservationModel->delete($id);
