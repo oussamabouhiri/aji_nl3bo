@@ -66,7 +66,7 @@ class UserController {
         $categoryId = isset($_GET['category']) ? intval($_GET['category']) : null;
         $search = trim($_GET['search'] ?? '');
         
-        $perPage = 3;
+        $perPage = ($page === 1) ? 3 : 4;
         $result = $this->gameModel->getPaginated($page, $perPage, $categoryId, $search ?: null);
         
         $tables = $this->tableModel->getAll();
