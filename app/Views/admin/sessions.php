@@ -1,4 +1,7 @@
-<?php date_default_timezone_set('Africa/Casablanca'); ?>
+<?php 
+use App\Helper\Csrf;
+date_default_timezone_set('Africa/Casablanca'); 
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -350,6 +353,7 @@
                     
                     <!-- Game Selector Form -->
                     <form method="POST" action="<?= BASE_URL ?>/admin/sessions/changeGame" class="mb-3">
+                        <?= Csrf::field() ?>
                         <input type="hidden" name="session_id" value="<?= $session['id'] ?? 0 ?>">
                         <label class="text-[10px] text-secondary/60 uppercase tracking-wider font-semibold mb-2 block">Change Game</label>
                         <div class="flex gap-2">
@@ -391,6 +395,7 @@
                     <?php endif; ?>
                     
                     <form method="POST" action="<?= BASE_URL ?>/admin/sessions/end">
+                        <?= Csrf::field() ?>
                         <input type="hidden" name="id" value="<?= $session['id'] ?? 0 ?>">
                         <button type="submit" class="w-full py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
                             <span class="material-symbols-outlined text-lg">stop</span>
@@ -440,6 +445,7 @@
                     
                     <!-- Game Selector for Start -->
                     <form method="POST" action="<?= BASE_URL ?>/admin/sessions/start" class="mb-4">
+                        <?= Csrf::field() ?>
                         <input type="hidden" name="reservation_id" value="<?= $reservation['id'] ?? '' ?>">
                         <div class="mb-4">
                             <label class="text-[10px] text-yellow-400/60 uppercase tracking-wider font-semibold mb-2 flex items-center gap-1 block">

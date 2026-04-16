@@ -122,6 +122,7 @@ date_default_timezone_set('Africa/Casablanca');
                     <div class="space-y-3">
                         <?php if ($status === 'pending'): ?>
                         <form method="POST" action="<?= BASE_URL ?>/admin/reservations/confirm">
+                            <?= Csrf::field() ?>
                             <input type="hidden" name="id" value="<?= $reservation['id'] ?>">
                             <button type="submit" class="w-full bg-green-500/20 hover:bg-green-500/30 text-green-400 font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">check_circle</span>
@@ -134,6 +135,7 @@ date_default_timezone_set('Africa/Casablanca');
                         </button>
                         <?php elseif ($status === 'confirmed'): ?>
                         <form method="POST" action="<?= BASE_URL ?>/admin/reservations/start-session/<?= $reservation['id'] ?>">
+                            <?= Csrf::field() ?>
                             <input type="hidden" name="id" value="<?= $reservation['id'] ?>">
                             <button type="submit" class="w-full brass-gradient text-on-primary font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">play_arrow</span>
@@ -146,6 +148,7 @@ date_default_timezone_set('Africa/Casablanca');
                         </button>
                         <?php elseif ($status === 'cancelled'): ?>
                         <form method="POST" action="<?= BASE_URL ?>/admin/reservations/restore">
+                            <?= Csrf::field() ?>
                             <input type="hidden" name="id" value="<?= $reservation['id'] ?>">
                             <button type="submit" class="w-full bg-primary/20 hover:bg-primary/30 text-primary font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">restore</span>
@@ -190,6 +193,7 @@ date_default_timezone_set('Africa/Casablanca');
         <div class="flex justify-end gap-4">
             <button onclick="document.getElementById('cancelModal').close()" class="px-6 py-2 rounded-full text-secondary hover:bg-surface-container">Keep</button>
             <form method="POST" action="<?= BASE_URL ?>/admin/reservations/cancel" class="inline">
+                <?= Csrf::field() ?>
                 <input type="hidden" name="id" value="<?= $reservation['id'] ?>">
                 <button type="submit" class="px-6 py-2 bg-error text-on-error rounded-full hover:opacity-90">Cancel Reservation</button>
             </form>
@@ -203,6 +207,7 @@ date_default_timezone_set('Africa/Casablanca');
         <div class="flex justify-end gap-4">
             <button onclick="document.getElementById('deleteModal').close()" class="px-6 py-2 rounded-full text-secondary hover:bg-surface-container">Keep</button>
             <form method="POST" action="<?= BASE_URL ?>/admin/reservations/delete" class="inline">
+                <?= Csrf::field() ?>
                 <input type="hidden" name="id" value="<?= $reservation['id'] ?>">
                 <button type="submit" class="px-6 py-2 bg-error text-on-error rounded-full hover:opacity-90">Delete</button>
             </form>
