@@ -1,3 +1,7 @@
+<?php
+?>
+
+
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -89,6 +93,7 @@
                 </div>
               </div>
             </label>
+            
             <?php foreach ($games ?? [] as $game): ?>
             <label class="game-option cursor-pointer">
               <input type="radio" name="game_id" value="<?= $game['id'] ?>" class="hidden peer">

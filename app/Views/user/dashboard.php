@@ -1,6 +1,7 @@
 <?php
 $userName = $_SESSION['user_name'] ?? 'User';
-$baseUrl = \App\Helper\Utility::baseUrl();
+$config = require __DIR__ . '/../../../config/app.php';
+$baseUrl = $config['base_url'];
 ?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
@@ -110,25 +111,25 @@ $baseUrl = \App\Helper\Utility::baseUrl();
             </div>
         </div>
         <nav class="flex-1 space-y-1">
-            <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center space-x-3" href="<?= $baseUrl ?>dashboard">
+            <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full mx-2 px-4 py-3 font-bold flex items-center space-x-3" href="<?= $baseUrl ?>/dashboard">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span class="font-label">Dashboard</span>
             </a>
-            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>games">
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>/games">
                 <span class="material-symbols-outlined">sports_esports</span>
                 <span class="font-label">Games</span>
             </a>
-            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>reservation">
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>/reservation">
                 <span class="material-symbols-outlined">event_available</span>
                 <span class="font-label">Reservations</span>
             </a>
-            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>profile">
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>/profile">
                 <span class="material-symbols-outlined">person</span>
                 <span class="font-label">Profile</span>
             </a>
         </nav>
         <div class="px-4 mt-auto pt-6 space-y-1">
-            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>logout">
+            <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all hover:text-white flex items-center space-x-3" href="<?= $baseUrl ?>/logout">
                 <span class="material-symbols-outlined">logout</span>
                 <span class="font-label">Logout</span>
             </a>

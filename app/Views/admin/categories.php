@@ -243,7 +243,7 @@
                 <dialog id="createCategoryModal" class="bg-surface-container rounded-2xl p-6 backdrop:bg-black/50 w-full max-w-md">
                     <h3 class="text-xl font-bold text-primary mb-6">Create New Category</h3>
                     <form method="POST" action="<?= BASE_URL ?>/admin/categories/create" class="space-y-4">
-                        <?= Csrf::field() ?>
+                        <!--  //Csrf::field()  -->
                         <div>
                             <label class="block text-sm font-medium text-secondary mb-2">Category Name</label>
                             <input type="text" name="name" required
@@ -268,8 +268,8 @@
             <!-- Bento Category Grid (List View alternative for premium feel) -->
             <div class="space-y-6">
                 <?php
-use App\Helper\Csrf;
-$category_styles = [
+                use App\Helper\Csrf;
+                $category_styles = [
                     'Strategy' => ['icon' => 'tactic', 'color' => 'primary'],
                     'Atmosphere' => ['icon' => 'auto_awesome', 'color' => 'secondary'],
                     'Family' => ['icon' => 'diversity_3', 'color' => 'tertiary'],
@@ -280,7 +280,6 @@ $category_styles = [
                 -
                 $colorIndex = 0;
                 $iconIndex = 0;
-                
                 foreach ($categories as $category): 
                     $style = $category_styles[$category['name']] ?? ['icon' => $icons[$iconIndex++ % count($icons)], 'color' => $colors[$colorIndex++ % count($colors)]];
                 ?>

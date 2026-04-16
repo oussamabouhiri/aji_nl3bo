@@ -50,4 +50,10 @@ class Utility {
             self::abort(403);
         }
     }
+
+    public static function url(string $path): string {
+        $config = require dirname(__DIR__) . '/../config/app.php';
+        return $config['base_url'] . $path;
+    }
+
 }

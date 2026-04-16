@@ -3,7 +3,7 @@
 namespace App\Helper;
 
 class Csrf {
-    private const TOKEN_NAME = '_csrf_token';
+    private const TOKEN_NAME = 'csrf_token';
     private const TOKEN_LENGTH = 32;
 
     public static function generate(): string {

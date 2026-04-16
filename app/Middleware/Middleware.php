@@ -9,36 +9,40 @@ class Middleware
     
     public function auth(): void
     {
-        if (!isset($_SESSION['user_id'])) {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (empty($_SESSION['user_id'])) {
             Utility::redirect('/login');
-            exit;
         }
     }
 
     
     public function guest(): void
     {
-        if (isset($_SESSION['user_id'])) {
-            if ($_SESSION['user_role'] === 'admin') {
-                Utility::redirect('/admin');
-            } else {
-                Utility::redirect('/');
-            }
-            exit;
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
+        
+        // Skip middleware for login/register - they're public
+        // This middleware is now optional for guests only
     }
 
     
     public function admin(): void
     {
-        if (!isset($_SESSION['user_id'])) {
-            Utility::redirect('/login');
-            exit;
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
         
-        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+        if (empty($_SESSION['user_id'])) {
+            Utility::redirect('/login');
+            return;
+        }
+        
+        if (empty($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
             Utility::redirect('/');
-            exit;
         }
     }
 }

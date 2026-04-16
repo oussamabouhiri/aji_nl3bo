@@ -23,15 +23,19 @@ class UserController {
         $this->utility = new Utility();
     }
 
-    public function home() {
+    public function games() {
         $games = $this->gameModel->getAll();
         $this->utility->view("user/games", [
             'games' => $games
         ]);
     }
 
-    public function games() {
-        $this->home();
+    // public function games() {
+    //     $this->home();
+    // }
+
+    public function dashboard () {
+        $this->utility->view("user/dashboard");
     }
 
     public function gameDetail($params = []) {

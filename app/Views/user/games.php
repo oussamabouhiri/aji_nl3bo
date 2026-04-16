@@ -122,7 +122,7 @@
     <!-- TopNavBar -->
     <nav class="fixed top-0 w-full z-50 glass-nav shadow-2xl shadow-black/40">
         <div class="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
-            <a href="/" class="text-2xl font-black tracking-tighter text-[#e9c176] font-headline">Aji L3bo</a>
+            <a href="<?= BASE_URL ?>/dashboard" class="text-2xl font-black tracking-tighter text-[#e9c176] font-headline">Aji L3bo</a>
             <div class="hidden md:flex items-center space-x-8">
                 <a class="font-body text-[#e9c176] border-b-2 border-[#e9c176] pb-1" href="<?= BASE_URL ?>/games">Games</a>
                 <a class="font-body text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="<?= BASE_URL ?>/my-reservations">My Reservations</a>

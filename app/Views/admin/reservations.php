@@ -1,3 +1,12 @@
+<?php 
+
+// echo json_encode($reservations);
+
+// die();
+
+?>
+
+
 <?php date_default_timezone_set('Africa/Casablanca'); ?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
@@ -311,6 +320,7 @@
                     <tbody>
                         <?php 
                         $listReservations = $reservations ?? [];
+                        
                         foreach ($listReservations as $res): 
                             $status = $res['status'] ?? 'pending';
                             $statusColors = [

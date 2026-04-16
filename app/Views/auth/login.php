@@ -161,6 +161,8 @@
                             <?= htmlspecialchars($error) ?>
                         </div>
                         <?php endif; ?>
+                        <!-- CSRF Token -->
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <!-- Email Field -->
                         <div class="space-y-2 group">
                             <label

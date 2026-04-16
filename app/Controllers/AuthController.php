@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Helper\Utility;
 use App\Helper\Csrf;
-use App\Service\AuthService;
+use App\Services\AuthService;
 
 class AuthController
 {
@@ -17,6 +17,7 @@ class AuthController
 
     public function loginForm(): void
     {
+        Csrf::generate();
         Utility::view('auth/login');
     }
 
@@ -59,7 +60,7 @@ class AuthController
         }
 
         if ($user['role'] === 'admin') {
-            Utility::redirect('/admin/dashboard');
+            Utility::redirect('/admin');
         } else {
             Utility::redirect('/dashboard');
         }
@@ -67,6 +68,7 @@ class AuthController
 
     public function registerForm(): void
     {
+        Csrf::generate();
         Utility::view('auth/register');
     }
 

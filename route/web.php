@@ -1,18 +1,101 @@
 <?php
 
 use App\Route\Router;
+require_once __DIR__ . '/Router.php';
+
+use App\Controllers\AdminController;
+use App\Controllers\AuthController;
+use App\Controllers\CategoryController;
 use App\Controllers\GameController;
+use App\Controllers\HomeController;
+use App\Controllers\ReservationController;
+use App\Controllers\SessionController;
+use App\Controllers\UserController;
 
-// LIST
-Router::get('/games', [GameController::class, 'index']);
 
-// CREATE
-Router::get('/games/create', [GameController::class, 'createForm']);
-Router::post('/games/create', [GameController::class, 'store']);
+// =====================
+// PUBLIC ROUTES
+// =====================
 
-// EDIT
-Router::get('/games/edit/{id:\d+}', [GameController::class, 'edit']);
-Router::post('/games/update/{id:\d+}', [GameController::class, 'update']);
+// Home (public)
+Router::get('/', [HomeController::class, 'index']);
+Router::get('/home', [HomeController::class, 'index']);
 
-// DELETE (POST ⚠️)
-Router::post('/games/delete/{id:\d+}', [GameController::class, 'delete']);
+
+// Auth routes (guests only - redirect if logged in)
+Router::get('/login', [AuthController::class, 'loginForm'])->middleware('guest');
+Router::post('/login', [AuthController::class, 'login'])->middleware('guest');
+Router::get('/register', [AuthController::class, 'registerForm'])->middleware('guest');
+Router::post('/register', [AuthController::class, 'register'])->middleware('guest');
+
+// Logout (auth required)
+Router::get('/logout', [AuthController::class, 'logout'])->middleware('auth');
+
+// =====================
+// PROTECTED USER ROUTES
+// =====================
+
+//
+Router::get('/dashboard', [UserController::class, 'dashboard'])->middleware('auth');
+
+// Reservation (auth required)
+Router::get('/reservation', [UserController::class, 'reservation'])->middleware('auth');
+Router::post('/reservation/create', [UserController::class, 'createReservation'])->middleware('auth');
+Router::post('/reservation/cancel', [UserController::class, 'cancelReservation'])->middleware('auth');
+
+// My Reservations (auth required)
+Router::get('/my-reservations', [UserController::class, 'myReservations'])->middleware('auth');
+
+// Profile (auth required)
+Router::get('/profile', [UserController::class, 'profile'])->middleware('auth');
+
+// Games (auth required)
+Router::get('/games', [UserController::class, 'games'])->middleware('auth');
+Router::get('/games/{id}', [UserController::class, 'gameDetail'])->middleware('auth');
+
+// =====================
+// ADMIN ROUTES
+// =====================
+
+// Admin Dashboard
+Router::get('/admin', [AdminController::class, 'dashboard'])->middleware('admin');
+
+// Categories (admin)
+Router::get('/admin/categories', [CategoryController::class, 'index'])->middleware('admin');
+Router::post('/admin/categories/create', [CategoryController::class, 'create'])->middleware('admin');
+Router::post('/admin/categories/update/{id}', [CategoryController::class, 'update'])->middleware('admin');
+Router::post('/admin/categories/delete/{id}', [CategoryController::class, 'delete'])->middleware('admin');
+
+// Admin Reservations
+Router::get('/admin/reservations', [ReservationController::class, 'index'])->middleware('admin');
+Router::get('/admin/reservations/view/{id}', [ReservationController::class, 'view'])->middleware('admin');
+Router::post('/admin/reservations/create', [ReservationController::class, 'create'])->middleware('admin');
+Router::post('/admin/reservations/update', [ReservationController::class, 'update'])->middleware('admin');
+Router::post('/admin/reservations/confirm', [ReservationController::class, 'confirm'])->middleware('admin');
+Router::post('/admin/reservations/cancel', [ReservationController::class, 'cancel'])->middleware('admin');
+Router::post('/admin/reservations/restore', [ReservationController::class, 'restore'])->middleware('admin');
+Router::post('/admin/reservations/start-session/{id}', [ReservationController::class, 'startSession'])->middleware('admin');
+Router::post('/admin/reservations/delete', [ReservationController::class, 'delete'])->middleware('admin');
+
+// Sessions (admin)
+Router::get('/admin/sessions', [SessionController::class, 'index'])->middleware('admin');
+Router::get('/admin/sessions/history', [SessionController::class, 'history'])->middleware('admin');
+Router::get('/admin/sessions/view/{id}', [SessionController::class, 'view'])->middleware('admin');
+Router::post('/admin/sessions/start', [SessionController::class, 'start'])->middleware('admin');
+Router::post('/admin/sessions/changeGame', [SessionController::class, 'changeGame'])->middleware('admin');
+Router::post('/admin/sessions/end', [SessionController::class, 'end'])->middleware('admin');
+Router::post('/admin/sessions/delete', [SessionController::class, 'delete'])->middleware('admin');
+
+// Games Admin
+Router::get('/admin/games', [GameController::class, 'index'])->middleware('admin');
+Router::get('/admin/games/create', [GameController::class, 'create'])->middleware('admin');
+Router::get('/admin/games/edit/{id}', [GameController::class, 'edit'])->middleware('admin');
+Router::post('/admin/games/store', [GameController::class, 'store'])->middleware('admin');
+Router::post('/admin/games/update', [GameController::class, 'update'])->middleware('admin');
+Router::post('/admin/games/delete/{id}', [GameController::class, 'delete'])->middleware('admin');
+
+// Settings (admin)
+Router::get('/admin/settings', [CategoryController::class, 'index'])->middleware('admin');
+
+
+Router::match();

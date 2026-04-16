@@ -49,19 +49,23 @@ class Router {
     }
 
     static public function request(): array {
-        $basePath = self::$config['base_path'];
-        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $path = str_replace($basePath, '', $path);
-        $path = '/' . ltrim($path, '/');
-        $path = rtrim($path, '/');
-        
-        if ($path === '/') {
-            $path = '/';
+        if (isset($_GET['url'])) {
+            $path = '/' . rtrim(ltrim($_GET['url'], '/'), '/');
+            if ($path === '') $path = '/';
+        } else {
+            $basePath = self::$config['base_path'] ?? '/';
+            $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+            $path = parse_url($requestUri, PHP_URL_PATH) ?: '/';
+            // Use case-insensitive replace to prevent 404s when folder name case doesn't match URL
+            $path = str_ireplace($basePath, '', $path);
+            $path = '/' . ltrim($path, '/');
+            $path = rtrim($path, '/');
+            if ($path === '') $path = '/';
         }
-        
+
         return [
             'path' => $path, 
-            'method' => $_SERVER['REQUEST_METHOD']
+            'method' => $_SERVER['REQUEST_METHOD'] ?? 'CLI'
         ];
     }
 
