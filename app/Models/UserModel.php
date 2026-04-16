@@ -137,4 +137,53 @@ class UserModel extends Database
             return false;
         }
     }
+
+    public function setAdmin(string $name, string $email, string $password): int|false
+    {
+        if (empty($name) || empty($email) || empty($password)) {
+            error_log("UserModel::setAdmin - Missing required fields");
+            return false;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            error_log("UserModel::setAdmin - Invalid email format");
+            return false;
+        }
+
+        try {
+            $this->db->beginTransaction();
+
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            $stmt = $this->db->prepare("SELECT id FROM users WHERE email = :email");
+            $stmt->execute(['email' => $email]);
+            $existingUser = $stmt->fetch();
+
+            if ($existingUser) {
+                $stmt = $this->db->prepare("UPDATE users SET name = :name, password = :password, role = 'admin' WHERE id = :id");
+                $stmt->execute([
+                    'name' => $name,
+                    'password' => $hashedPassword,
+                    'id' => $existingUser['id']
+                ]);
+                $userId = (int) $existingUser['id'];
+            } else {
+                $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, 'admin')");
+                $stmt->execute([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => $hashedPassword
+                ]);
+                $userId = (int) $this->db->lastInsertId();
+            }
+
+            $this->db->commit();
+            return $userId;
+
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            error_log("UserModel::setAdmin - " . $e->getMessage());
+            return false;
+        }
+    }
 }
