@@ -2,20 +2,20 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\UserModel;
 
 class AuthService
 {
-    private User $userModel;
+    private UserModel $userModel;
 
     public function __construct()
     {
-        $this->userModel = new User();
+        $this->userModel = new UserModel();
     }
 
     public function attempt(string $email, string $password): array|false
     {
-        $user = $this->userModel->findByEmail($email);
+        $user = $this->userModel->getByEmail($email);
 
         if (!$user || !password_verify($password, $user['password'])) {
             return false;
@@ -28,7 +28,7 @@ class AuthService
         return $user;
     }
 
-    public function register(array $data): bool
+    public function register(array $data): bool|int
     {
         if ($this->userModel->emailExists($data['email'])) {
             return false;
