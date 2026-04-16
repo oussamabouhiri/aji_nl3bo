@@ -109,7 +109,6 @@
                   </div>
                 </div>
                 <div class="mt-3 pt-3 border-t border-outline-variant/10">
-                  <span class="text-lg font-bold text-secondary">0 MAD</span>
                 </div>
               </div>
             </label>
