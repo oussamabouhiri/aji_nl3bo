@@ -28,15 +28,7 @@ INSERT INTO users (name, email, password, phone, role) VALUES
 ('Fatima', 'fatima@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0672345678', 'user'),
 ('Omar', 'omar@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0683456789', 'user');
 
--- Sample reservations for today (some time-up for testing game change)
-INSERT INTO reservations (user_id, table_id, game_id, date, start_time, end_time, spots, status, price) VALUES
-(2, 3, 1, CURDATE(), '08:00:00', '10:00:00', 4, 'confirmed', 80.00),  -- Time's up, ready to start
-(3, 4, 5, CURDATE(), CURTIME(), DATE_ADD(CURTIME(), INTERVAL 2 HOUR), 4, 'pending', 150.00),  -- Current time reservation
-(4, 5, NULL, CURDATE(), CURTIME(), DATE_ADD(CURTIME(), INTERVAL 2 HOUR), 6, 'pending', 0.00),  -- No game selected yet
-(2, 3, 11, CURDATE(), CURTIME(), DATE_ADD(CURTIME(), INTERVAL 2 HOUR), 4, 'pending', 50.00),  -- Game already selected
-(4, 6, NULL, CURDATE(), '14:00:00', '16:00:00', 6, 'pending', 0.00);  -- Future reservation, no game
-
--- Insert games (password for all users is: 'password')
+-- Insert games FIRST (password for all users is: 'password')
 INSERT INTO games (name, description, difficulty, min_players, max_players, spots, duration, price, category_id, image_url, status) VALUES
 -- Strategy Games
 ('Catan', 'Build settlements, roads, and trade resources to become the dominant force on the island.', 'medium', 3, 4, 4, 90, 80.00, 1, 'https://picsum.photos/seed/catan/400/300', 'available'),
@@ -96,3 +88,11 @@ INSERT INTO games (name, description, difficulty, min_players, max_players, spot
 ('Aeons End', 'Battle monsters using unique powers and custom cards in this cooperative deckbuilder.', 'hard', 2, 4, 4, 60, 100.00, 6, 'https://picsum.photos/seed/aeonsend/400/300', 'available'),
 ('Clank!', 'Grab treasure, avoid the dragon, and escape the dungeon with your life and loot.', 'medium', 2, 4, 4, 60, 80.00, 6, 'https://picsum.photos/seed/clank/400/300', 'available'),
 ('Lord of the Rings: Journeys', 'Explore Middle-earth through this narrative-driven adventure game.', 'medium', 2, 4, 4, 60, 90.00, 6, 'https://picsum.photos/seed/lotr/400/300', 'available');
+
+-- Sample reservations for today (INSERT AFTER games for foreign key integrity)
+INSERT INTO reservations (user_id, table_id, game_id, date, start_time, end_time, spots, status, price) VALUES
+(2, 3, 1, CURDATE(), '08:00:00', '10:00:00', 4, 'confirmed', 80.00),   -- Time's up, ready to start
+(3, 4, 5, CURDATE(), DATE_ADD(CURTIME(), INTERVAL 1 HOUR), DATE_ADD(CURTIME(), INTERVAL 3 HOUR), 4, 'pending', 150.00),  -- Future reservation
+(4, 5, NULL, CURDATE(), DATE_ADD(CURTIME(), INTERVAL 2 HOUR), DATE_ADD(CURTIME(), INTERVAL 4 HOUR), 6, 'pending', 0.00),  -- No game selected yet
+(2, 6, 1, CURDATE(), DATE_ADD(CURTIME(), INTERVAL 3 HOUR), DATE_ADD(CURTIME(), INTERVAL 5 HOUR), 4, 'pending', 80.00),  -- Game already selected
+(4, 7, NULL, CURDATE(), '14:00:00', '16:00:00', 6, 'pending', 0.00);  -- Future reservation, no game

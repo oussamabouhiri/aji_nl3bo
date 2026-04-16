@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS sessions (
     ended_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
-    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS session_games (
