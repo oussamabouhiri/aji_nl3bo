@@ -114,19 +114,19 @@
             <label class="game-option cursor-pointer">
               <input type="radio" name="game_id" value="<?= $game['id'] ?>" class="hidden peer">
               <div class="p-4 rounded-xl border-2 border-outline-variant/10 peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
-                <div class="flex items-start gap-4">
+                <div class="flex items-center gap-4">
                   <img src="<?= $game['image_url'] ?? 'https://picsum.photos/seed/' . $game['id'] . '/100/100' ?>" class="w-16 h-16 rounded-lg object-cover flex-shrink-0">
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-bold text-on-surface truncate" title="<?= $game['name'] ?>"><?= $game['name'] ?></h3>
+                  <div class="flex-1">
+                    <h3 class="font-bold text-on-surface"><?= $game['name'] ?></h3>
                     <p class="text-xs text-secondary"><?= $game['category_name'] ?? 'Board Game' ?></p>
                     <div class="flex items-center gap-3 mt-2 text-xs text-secondary">
                       <span><?= $game['min_players'] ?? 2 ?>-<?= $game['max_players'] ?? 4 ?> players</span>
                       <span><?= $game['duration'] ?? 60 ?> min</span>
                     </div>
                   </div>
-                  <div class="flex-shrink-0 text-right">
-                    <span class="text-lg font-bold text-primary whitespace-nowrap"><?= number_format($game['price'] ?? 0, 2) ?> MAD</span>
-                  </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-outline-variant/10">
+                  <span class="text-lg font-bold text-primary"><?= number_format($game['price'] ?? 0, 2) ?> MAD</span>
                 </div>
               </div>
             </label>
