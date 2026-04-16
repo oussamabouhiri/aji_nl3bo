@@ -1,4 +1,6 @@
 <?php 
+use App\Helper\Csrf;
+date_default_timezone_set('Africa/Casablanca');
 
 // echo json_encode($reservations);
 

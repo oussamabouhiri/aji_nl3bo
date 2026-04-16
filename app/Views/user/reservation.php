@@ -1,5 +1,4 @@
-<?php
-?>
+<?php use App\Helper\Csrf; date_default_timezone_set('Africa/Casablanca'); ?>
 
 
 <!DOCTYPE html>
@@ -69,6 +68,7 @@
     </header>
 
     <form method="POST" action="<?= BASE_URL ?>/reservation/create" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <?= Csrf::field() ?>
       <!-- Left: Form -->
       <div class="lg:col-span-2 space-y-6">
         <!-- Game Selection -->

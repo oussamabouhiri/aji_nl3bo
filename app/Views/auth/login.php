@@ -1,3 +1,4 @@
+<?php use App\Helper\Csrf; date_default_timezone_set('Africa/Casablanca'); ?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -161,8 +162,7 @@
                             <?= htmlspecialchars($error) ?>
                         </div>
                         <?php endif; ?>
-                        <!-- CSRF Token -->
-                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                        <?= Csrf::field() ?>
                         <!-- Email Field -->
                         <div class="space-y-2 group">
                             <label

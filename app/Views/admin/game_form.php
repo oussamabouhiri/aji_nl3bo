@@ -1,3 +1,4 @@
+<?php use App\Helper\Csrf; date_default_timezone_set('Africa/Casablanca'); ?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -95,6 +96,7 @@
 
             <!-- Form -->
             <form method="POST" action="<?= BASE_URL ?>/admin/games/<?= ($action === 'edit') ? 'update' : 'store' ?>" class="bg-surface-container rounded-2xl p-8 space-y-6">
+                <?= Csrf::field() ?>
                 <?php if ($action === 'edit'): ?>
                 <input type="hidden" name="id" value="<?= $game['id'] ?? '' ?>">
                 <?php endif; ?>

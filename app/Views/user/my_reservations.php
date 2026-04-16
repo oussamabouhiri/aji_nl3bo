@@ -1,4 +1,6 @@
 <?php
+use App\Helper\Csrf;
+date_default_timezone_set('Africa/Casablanca');
 $pageTitle = 'My Reservations - Aji L3bo';
 $reservations = $reservations ?? [];
 ?>
@@ -120,6 +122,7 @@ $reservations = $reservations ?? [];
                 <?php if ($status === 'pending' || $status === 'confirmed'): ?>
                 <div class="flex justify-end">
                     <form method="POST" action="<?= BASE_URL ?>/reservation/cancel" class="inline">
+                        <?= Csrf::field() ?>
                         <input type="hidden" name="id" value="<?= $res['id'] ?>">
                         <button type="submit" class="text-error hover:text-error/80 text-sm font-medium transition-colors">
                             Cancel Reservation
