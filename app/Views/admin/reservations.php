@@ -367,6 +367,7 @@ date_default_timezone_set('Africa/Casablanca');
                                         <span class="material-symbols-outlined text-sm">visibility</span>
                                     </a>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/reservations/start-session/<?= $res['id'] ?>" class="inline">
+                                        <?= Csrf::field() ?>
                                         <button type="submit" class="w-8 h-8 rounded-full flex items-center justify-center bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors" title="Start Session">
                                             <span class="material-symbols-outlined text-sm">play_arrow</span>
                                         </button>
@@ -376,6 +377,7 @@ date_default_timezone_set('Africa/Casablanca');
                                         <span class="material-symbols-outlined text-sm">visibility</span>
                                     </a>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/reservations/confirm/<?= $res['id'] ?>" class="inline">
+                                        <?= Csrf::field() ?>
                                         <button type="submit" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-green-400 hover:bg-green-500/10 transition-colors" title="Confirm">
                                             <span class="material-symbols-outlined text-sm">check</span>
                                         </button>
@@ -389,6 +391,7 @@ date_default_timezone_set('Africa/Casablanca');
                                         <div class="flex justify-end gap-4">
                                             <button onclick="document.getElementById('cancelModal-<?= $res['id'] ?>').close()" class="px-4 py-2 rounded-full text-secondary hover:bg-surface-container">Keep</button>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/reservations/cancel/<?= $res['id'] ?>" class="inline">
+                                                <?= Csrf::field() ?>
                                                 <button type="submit" class="px-4 py-2 bg-error text-on-error rounded-full hover:opacity-90">Cancel Reservation</button>
                                             </form>
                                         </div>
@@ -398,6 +401,7 @@ date_default_timezone_set('Africa/Casablanca');
                                         <span class="material-symbols-outlined text-sm">visibility</span>
                                     </a>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/reservations/restore/<?= $res['id'] ?>" class="inline">
+                                        <?= Csrf::field() ?>
                                         <button type="submit" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-primary/10 transition-colors" title="Restore">
                                             <span class="material-symbols-outlined text-sm">restore</span>
                                         </button>

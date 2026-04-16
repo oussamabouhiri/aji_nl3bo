@@ -1,4 +1,7 @@
-<?php date_default_timezone_set('Africa/Casablanca'); ?>
+<?php 
+use App\Helper\Csrf;
+date_default_timezone_set('Africa/Casablanca'); 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
