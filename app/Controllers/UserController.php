@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Models\GameModel;
+use App\Models\CategoryModel;
 use App\Models\ReservationModel;
 use App\Models\GameTableModel;
 use App\Models\UserModel;
@@ -13,6 +14,7 @@ class UserController {
     private $reservationModel;
     private $tableModel;
     private $userModel;
+    private $categoryModel;
     private $utility;
 
     public function __construct() {
@@ -20,13 +22,30 @@ class UserController {
         $this->reservationModel = new ReservationModel();
         $this->tableModel = new GameTableModel();
         $this->userModel = new UserModel();
+        $this->categoryModel = new CategoryModel();
         $this->utility = new Utility();
     }
 
     public function games() {
-        $games = $this->gameModel->getAll();
+        $page = max(1, intval($_GET['page'] ?? 1));
+        $perPage = 12;
+        $categoryId = isset($_GET['category']) ? intval($_GET['category']) : null;
+        $search = isset($_GET['search']) ? trim($_GET['search']) : null;
+        $difficulty = isset($_GET['difficulty']) ? $_GET['difficulty'] : null;
+        $gamesResult = $this->gameModel->getPaginated($page, $perPage, $categoryId, $search, $difficulty, false);
+
+        $categories = $this->categoryModel->getCategories();
         $this->utility->view("user/games", [
-            'games' => $games
+            'games' => $gamesResult['games'],
+            'categories' => $categories,
+            'pagination' => [
+                'currentPage' => $gamesResult['currentPage'],
+                'totalPages' => $gamesResult['totalPages'],
+                'totalGames' => $gamesResult['totalGames'],
+                'perPage' => $gamesResult['perPage']
+            ],
+            'selectedCategory' => $categoryId,
+            'search' => $search,
         ]);
     }
 

@@ -122,27 +122,16 @@
     <!-- TopNavBar -->
     <nav class="fixed top-0 w-full z-50 glass-nav shadow-2xl shadow-black/40">
         <div class="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
-            <a href="<?= BASE_URL ?>/dashboard" class="text-2xl font-black tracking-tighter text-[#e9c176] font-headline">Aji L3bo</a>
+            <a href="<?= BASE_URL ?>/" class="text-2xl font-black tracking-tighter text-[#e9c176] font-headline">Aji L3bo</a>
             <div class="hidden md:flex items-center space-x-8">
                 <a class="font-body text-[#e9c176] border-b-2 border-[#e9c176] pb-1" href="<?= BASE_URL ?>/games">Games</a>
+                <a class="font-body text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="<?= BASE_URL ?>/reservation">Reserve</a>
                 <a class="font-body text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="<?= BASE_URL ?>/my-reservations">My Reservations</a>
-                <a class="font-body text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="<?= BASE_URL ?>/profile">Profile</a>
             </div>
             <div class="flex items-center space-x-6">
-                <div class="relative hidden lg:block">
-                    <input
-                        class="bg-surface-container-high border-none rounded-full px-6 py-2 text-sm w-64 focus:ring-1 focus:ring-primary text-on-surface-variant placeholder-on-surface-variant/50"
-                        placeholder="Search a game..." type="text">
-                    <span class="material-symbols-outlined absolute right-4 top-2 text-on-surface-variant text-lg"
-                        data-icon="search">search</span>
-                </div>
-                <button class="text-[#abcdcc] hover:opacity-80 transition-all duration-300">
-                    <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-                </button>
+                <a href="<?= BASE_URL ?>/logout" class="text-sm text-[#c1c8c7] hover:text-[#e9c176] transition-colors">Logout</a>
                 <div class="w-10 h-10 rounded-full overflow-hidden border border-primary/20">
-                    <img alt="User profile"
-                        data-alt="close-up portrait of a stylish person in soft ambient indoor lighting with a warm bokeh background"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAw3A-H9NMwEc27KqDsw93vKKXxs73cvFw4gxSjxe1f1HfxwS1bUiWjginiKx0qSgnoKFO6kpdPSieQJAEjurCE0i-brqM_2FerCHTc4i_sW6b9EFxt6vzZGagIyoCbsfSP8GkkETMfliZkOY9W0_IoTjkmAqnrLlinrANL7e42YpGNADo3edXy9LBT3MU0p-VBEEsoJIJOqPA-yQdukmq1PcB5Y-L9kRNegXSVdpZOjw9tJM0bxwD759KVv7TIF1xWHkMhrqdm9Dq">
+                    <img alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAw3A-H9NMwEc27KqDsw93vKKXxs73cvFw4gxSjxe1f1HfxwS1bUiWjginiKx0qSgnoKFO6kpdPSieQJAEjurCE0i-brqM_2FerCHTc4i_sW6b9EFxt6vzZGagIyoCbsfSP8GkkETMfliZkOY9W0_IoTjkmAqnrLlinrANL7e42YpGNADo3edXy9LBT3MU0p-VBEEsoJIJOqPA-yQdukmq1PcB5Y-L9kRNegXSVdpZOjw9tJM0bxwD759KVv7TIF1xWHkMhrqdm9Dq">
                 </div>
             </div>
         </div>
@@ -164,16 +153,16 @@
                 <p class="font-body text-xl text-secondary mb-8 leading-relaxed">Discover a handpicked collection of
                     board games in Morocco's premium gaming lounge.</p>
                 <div class="flex gap-4">
-                    <button
-                        class="brass-gradient text-on-primary font-bold px-8 py-4 rounded-full hover:shadow-[0_0_20px_rgba(233,193,118,0.3)] transition-all">Explore
-                        Catalog</button>
-                    <button
-                        class="bg-surface-container-highest/60 backdrop-blur-md text-on-surface px-8 py-4 rounded-full border border-outline-variant/15 hover:bg-surface-container-highest transition-all">Book
-                        a Table</button>
+                    <a href="#games"
+                        class="brass-gradient text-on-primary font-bold px-8 py-4 rounded-full hover:shadow-[0_0_20px_rgba(233,193,118,0.3)] transition-all inline-block">Explore
+                        Catalog</a>
+                    <a href="<?= BASE_URL ?>/reservation"
+                        class="bg-surface-container-highest/60 backdrop-blur-md text-on-surface px-8 py-4 rounded-full border border-outline-variant/15 hover:bg-surface-container-highest transition-all inline-block text-center">Book
+                        a Table</a>
                 </div>
             </div>
         </section>
-        <div class="flex flex-col lg:flex-row gap-8">
+        <div id="games" class="flex flex-col lg:flex-row gap-8">
             <!-- Sidebar Filters -->
             <aside class="lg:w-72 flex-shrink-0">
                 <div class="sticky top-32 space-y-8">
