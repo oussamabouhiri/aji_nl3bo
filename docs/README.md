@@ -1,6 +1,13 @@
 # 🎲 Aji L3bo - Système de Gestion de Café de Jeux
 
-> Plateforme digitale complète pour la gestion des réservations, catalogues de jeux et sessions de jeu d'**Aji L3bo Café** 
+> Plateforme digitale complète pour la gestion des réservations, catalogues de jeux et sessions de jeu d'**Aji L3bo Café**.
+
+[![PHP Version](https://img.shields.io/badge/PHP-8.0%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Composer](https://img.shields.io/badge/Composer-2.0%2B-885630?logo=composer&logoColor=white)](https://getcomposer.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+---
 
 ## 📋 Table des Matières
 
@@ -474,6 +481,7 @@ Ce projet a été développé en équipe de **3 développeurs** avec méthodolog
 - 🔄 **Daily Standups** : Coordination quotidienne
 - 📋 **Jira** : Suivi des tickets (MFLP-21 à MFLP-28)
 - 🔍 **Code Reviews** : Validation avant merge sur `main`
+
 
 ---
 

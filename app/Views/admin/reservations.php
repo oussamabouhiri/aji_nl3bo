@@ -126,12 +126,12 @@ $filterDate = $filterDate ?? date('Y-m-d');
 <body class="bg-background text-on-surface font-body selection:bg-primary/30">
     <!-- SideNavBar -->
     <aside
-        class="h-screen w-64 fixed left-0 top-0 border-r border-[#414848]/15 bg-[#131313] flex flex-col py-8 z-50 shadow-[16px_0_40px_-4px_rgba(0,0,0,0.1)]">
-        <div class="px-6 mb-10">
+        class="h-screen w-64 fixed left-0 top-0 border-r border-[#414848]/15 bg-[#131313] flex flex-col py-4 z-50 shadow-[16px_0_40px_-4px_rgba(0,0,0,0.1)]">
+        <div class="px-6 mb-4">
             <h1 class="text-2xl font-black tracking-tight text-[#e9c176] font-manrope">The Tactile Archive</h1>
             <p class="text-secondary text-xs uppercase tracking-widest mt-1 opacity-70">Digital Curator</p>
         </div>
-        <nav class="flex-1 space-y-1">
+        <nav class="flex-1 overflow-y-auto px-2 py-2 space-y-1">
             <!-- Dashboard -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
                 href="<?= BASE_URL ?>/admin">
@@ -169,7 +169,7 @@ $filterDate = $filterDate ?? date('Y-m-d');
                 <span class="font-medium text-sm">History</span>
             </a>
         </nav>
-        <div class="px-4 mt-auto">
+        <div class="mt-auto pt-4 border-t border-outline-variant/20 px-2">
             <div class="space-y-1 mb-4">
                 <a class="text-[#abcdcc] hover:bg-[#353534]/50 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
                     href="<?= BASE_URL ?>/admin/settings">
@@ -183,10 +183,10 @@ $filterDate = $filterDate ?? date('Y-m-d');
                 </a>
             </div>
             <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-surface-container/50">
-                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary">person</span>
+                <div class="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-primary text-sm">person</span>
                 </div>
-                <div class="overflow-hidden">
+                <div class="overflow-hidden min-w-0">
                     <p class="text-xs font-bold truncate"><?= $_SESSION['user_name'] ?? 'Admin' ?></p>
                     <p class="text-[10px] text-secondary/60 truncate">Administrator</p>
                 </div>

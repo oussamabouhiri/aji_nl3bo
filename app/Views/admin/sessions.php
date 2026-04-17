@@ -117,12 +117,23 @@ date_default_timezone_set('Africa/Casablanca');
 <body class="bg-background text-on-background font-body selection:bg-primary/30">
     <!-- SideNavBar (Authority: Shared Components JSON) -->
     <aside
-        class="h-screen w-64 fixed left-0 top-0 bg-[#0e0e0e] shadow-[16px_0_40px_-4px_rgba(0,0,0,0.5)] flex flex-col py-6 z-50">
-        <div class="px-6 mb-8">
+        class="h-screen w-64 fixed left-0 top-0 bg-[#0e0e0e] shadow-[16px_0_40px_-4px_rgba(0,0,0,0.5)] flex flex-col py-4 z-50">
+        <div class="px-6 mb-4">
             <h1 class="text-xl font-bold text-[#e9c176] font-headline tracking-tight">Aji L3bo</h1>
             <p class="text-xs text-secondary-fixed-dim/60 font-medium">Admin Console</p>
         </div>
-        <nav class="flex-1 space-y-1">
+        <div class="px-4 mb-4">
+            <div class="flex items-center gap-3 py-2 px-2 rounded-xl bg-surface-container/50">
+                <div class="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-primary text-sm">person</span>
+                </div>
+                <div class="overflow-hidden min-w-0">
+                    <p class="text-xs font-bold truncate"><?= $_SESSION['user_name'] ?? 'Admin' ?></p>
+                    <p class="text-[10px] text-secondary/60">Administrator</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 overflow-y-auto px-2 py-2 space-y-1">
             <!-- Dashboard -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
                 href="<?= BASE_URL ?>/admin">
@@ -197,13 +208,13 @@ date_default_timezone_set('Africa/Casablanca');
                 <div class="bg-surface-container px-6 py-3 rounded-xl flex items-center gap-6">
                     <div class="flex flex-col">
                         <span class="text-[10px] uppercase tracking-widest text-secondary/60 font-bold">Occupancy</span>
-                        <span class="text-xl font-headline font-bold text-primary">14/20</span>
+                        <span class="text-xl font-headline font-bold text-primary"><?= $occupancy ?></span>
                     </div>
                     <div class="w-[1px] h-8 bg-white/5"></div>
                     <div class="flex flex-col">
                         <span
                             class="text-[10px] uppercase tracking-widest text-secondary/60 font-bold">Revenue/hr</span>
-                        <span class="text-xl font-headline font-bold text-primary">$182.50</span>
+                        <span class="text-xl font-headline font-bold text-primary"><?= $revenueFormatted ?> DH</span>
                     </div>
                 </div>
             </div>
@@ -230,26 +241,61 @@ date_default_timezone_set('Africa/Casablanca');
         }
         
         $activeCount = 0;
+        $readyCount = 0;
         $bookedCount = 0;
         $freeCount = 0;
+        $currentTime = date('H:i:s');
+        $hourlyRevenue = 0;
+        
         foreach ($tables as $t) {
             $tid = $t['id'];
             $session = $sessionByTable[$tid] ?? null;
             $reservations = $reservationsByTable[$tid] ?? [];
+            
             if ($session !== null) {
                 $activeCount++;
+                $hourlyRevenue += floatval($session['total_price'] ?? 0) / max(1, intval($session['duration'] ?? 60)) * 60;
             } elseif (!empty($reservations)) {
-                $bookedCount++;
+                // Check if any reservation is ready
+                $isReady = false;
+                foreach ($reservations as $res) {
+                    $resStartTime = $res['start_time'];
+                    $timeDiff = strtotime($currentTime) - strtotime($resStartTime);
+                    $minutesDiff = $timeDiff / 60;
+                    if ($minutesDiff >= 0) {
+                        $isReady = true;
+                        break;
+                    }
+                }
+                if ($isReady) {
+                    $readyCount++;
+                } else {
+                    $bookedCount++;
+                }
             } else {
                 $freeCount++;
             }
         }
+        
+        $totalTables = count($tables);
+        $occupancy = "{$activeCount}/{$totalTables}";
+        $revenueFormatted = number_format($hourlyRevenue, 2);
         ?>
         <div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
-            <button onclick="filterTables('active')" class="status-tab active flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="active">
+            <button onclick="filterTables('all')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="all">
+                <span class="material-symbols-outlined text-lg">grid_view</span>
+                All Tables
+                <span class="px-2 py-0.5 rounded-full text-xs bg-white/10 text-white"><?= $totalTables ?></span>
+            </button>
+            <button onclick="filterTables('active')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="active">
                 <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">radio_button_checked</span>
                 Occupied
                 <span class="px-2 py-0.5 rounded-full text-xs bg-secondary/20 text-secondary"><?= $activeCount ?></span>
+            </button>
+            <button onclick="filterTables('ready')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="ready">
+                <span class="material-symbols-outlined text-lg">event_available</span>
+                Ready
+                <span class="px-2 py-0.5 rounded-full text-xs bg-yellow-500/20 text-yellow-400"><?= $readyCount ?></span>
             </button>
             <button onclick="filterTables('booked')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="booked">
                 <span class="material-symbols-outlined text-lg">event_busy</span>
@@ -325,10 +371,25 @@ date_default_timezone_set('Africa/Casablanca');
                 
                 // Determine status
                 $status = 'free';
+                $isReady = false;
+                $currentTime = date('H:i:s');
+                
                 if ($session !== null) {
                     $status = 'active';
                 } elseif ($reservation !== null) {
-                    $status = 'booked';
+                    // Check if reservation time has been reached
+                    $resStartTime = $reservation['start_time'];
+                    $timeDiff = strtotime($currentTime) - strtotime($resStartTime);
+                    $minutesDiff = $timeDiff / 60;
+                    
+                    // Booked: time not yet reached
+                    // Ready: time has arrived (minutesDiff >= 0)
+                    if ($minutesDiff >= 0) {
+                        $status = 'ready';
+                        $isReady = true;
+                    } else {
+                        $status = 'booked';
+                    }
                 }
             ?>
             
@@ -444,41 +505,107 @@ date_default_timezone_set('Africa/Casablanca');
             </div>
             
             <?php elseif ($status === 'booked'): ?>
-            <!-- Booked Card - Has Reservation -->
+            <!-- Booked Card - Has Future Reservation -->
             <div class="table-card relative group" data-status="<?= $status ?>">
-                <div class="absolute -inset-0.5 bg-gradient-to-r from-primary/50 via-amber-400/50 to-primary/50 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
-                <div class="relative bg-[#1a1508]/95 backdrop-blur-xl rounded-2xl p-5 border border-primary/20">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-surface-variant/30 via-white/5 to-surface-variant/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <div class="relative bg-surface-container-low/70 backdrop-blur-xl rounded-2xl p-5 border-2 border-dashed border-surface-variant/30">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 flex items-center justify-center">
-                                <span class="text-3xl font-black font-headline text-primary"><?= str_replace('Table ', '', $tableRef) ?></span>
+                            <div class="w-14 h-14 rounded-2xl bg-surface-variant/10 border border-surface-variant/20 flex items-center justify-center">
+                                <span class="text-3xl font-black font-headline text-on-surface-variant/40"><?= str_replace('Table ', '', $tableRef) ?></span>
                             </div>
                             <div>
-                                <p class="text-[10px] text-yellow-400/50 uppercase tracking-widest font-semibold"><?= $table['capacity'] ?? 0 ?> seats</p>
+                                <p class="text-[10px] text-on-surface-variant/30 uppercase tracking-widest font-semibold"><?= $table['capacity'] ?? 0 ?> seats</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1.5 bg-yellow-500/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-yellow-500/30">
+                        <div class="flex items-center gap-1.5 bg-surface-variant/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-surface-variant/30">
+                            <span class="material-symbols-outlined text-xs text-on-surface-variant/50">event_busy</span>
+                            <span class="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-wider">Booked</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-variant/5 border border-surface-variant/10 mb-4">
+                        <?php if (!empty($reservation['game_name'])): ?>
+                        <img class="w-12 h-12 rounded-xl object-cover shadow-lg opacity-60" src="<?= $reservation['game_image'] ?? '' ?>">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm text-on-surface-variant/50 truncate"><?= $reservation['game_name'] ?? '' ?></h4>
+                            <p class="text-xs text-on-surface-variant/30 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
+                        </div>
+                        <?php else: ?>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm text-on-surface-variant/30">No Game Selected</h4>
+                            <p class="text-xs text-on-surface-variant/30 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-surface-variant/5 border border-surface-variant/10 mb-4">
+                        <div class="text-center">
+                            <p class="text-[10px] text-on-surface-variant/40 uppercase tracking-wider font-semibold flex items-center justify-center gap-1">
+                                <span class="material-symbols-outlined text-xs">schedule</span>
+                                Starts
+                            </p>
+                            <p class="text-lg font-black text-on-surface-variant/50"><?= date('H:i', strtotime($reservation['start_time'])) ?></p>
+                        </div>
+                        <div class="text-center border-l border-surface-variant/10">
+                            <p class="text-[10px] text-on-surface-variant/40 uppercase tracking-wider font-semibold flex items-center justify-center gap-1">
+                                <span class="material-symbols-outlined text-xs">hourglass_empty</span>
+                                Duration
+                            </p>
+                            <p class="text-lg font-black text-on-surface-variant/50"><?= $reservation['planned_duration'] ?? 60 ?><span class="text-xs">min</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="py-3 rounded-xl bg-surface-variant/5 border border-surface-variant/10 text-center">
+                        <p class="text-xs text-on-surface-variant/40 font-medium flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">hourglass_top</span>
+                            Waiting for reservation time
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <?php elseif ($status === 'ready'): ?>
+            <!-- Ready Card - Time Arrived, Can Start -->
+            <div class="table-card relative group" data-status="<?= $status ?>">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-green-500/50 via-emerald-400/50 to-green-500/50 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500 animate-pulse"></div>
+                <div class="relative bg-[#0a1a10]/95 backdrop-blur-xl rounded-2xl p-5 border border-green-500/30">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-green-500/5 flex items-center justify-center">
+                                <span class="text-3xl font-black font-headline text-green-400"><?= str_replace('Table ', '', $tableRef) ?></span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-green-400/50 uppercase tracking-widest font-semibold"><?= $table['capacity'] ?? 0 ?> seats</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-green-500/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-green-500/30">
                             <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-400"></span>
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
                             </span>
-                            <span class="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">Ready</span>
+                            <span class="text-[10px] font-bold text-green-400 uppercase tracking-wider">Ready</span>
                         </div>
                     </div>
                     
                     <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 mb-4">
                         <?php if (!empty($reservation['game_name'])): ?>
-                        <img class="w-12 h-12 rounded-xl object-cover shadow-lg ring-2 ring-yellow-500/20" src="<?= $reservation['game_image'] ?? '' ?>">
+                        <img class="w-12 h-12 rounded-xl object-cover shadow-lg ring-2 ring-green-500/30" src="<?= $reservation['game_image'] ?? '' ?>">
                         <div class="flex-1 min-w-0">
                             <h4 class="font-bold text-sm text-on-surface truncate"><?= $reservation['game_name'] ?? '' ?></h4>
-                            <p class="text-xs text-yellow-400/60 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
+                            <p class="text-xs text-green-400/60 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
                         </div>
                         <?php else: ?>
                         <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-sm text-yellow-400/60">No Game Selected</h4>
-                            <p class="text-xs text-yellow-400/60 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
+                            <h4 class="font-bold text-sm text-green-400/60">No Game Selected</h4>
+                            <p class="text-xs text-green-400/60 truncate"><?= $reservation['customer_name'] ?? '' ?></p>
                         </div>
                         <?php endif; ?>
+                    </div>
+                    
+                    <div class="p-3 rounded-xl bg-green-500/10 border border-green-500/20 mb-4 text-center">
+                        <p class="text-[10px] text-green-400/60 uppercase tracking-wider font-semibold">Time Arrived</p>
+                        <p class="text-sm font-bold text-green-400"><?= date('H:i', strtotime($reservation['start_time'])) ?> - <?= date('H:i', strtotime($reservation['end_time'])) ?></p>
                     </div>
                     
                     <!-- Game Selector for Start -->
@@ -486,12 +613,12 @@ date_default_timezone_set('Africa/Casablanca');
                         <?= Csrf::field() ?>
                         <input type="hidden" name="reservation_id" value="<?= $reservation['id'] ?? '' ?>">
                         <div class="mb-4">
-                            <label class="text-[10px] text-yellow-400/60 uppercase tracking-wider font-semibold mb-2 flex items-center gap-1 block">
+                            <label class="text-[10px] text-green-400/60 uppercase tracking-wider font-semibold mb-2 flex items-center gap-1 block">
                                 <span class="material-symbols-outlined text-sm">sports_esports</span>
                                 Select Game
                             </label>
                             <div class="relative">
-                                <select name="game_id" class="w-full appearance-none bg-[#2a2010] border border-yellow-500/30 rounded-xl px-4 py-3 pr-10 text-sm text-on-surface focus:ring-2 focus:ring-yellow-500/40 cursor-pointer hover:bg-[#352515] transition-all">
+                                <select name="game_id" class="w-full appearance-none bg-[#0f2015] border border-green-500/30 rounded-xl px-4 py-3 pr-10 text-sm text-on-surface focus:ring-2 focus:ring-green-500/40 cursor-pointer hover:bg-[#102515] transition-all">
                                     <option value="">Choose a game to start...</option>
                                     <?php foreach ($availableGames as $game): ?>
                                     <?php if (isGameAvailableForReservation($game, $reservation, $todayReservations)): ?>
@@ -501,28 +628,11 @@ date_default_timezone_set('Africa/Casablanca');
                                     <?php endif; ?>
                                     <?php endforeach; ?>
                                 </select>
-                                <span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-yellow-400/60 text-lg pointer-events-none">expand_more</span>
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-green-400/60 text-lg pointer-events-none">expand_more</span>
                             </div>
                         </div>
                         
-                        <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-yellow-500/5 border border-yellow-500/10 mb-4">
-                            <div class="text-center">
-                                <p class="text-[10px] text-yellow-400/50 uppercase tracking-wider font-semibold flex items-center justify-center gap-1">
-                                    <span class="material-symbols-outlined text-xs">schedule</span>
-                                    Starts
-                                </p>
-                                <p class="text-lg font-black text-yellow-400"><?= date('H:i', strtotime($reservation['start_time'])) ?></p>
-                            </div>
-                            <div class="text-center border-l border-yellow-500/10">
-                                <p class="text-[10px] text-yellow-400/50 uppercase tracking-wider font-semibold flex items-center justify-center gap-1">
-                                    <span class="material-symbols-outlined text-xs">hourglass_empty</span>
-                                    Duration
-                                </p>
-                                <p class="text-lg font-black text-yellow-400"><?= $reservation['planned_duration'] ?? 60 ?><span class="text-xs">min</span></p>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-500 text-[#1a1200] font-bold text-sm shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                        <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-400 hover:from-emerald-400 hover:to-green-500 text-[#0a1a0a] font-bold text-sm shadow-lg shadow-green-500/20 flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
                             <span class="material-symbols-outlined text-lg">play_arrow</span>
                             Start Session
                         </button>
@@ -594,52 +704,132 @@ date_default_timezone_set('Africa/Casablanca');
         function filterTables(status) {
             const tabs = document.querySelectorAll('.status-tab');
             tabs.forEach(tab => {
-                tab.classList.remove('active', 'bg-secondary/20', 'text-secondary', 'bg-primary/20', 'text-primary', 'bg-green-500/20', 'text-green-400');
+                tab.classList.remove('active', 'bg-secondary/20', 'text-secondary', 'bg-primary/20', 'text-primary', 'bg-green-500/20', 'text-green-400', 'bg-yellow-500/20', 'text-yellow-400', 'bg-white/10', 'text-white');
                 if (tab.dataset.status === 'active') {
                     tab.classList.add('text-secondary');
                 } else if (tab.dataset.status === 'booked') {
                     tab.classList.add('text-primary');
+                } else if (tab.dataset.status === 'ready') {
+                    tab.classList.add('text-green-400');
                 } else if (tab.dataset.status === 'free') {
                     tab.classList.add('text-green-400');
+                } else if (tab.dataset.status === 'all') {
+                    tab.classList.add('text-white');
                 }
             });
             
             const activeTab = document.querySelector(`.status-tab[data-status="${status}"]`);
             if (activeTab) {
-                activeTab.classList.remove('text-secondary', 'text-primary', 'text-green-400');
+                activeTab.classList.remove('text-secondary', 'text-primary', 'text-green-400', 'text-white');
                 activeTab.classList.add('active');
                 if (status === 'active') {
                     activeTab.classList.add('bg-secondary/20', 'text-secondary');
                 } else if (status === 'booked') {
                     activeTab.classList.add('bg-primary/20', 'text-primary');
+                } else if (status === 'ready') {
+                    activeTab.classList.add('bg-green-500/20', 'text-green-400');
                 } else if (status === 'free') {
                     activeTab.classList.add('bg-green-500/20', 'text-green-400');
+                } else if (status === 'all') {
+                    activeTab.classList.add('bg-white/10', 'text-white');
                 }
             }
             
             const cards = document.querySelectorAll('.table-card');
             cards.forEach(card => {
-                const cardStatus = card.dataset.status;
-                if (cardStatus === status) {
+                if (status === 'all') {
                     card.style.display = '';
                 } else {
-                    card.style.display = 'none';
+                    const cardStatus = card.dataset.status;
+                    if (cardStatus === status) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
                 }
             });
         }
         
         // Initialize filter tabs styling
         document.addEventListener('DOMContentLoaded', function() {
-            filterTables('free');
+            filterTables('all');
         });
         </script>
         <!-- Floating Quick Action for Admin -->
-        <button class="fixed bottom-10 right-10 group">
+        <button onclick="document.getElementById('quick-reservation-modal').showModal()" class="fixed bottom-10 right-10 group cursor-pointer">
             <div class="absolute -inset-1 bg-gradient-to-r from-primary/50 to-amber-400/50 rounded-full blur opacity-40 group-hover:opacity-70 transition duration-500"></div>
             <div class="relative w-14 h-14 bg-gradient-to-br from-primary to-amber-400 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 active:scale-95 transition-all duration-300">
                 <span class="material-symbols-outlined text-2xl text-[#1a1200] font-bold">add</span>
             </div>
         </button>
+
+        <!-- Quick Reservation Modal -->
+        <dialog id="quick-reservation-modal" class="bg-transparent p-0 rounded-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm">
+            <div class="bg-surface-container rounded-2xl p-6 w-[400px] max-w-[90vw] border border-white/10">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-headline font-bold text-on-surface">Quick Reservation</h3>
+                    <button onclick="document.getElementById('quick-reservation-modal').close()" class="text-on-surface-variant hover:text-on-surface p-2">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <form method="POST" action="<?= BASE_URL ?>/admin/reservations/quick-create" class="space-y-4">
+                    <?= Csrf::field() ?>
+                    <div>
+                        <label class="text-xs text-secondary/60 uppercase tracking-wider font-semibold mb-2 block">Customer Name</label>
+                        <input type="text" name="customer_name" required class="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40">
+                    </div>
+                    <div>
+                        <label class="text-xs text-secondary/60 uppercase tracking-wider font-semibold mb-2 block">Phone</label>
+                        <input type="tel" name="phone" required class="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-secondary/60 uppercase tracking-wider font-semibold mb-2 block">Table</label>
+                            <select name="table_id" required class="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40">
+                                <option value="">Select table</option>
+                                <?php foreach ($tables as $t): ?>
+                                <option value="<?= $t['id'] ?>"><?= $t['reference'] ?> (<?= $t['capacity'] ?> seats)</option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-secondary/60 uppercase tracking-wider font-semibold mb-2 block">Game</label>
+                            <select name="game_id" required class="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40">
+                                <option value="">Select game</option>
+                                <?php foreach ($availableGames as $g): ?>
+                                <?php if ($g['status'] === 'available'): ?>
+                                <option value="<?= $g['id'] ?>"><?= htmlspecialchars($g['name']) ?></option>
+                                <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-secondary/60 uppercase tracking-wider font-semibold mb-2 block">Date</label>
+                            <input type="date" name="date" value="<?= date('Y-m-d') ?>" required class="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40">
+                        </div>
+                        <div>
+                            <label class="text-xs text-secondary/60 uppercase tracking-wider font-semibold mb-2 block">Time</label>
+                            <input type="time" name="start_time" required class="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-secondary/60 uppercase tracking-wider font-semibold mb-2 block">Duration (minutes)</label>
+                        <select name="duration" class="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40">
+                            <option value="30">30 minutes</option>
+                            <option value="60" selected>60 minutes</option>
+                            <option value="90">90 minutes</option>
+                            <option value="120">120 minutes</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-primary to-amber-400 hover:from-amber-400 hover:to-primary text-[#1a1200] font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all">
+                        <span class="material-symbols-outlined">event_available</span>
+                        Create Reservation
+                    </button>
+                </form>
+            </div>
+        </dialog>
     </main>
     <!-- Footer Subtle Status Bar -->
     <footer
@@ -649,13 +839,25 @@ date_default_timezone_set('Africa/Casablanca');
                 <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> System Online
             </span>
             <span class="flex items-center gap-2">
-                <div class="w-1.5 h-1.5 rounded-full bg-secondary"></div> 5 Active Tables
+                <div class="w-1.5 h-1.5 rounded-full bg-secondary"></div> <?= $activeCount ?> Active Tables
             </span>
         </div>
         <div>
-            Current Server Time: <span class="text-on-surface-variant">21:42:05 UTC</span>
+            Current Server Time: <span class="text-on-surface-variant" id="server-time"><?= date('H:i:s') ?> UTC</span>
         </div>
     </footer>
+    <script>
+        function updateServerTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const el = document.getElementById('server-time');
+            if (el) el.textContent = hours + ':' + minutes + ':' + seconds + ' UTC';
+        }
+        setInterval(updateServerTime, 1000);
+        updateServerTime();
+    </script>
 </body>
 
 </html>

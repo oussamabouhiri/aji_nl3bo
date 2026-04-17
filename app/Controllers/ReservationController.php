@@ -205,6 +205,68 @@ class ReservationController {
         $this->utility->redirect('/admin/reservations');
     }
 
+    public function quickCreate() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/admin/sessions');
+            return;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $customerName = $_POST['customer_name'] ?? null;
+            $phone = $_POST['phone'] ?? null;
+            $tableId = $_POST['table_id'] ?? null;
+            $gameId = $_POST['game_id'] ?? null;
+            $date = $_POST['date'] ?? date('Y-m-d');
+            $startTime = $_POST['start_time'] ?? null;
+            $duration = intval($_POST['duration'] ?? 60);
+            
+            if (!$customerName || !$phone || !$tableId || !$startTime) {
+                $this->utility->redirect('/admin/sessions');
+                return;
+            }
+            
+            $userModel = new \App\Models\UserModel();
+            $user = $userModel->getByPhone($phone);
+            
+            if (!$user) {
+                $userId = $userModel->create([
+                    'name' => $customerName,
+                    'phone' => $phone,
+                    'password' => password_hash(bin2hex(random_bytes(8)), PASSWORD_DEFAULT)
+                ]);
+            } else {
+                $userId = $user['id'];
+            }
+            
+            $gamePrice = 0;
+            if ($gameId) {
+                $gameModel = new \App\Models\GameModel();
+                $game = $gameModel->getById($gameId);
+                $gamePrice = $game['price'] ?? 0;
+            }
+            
+            $start = new \DateTime($startTime);
+            $end = $start->modify("+{$duration} minutes");
+            $endTime = $end->format('H:i:s');
+            
+            $data = [
+                'user_id' => $userId,
+                'table_id' => $tableId,
+                'game_id' => $gameId ?: null,
+                'date' => $date,
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'spots' => 1,
+                'price' => $gamePrice,
+                'status' => 'confirmed'
+            ];
+            
+            $id = $this->reservationModel->create($data);
+        }
+        
+        $this->utility->redirect('/admin/sessions');
+    }
+
     public function update() {
         if (!Csrf::validate()) {
             $this->utility->redirect('/admin/reservations');
