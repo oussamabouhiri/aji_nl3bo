@@ -54,8 +54,54 @@ class UserController {
     //     $this->home();
     // }
 
-    public function dashboard () {
-        $this->utility->view("user/dashboard");
+    public function dashboard() {
+        $userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$userId) {
+            $this->utility->redirect('/login');
+            return;
+        }
+        
+        $user = $this->userModel->getById($userId);
+        $reservations = $this->reservationModel->getByUserId($userId);
+        
+        $upcomingCount = 0;
+        $completedCount = 0;
+        $totalPlaytime = 0;
+        $partySizes = [];
+        
+        foreach ($reservations as $res) {
+            if ($res['status'] === 'confirmed' || $res['status'] === 'pending') {
+                $upcomingCount++;
+            }
+            if ($res['status'] === 'completed') {
+                $completedCount++;
+                if (!empty($res['start_time']) && !empty($res['end_time'])) {
+                    $start = strtotime($res['start_time']);
+                    $end = strtotime($res['end_time']);
+                    $totalPlaytime += round(($end - $start) / 3600, 1);
+                }
+            }
+            if (!empty($res['spots'])) {
+                $partySizes[] = $res['spots'];
+            }
+        }
+        
+        $totalSessions = $completedCount + $upcomingCount;
+        
+        $mostCommonParty = !empty($partySizes) ? max(array_count_values($partySizes)) : 0;
+        
+        $gamesCount = $this->gameModel->count();
+        
+        $this->utility->view("user/dashboard", [
+            'user' => $user,
+            'reservations' => $reservations,
+            'upcomingCount' => $upcomingCount,
+            'totalSessions' => $totalSessions,
+            'totalPlaytime' => $totalPlaytime,
+            'mostCommonParty' => $mostCommonParty,
+            'gamesCount' => $gamesCount
+        ]);
     }
 
     public function gameDetail($params = []) {
@@ -204,7 +250,53 @@ class UserController {
     }
 
     public function profile() {
-        $this->utility->view("user/profile");
+        $userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$userId) {
+            $this->utility->redirect('/login');
+            return;
+        }
+        
+        $user = $this->userModel->getById($userId);
+        $reservations = $this->reservationModel->getByUserId($userId);
+        
+        $totalPlaytime = 0;
+        $partySizes = [];
+        $gameCategories = [];
+        
+        foreach ($reservations as $res) {
+            if ($res['status'] === 'completed') {
+                if (!empty($res['start_time']) && !empty($res['end_time'])) {
+                    $start = strtotime($res['start_time']);
+                    $end = strtotime($res['end_time']);
+                    $totalPlaytime += round(($end - $start) / 3600, 1);
+                }
+            }
+            if (!empty($res['spots'])) {
+                $partySizes[] = (int)$res['spots'];
+            }
+        }
+        
+        $mostCommonParty = 0;
+        if (!empty($partySizes)) {
+            $partyCounts = array_count_values($partySizes);
+            arsort($partyCounts);
+            $mostCommonParty = key($partyCounts);
+        }
+        
+        $loyaltyPoints = $totalPlaytime * 10;
+        $nextRewardPoints = 1500;
+        $progress = min(100, ($loyaltyPoints / $nextRewardPoints) * 100);
+        
+        $this->utility->view("user/profile", [
+            'user' => $user,
+            'reservations' => $reservations,
+            'totalPlaytime' => $totalPlaytime,
+            'mostCommonParty' => $mostCommonParty,
+            'loyaltyPoints' => $loyaltyPoints,
+            'nextRewardPoints' => $nextRewardPoints,
+            'progress' => $progress
+        ]);
     }
 
     public function login() {
@@ -322,5 +414,56 @@ class UserController {
     public function logout() {
         session_destroy();
         $this->utility->redirect('/');
+    }
+
+    public function editProfile() {
+        $userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$userId) {
+            $this->utility->redirect('/login');
+            return;
+        }
+        
+        $user = $this->userModel->getById($userId);
+        
+        $this->utility->view("user/profile-edit", [
+            'user' => $user
+        ]);
+    }
+
+    public function updateProfile() {
+        if (!Csrf::validate()) {
+            $this->utility->redirect('/profile/edit');
+            return;
+        }
+        
+        $userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$userId) {
+            $this->utility->redirect('/login');
+            return;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = $_POST['name'] ?? '';
+            $email = $_POST['email'] ?? '';
+            $phone = $_POST['phone'] ?? '';
+            
+            if ($name && $email) {
+                $this->userModel->update($userId, [
+                    'name' => $name,
+                    'email' => $email,
+                    'phone' => $phone
+                ]);
+                
+                $_SESSION['user_name'] = $name;
+                $_SESSION['user_email'] = $email;
+            }
+            
+            $this->utility->redirect('/profile');
+            return;
+        }
+        
+        $this->utility->redirect('/profile/edit');
     }
 }

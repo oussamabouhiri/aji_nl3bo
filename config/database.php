@@ -4,8 +4,8 @@ return [
     'driver'   => 'mysql',
     'host'     => 'localhost',
     'dbname'   => 'games_db',
-    'username' => 'root',
-    'password' => '',
+    'username' => 'tester',
+    'password' => '123',
     'charset'  => 'utf8mb4',
-    'port'     => 3306
+    'port'     => 3307
 ];

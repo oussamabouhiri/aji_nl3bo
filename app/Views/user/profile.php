@@ -1,3 +1,10 @@
+<?php
+$userName = $user['name'] ?? 'User';
+$userEmail = $user['email'] ?? '';
+$userCreatedAt = $user['created_at'] ?? date('Y-m-d');
+$config = require __DIR__ . '/../../../config/app.php';
+$baseUrl = $config['base_url'];
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
@@ -181,7 +188,7 @@
       </div>
       <div class="space-y-1">
         <a class="flex items-center gap-3 px-4 py-2 text-[#abcdcc] opacity-70 hover:text-[#e9c176] transition-colors"
-          href="#">
+          href="mailto:support@aji-l3bo.com">
           <span class="material-symbols-outlined" data-icon="help">help</span>
           <span class="text-sm">Support</span>
         </a>
@@ -218,16 +225,16 @@
           <p class="text-secondary font-medium text-lg italic opacity-80">Welcome to Aji L3bo</p>
         </div>
         <div class="relative z-10 flex gap-3">
-          <button
+          <a href="<?= BASE_URL ?>/profile/edit"
             class="px-6 py-3 rounded-full border border-outline-variant/30 text-secondary hover:bg-surface-container-highest transition-all duration-300 flex items-center gap-2">
             <span class="material-symbols-outlined">edit</span>
             Edit Profile
-          </button>
-          <button
+          </a>
+          <a href="<?= BASE_URL ?>/reservation"
             class="brass-gradient px-8 py-3 rounded-full text-on-primary font-bold brass-glow transition-transform active:scale-95 flex items-center gap-2">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
             Quick Reservation
-          </button>
+          </a>
         </div>
       </section>
       <!-- 2. Loyalty & Bento Grid -->
@@ -238,7 +245,7 @@
           <div class="flex justify-between items-start">
             <div>
               <h3 class="text-secondary uppercase tracking-[0.2em] text-xs font-bold mb-4">Loyalty Status</h3>
-              <div class="text-7xl font-headline font-black text-primary tracking-tighter">1,240 <span
+              <div class="text-7xl font-headline font-black text-primary tracking-tighter"><?= number_format($loyaltyPoints) ?> <span
                   class="text-lg font-medium text-secondary opacity-50 tracking-normal">pts</span>
               </div>
             </div>
@@ -251,10 +258,10 @@
             <div class="flex justify-between items-end">
               <span class="text-sm font-semibold text-on-surface">Next Reward: <span class="text-primary italic">Free
                   Private Session</span></span>
-              <span class="text-xs text-secondary">260 pts remaining</span>
+              <span class="text-xs text-secondary"><?= max(0, $nextRewardPoints - $loyaltyPoints) ?> pts remaining</span>
             </div>
             <div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
-              <div class="h-full brass-gradient rounded-full shadow-[0_0_12px_#e9c176]" style="width: 82%;"></div>
+              <div class="h-full brass-gradient rounded-full shadow-[0_0_12px_#e9c176]" style="width: <?= $progress ?>%;"></div>
             </div>
           </div>
         </div>
@@ -267,7 +274,7 @@
             </div>
             <div>
               <p class="text-on-surface-variant text-xs">Total Playtime</p>
-              <p class="text-2xl font-bold font-headline text-on-surface">142 hrs</p>
+              <p class="text-2xl font-bold font-headline text-on-surface"><?= $totalPlaytime ?> hrs</p>
             </div>
           </div>
           <div class="bg-surface-container p-6 rounded-3xl flex items-center gap-5">
@@ -275,8 +282,8 @@
               <span class="material-symbols-outlined">star</span>
             </div>
             <div>
-              <p class="text-on-surface-variant text-xs">Favorite Genre</p>
-              <p class="text-2xl font-bold font-headline text-on-surface">Tactical RPG</p>
+              <p class="text-on-surface-variant text-xs">Most Common Party</p>
+              <p class="text-2xl font-bold font-headline text-on-surface"><?= $mostCommonParty ?> Players</p>
             </div>
           </div>
           <div class="bg-surface-container p-6 rounded-3xl flex items-center gap-5">
@@ -297,7 +304,7 @@
             <h2 class="text-3xl font-headline font-bold text-on-surface">Personal History</h2>
             <p class="text-secondary opacity-60">Your recent journeys within the archive</p>
           </div>
-          <button class="text-primary hover:underline font-bold text-sm tracking-wide">View Full Archive</button>
+          <a href="<?= BASE_URL ?>/my-reservations" class="text-primary hover:underline font-bold text-sm tracking-wide">View Full Archive</a>
         </div>
         <div class="bg-surface-container rounded-[2rem] overflow-hidden">
           <div class="overflow-x-auto">
@@ -407,8 +414,8 @@
       </section>
       <!-- 4. Quick Actions -->
       <section class="grid grid-cols-1 md:grid-cols-3 gap-6 pb-12">
-        <button
-          class="group relative bg-surface-container hover:bg-surface-container-highest p-6 rounded-3xl transition-all duration-300 text-left">
+        <a href="<?= BASE_URL ?>/profile/edit"
+          class="group relative bg-surface-container hover:bg-surface-container-highest p-6 rounded-3xl transition-all duration-300 text-left block">
           <div class="flex items-center justify-between mb-4">
             <div
               class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
@@ -419,9 +426,9 @@
           </div>
           <h4 class="text-lg font-bold text-on-surface">Security Settings</h4>
           <p class="text-sm text-secondary opacity-60">Change password and manage 2FA</p>
-        </button>
-        <button
-          class="group relative bg-surface-container hover:bg-surface-container-highest p-6 rounded-3xl transition-all duration-300 text-left">
+        </a>
+        <a href="<?= BASE_URL ?>/games"
+          class="group relative bg-surface-container hover:bg-surface-container-highest p-6 rounded-3xl transition-all duration-300 text-left block">
           <div class="flex items-center justify-between mb-4">
             <div
               class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
@@ -432,9 +439,9 @@
           </div>
           <h4 class="text-lg font-bold text-on-surface">Manage Preferences</h4>
           <p class="text-sm text-secondary opacity-60">Game categories and dietary needs</p>
-        </button>
-        <button
-          class="group relative bg-surface-container hover:bg-surface-container-highest p-6 rounded-3xl transition-all duration-300 text-left">
+        </a>
+        <a href="<?= BASE_URL ?>/my-reservations"
+          class="group relative bg-surface-container hover:bg-surface-container-highest p-6 rounded-3xl transition-all duration-300 text-left block">
           <div class="flex items-center justify-between mb-4">
             <div
               class="w-12 h-12 rounded-full bg-error-container/10 flex items-center justify-center text-error group-hover:scale-110 transition-transform">
@@ -445,7 +452,7 @@
           </div>
           <h4 class="text-lg font-bold text-on-surface">Payment Methods</h4>
           <p class="text-sm text-secondary opacity-60">Update billing for faster bookings</p>
-        </button>
+        </a>
       </section>
     </div>
   </main>
@@ -455,9 +462,9 @@
       <p class="text-secondary/40 text-xs tracking-widest uppercase">&copy; 2024 Aji L3bo Caf&eacute; &mdash; Crafted
         for Curators</p>
       <div class="flex gap-8">
-        <a class="text-xs text-secondary/40 hover:text-primary transition-colors" href="#">Privacy Policy</a>
-        <a class="text-xs text-secondary/40 hover:text-primary transition-colors" href="#">House Rules</a>
-        <a class="text-xs text-secondary/40 hover:text-primary transition-colors" href="#">Contact Archive</a>
+        <a class="text-xs text-secondary/40 hover:text-primary transition-colors" href="<?= BASE_URL ?>/games">Privacy Policy</a>
+        <a class="text-xs text-secondary/40 hover:text-primary transition-colors" href="<?= BASE_URL ?>/reservation">House Rules</a>
+        <a class="text-xs text-secondary/40 hover:text-primary transition-colors" href="mailto:support@aji-l3bo.com">Contact Archive</a>
       </div>
     </div>
   </footer>
