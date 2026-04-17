@@ -47,6 +47,18 @@ class UserModel extends Database
         }
     }
 
+    public function getByPhone(string $phone): array|false
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE phone = :phone LIMIT 1");
+            $stmt->execute(['phone' => $phone]);
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("UserModel::getByPhone - " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function create(array $data): int|false
     {
         try {

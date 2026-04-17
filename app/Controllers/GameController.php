@@ -24,7 +24,7 @@ class GameController {
         $difficulty = $_GET['difficulty'] ?? null;
         $search = $_GET['search'] ?? null;
         
-        $result = $this->gameModel->getPaginated($page, $perPage, $category, $search, $difficulty, true);
+        $result = $this->gameModel->getPaginated($page, $perPage, $category, $search, $difficulty, null, true);
         
         $categories = $this->categoryModel->getCategories();
         
