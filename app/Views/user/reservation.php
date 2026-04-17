@@ -79,8 +79,19 @@
     <!-- Search Form - will be moved via JS into game selection -->
     <form method="GET" action="<?= BASE_URL ?>/reservation" id="searchForm">
       <div class="flex gap-2">
-        <input type="text" name="search" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" 
-          class="flex-1 bg-surface-high border-none rounded-xl py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/50">
+        <div class="flex-1 relative">
+          <input type="text" name="search" id="searchInput" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" 
+            class="w-full bg-surface-high border-none rounded-xl py-3 pl-4 pr-10 text-on-surface focus:ring-2 focus:ring-primary/50">
+          <?php if (!empty($_GET['search'])): ?>
+          <a href="<?= BASE_URL ?>/reservation" class="absolute right-4 top-1/2 -translate-y-1/2 text-secondary hover:text-primary">
+            <span class="text-xl">&times;</span>
+          </a>
+          <?php else: ?>
+          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-secondary/50">
+            <span class="text-xl">&times;</span>
+          </span>
+          <?php endif; ?>
+        </div>
         <button type="submit" class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90">Search</button>
         <?php if (isset($_GET['search']) || isset($_GET['category'])): ?>
         <a href="<?= BASE_URL ?>/reservation" class="px-4 py-3 bg-surface-high text-secondary rounded-xl hover:bg-surface-highest">Clear</a>
@@ -180,9 +191,14 @@
           
           <?php if (($pagination['totalPages'] ?? 0) > 1): ?>
           <!-- Pagination -->
-          <div class="flex items-center justify-center gap-2 mt-6">
+          <div class="games-pagination flex items-center justify-center gap-2 mt-6">
+            <?php 
+            $dateParam = $selectedDate ? '&date=' . $selectedDate : '';
+            $timeParam = $selectedTime ? '&time=' . $selectedTime : '';
+            $durationParam = $selectedDuration ? '&duration=' . $selectedDuration : '';
+            ?>
             <?php if (($pagination['currentPage'] ?? 1) > 1): ?>
-            <a href="?page=<?= ($pagination['currentPage'] ?? 1) - 1 ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
+            <a href="?page=<?= ($pagination['currentPage'] ?? 1) - 1 ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?><?= $dateParam ?><?= $timeParam ?><?= $durationParam ?>" 
                class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors">
               <span class="material-symbols-outlined">chevron_left</span>
             </a>
@@ -194,19 +210,21 @@
             if ($end - $start < 4) $start = max(1, $end - 4);
             for ($i = $start; $i <= $end; $i++): 
             ?>
-              <a href="?page=<?= $i ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
+              <a href="?page=<?= $i ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?><?= $dateParam ?><?= $timeParam ?><?= $durationParam ?>" 
                  class="px-4 py-2 rounded-xl <?= $i == ($pagination['currentPage'] ?? 1) ? 'bg-primary text-on-primary' : 'bg-surface-high hover:bg-surface-highest' ?> transition-colors">
                 <?= $i ?>
               </a>
             <?php endfor; ?>
             
             <?php if (($pagination['currentPage'] ?? 1) < ($pagination['totalPages'] ?? 1)): ?>
-            <a href="?page=<?= ($pagination['currentPage'] ?? 1) + 1 ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
+            <a href="?page=<?= ($pagination['currentPage'] ?? 1) + 1 ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?><?= $dateParam ?><?= $timeParam ?><?= $durationParam ?>" 
                class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors">
               <span class="material-symbols-outlined">chevron_right</span>
             </a>
             <?php endif; ?>
           </div>
+          <?php else: ?>
+          <div class="games-pagination"></div>
           <?php endif; ?>
         </div>
 
@@ -214,7 +232,7 @@
         <div class="bg-surface-container rounded-2xl p-6">
           <div class="flex items-center justify-between mb-4">
             <h2 class="font-headline text-xl font-bold text-primary">Select Table</h2>
-            <span class="text-sm text-secondary"><?= $tablePagination['totalTables'] ?? 0 ?> tables</span>
+            <span id="tables-count" class="text-sm text-secondary"><?= $tablePagination['totalTables'] ?? 0 ?> tables</span>
           </div>
           <div id="tables-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <?php foreach ($tables ?? [] as $table): ?>
@@ -231,35 +249,9 @@
             <?php endforeach; ?>
           </div>
           
-          <?php if (($tablePagination['totalPages'] ?? 0) > 1): ?>
-          <div class="flex items-center justify-center gap-2 mt-6">
-            <?php if (($tablePagination['currentPage'] ?? 1) > 1): ?>
-            <a href="?table_page=<?= ($tablePagination['currentPage'] ?? 1) - 1 ?><?= isset($_GET['page']) ? '&page=' . $_GET['page'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
-               class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors">
-              <span class="material-symbols-outlined">chevron_left</span>
-            </a>
-            <?php endif; ?>
-            
-            <?php 
-            $start = max(1, ($tablePagination['currentPage'] ?? 1) - 2);
-            $end = min($tablePagination['totalPages'] ?? 1, $start + 4);
-            if ($end - $start < 4) $start = max(1, $end - 4);
-            for ($i = $start; $i <= $end; $i++): 
-            ?>
-              <a href="?table_page=<?= $i ?><?= isset($_GET['page']) ? '&page=' . $_GET['page'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
-                 class="px-4 py-2 rounded-xl <?= $i == ($tablePagination['currentPage'] ?? 1) ? 'bg-primary text-on-primary' : 'bg-surface-high hover:bg-surface-highest' ?> transition-colors">
-                <?= $i ?>
-              </a>
-            <?php endfor; ?>
-            
-            <?php if (($tablePagination['currentPage'] ?? 1) < ($tablePagination['totalPages'] ?? 1)): ?>
-            <a href="?table_page=<?= ($tablePagination['currentPage'] ?? 1) + 1 ?><?= isset($_GET['page']) ? '&page=' . $_GET['page'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?>" 
-               class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors">
-              <span class="material-symbols-outlined">chevron_right</span>
-            </a>
-            <?php endif; ?>
+          <div id="tablePagination" class="flex items-center justify-center gap-2 mt-6">
+            <!-- Table pagination will be updated dynamically -->
           </div>
-          <?php endif; ?>
         </div>
 
         <!-- Guest Details -->
@@ -344,12 +336,26 @@
         searchWrapper.appendChild(searchForm);
       }
       
+      // Override search form to use AJAX
+      if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const date = document.getElementById('date')?.value;
+          const time = document.getElementById('start_time')?.value;
+          if (date && time) {
+            fetchAvailability(1);
+          } else {
+            searchForm.submit();
+          }
+        });
+      }
+      
       // Restore saved selections
       restoreSelections();
     });
 
-    const games = <?= json_encode($games ?? []) ?>;
-    const tables = <?= json_encode($tables ?? []) ?>;
+    let games = <?= json_encode($games ?? []) ?>;
+    let tables = <?= json_encode($tables ?? []) ?>;
 
     // Save selections to sessionStorage
     function saveSelections() {
@@ -495,10 +501,16 @@
       // Total (price is just the game price, no relation with duration)
       if (selectedGame && selectedGame.value && selectedGame.value !== '0') {
         const game = games.find(g => g.id == selectedGame.value);
-        const total = parseFloat(game?.price) || 0;
-        totalEl.textContent = total.toFixed(2) + ' MAD';
+        if (game && game.price) {
+          const total = parseFloat(game.price) || 0;
+          totalEl.textContent = total.toFixed(2) + ' MAD';
+        } else if (game) {
+          totalEl.textContent = (parseFloat(game.price) || 0).toFixed(2) + ' MAD';
+        } else {
+          totalEl.textContent = '0.00 MAD';
+        }
       } else {
-        totalEl.textContent = '0 MAD';
+        totalEl.textContent = '0.00 MAD';
       }
     }
 
@@ -534,21 +546,33 @@
     updateSummary();
 
     // Fetch available games and tables when date/time changes
-    async function fetchAvailability() {
+    let currentPage = 1;
+    async function fetchAvailability(page = 1) {
       const date = document.getElementById('date')?.value;
       const time = document.getElementById('start_time')?.value;
       const duration = document.getElementById('duration')?.value || 2;
+      const searchInput = document.querySelector('input[name="search"]')?.value || '';
       
       if (!date || !time) {
         return;
       }
       
+      currentPage = page;
+      
       try {
-        const response = await fetch(`<?= BASE_URL ?>/reservation/available?date=${date}&time=${time}&duration=${duration}`);
+        let url = `<?= BASE_URL ?>/reservation/available?date=${date}&time=${time}&duration=${duration}&page=${page}`;
+        if (searchInput) url += `&search=${encodeURIComponent(searchInput)}`;
+        
+        const response = await fetch(url);
         const data = await response.json();
         
-        updateGamesGrid(data.games);
-        updateTablesGrid(data.tables);
+        // Update local arrays
+        games = data.games || [];
+        tables = data.tables || [];
+        
+        updateGamesGrid(games);
+        updateTablesGrid(tables, 1);
+        updatePaginationLinks(data.pagination, date, time, duration);
         
         // Update counts
         const gamesCount = document.getElementById('games-count');
@@ -565,6 +589,52 @@
         }
       } catch (error) {
         console.error('Error fetching availability:', error);
+      }
+    }
+    
+    function updatePaginationLinks(pagination, date, time, duration) {
+      // Games pagination
+      const paginationEl = document.querySelector('.games-pagination');
+      if (paginationEl) {
+        let html = '';
+        
+        if (pagination && pagination.totalPages > 1) {
+          if (pagination.currentPage > 1) {
+            html += `<a href="#" onclick="fetchAvailability(${pagination.currentPage - 1}); return false;" class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors"><span class="material-symbols-outlined">chevron_left</span></a>`;
+          }
+          
+          for (let i = 1; i <= pagination.totalPages; i++) {
+            if (i === pagination.currentPage) {
+              html += `<span class="px-4 py-2 rounded-xl bg-primary text-on-primary font-bold">${i}</span>`;
+            } else {
+              html += `<a href="#" onclick="fetchAvailability(${i}); return false;" class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors">${i}</a>`;
+            }
+          }
+          
+          if (pagination.currentPage < pagination.totalPages) {
+            html += `<a href="#" onclick="fetchAvailability(${pagination.currentPage + 1}); return false;" class="px-4 py-2 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors"><span class="material-symbols-outlined">chevron_right</span></a>`;
+          }
+        } else if (!pagination || pagination.totalPages <= 1) {
+          html = '<p class="text-center text-secondary text-sm col-span-full py-4">All games loaded</p>';
+        }
+        
+        paginationEl.innerHTML = html;
+      }
+      
+      // Tables pagination - always show pagination if there are tables
+      const tablePaginationEl = document.getElementById('tablePagination');
+      if (tablePaginationEl) {
+        const totalTables = tables.length;
+        const perPage = 6;
+        const totalPages = Math.ceil(totalTables / perPage);
+        
+        let html = '';
+        if (totalPages > 1) {
+          html += '<span class="text-sm text-secondary mr-2">Page 1 of ' + totalPages + '</span>';
+        } else {
+          html = '';
+        }
+        tablePaginationEl.innerHTML = html;
       }
     }
 
@@ -630,17 +700,27 @@
       });
     }
 
-    function updateTablesGrid(tables) {
+    let currentTablePage = 1;
+    const tablesPerPage = 6;
+    
+    function updateTablesGrid(tables, page = 1) {
       const container = document.getElementById('tables-grid');
       if (!container) return;
+      
+      currentTablePage = page;
       
       if (tables.length === 0) {
         container.innerHTML = '<p class="text-secondary col-span-full text-center py-8">No tables available for this time slot</p>';
         return;
       }
       
+      const startIdx = (page - 1) * tablesPerPage;
+      const endIdx = startIdx + tablesPerPage;
+      const paginatedTables = tables.slice(startIdx, endIdx);
+      const totalPages = Math.ceil(tables.length / tablesPerPage);
+      
       let html = '';
-      tables.forEach(table => {
+      paginatedTables.forEach(table => {
         html += `
           <label class="table-option cursor-pointer">
             <input type="radio" name="table_id" value="${table.id}" class="hidden peer">
@@ -656,6 +736,28 @@
       });
       
       container.innerHTML = html;
+      
+      // Update table pagination
+      const tablePaginationEl = document.getElementById('tablePagination');
+      if (tablePaginationEl) {
+        let html = '';
+        if (totalPages > 1) {
+          if (page > 1) {
+            html += `<a href="#" onclick="updateTablesGrid(tables, ${page - 1}); return false;" class="px-3 py-1 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors"><span class="material-symbols-outlined text-sm">chevron_left</span></a>`;
+          }
+          html += `<span class="px-3 py-1 text-sm text-secondary">Page ${page} of ${totalPages}</span>`;
+          if (page < totalPages) {
+            html += `<a href="#" onclick="updateTablesGrid(tables, ${page + 1}); return false;" class="px-3 py-1 bg-surface-high rounded-xl hover:bg-surface-highest transition-colors"><span class="material-symbols-outlined text-sm">chevron_right</span></a>`;
+          }
+        }
+        tablePaginationEl.innerHTML = html;
+      }
+      
+      // Update table count
+      const tablesCount = document.getElementById('tables-count');
+      if (tablesCount) {
+        tablesCount.textContent = `${tables.length} tables`;
+      }
       
       // Re-attach event listeners
       container.querySelectorAll('input[name="table_id"]').forEach(el => {

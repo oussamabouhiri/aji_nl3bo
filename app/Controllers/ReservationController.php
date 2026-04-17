@@ -82,19 +82,78 @@ class ReservationController {
     }
 
     public function index() {
-        $page = $_GET['page'] ?? 1;
-        $perPage = 10;
-        $offset = ($page - 1) * $perPage;
+        date_default_timezone_set('Africa/Casablanca');
         
-        $reservations = $this->reservationModel->getAll($perPage, $offset);
-        $total = $this->reservationModel->count();
-        $totalPages = ceil($total / $perPage);
+        $page = max(1, intval($_GET['page'] ?? 1));
+        $perPage = 15;
+        $offset = ($page - 1) * $perPage;
+        $filterDate = isset($_GET['date']) && !empty($_GET['date']) ? $_GET['date'] : date('Y-m-d');
+        
+        $dateReservations = $this->reservationModel->getByDate($filterDate);
+        
+        $today = date('Y-m-d');
+        $isPastDate = $filterDate < $today;
+        
+        if ($isPastDate) {
+            foreach ($dateReservations as $res) {
+                if ($res['status'] === 'confirmed') {
+                    $this->reservationModel->complete($res['id']);
+                }
+            }
+            $dateReservations = $this->reservationModel->getByDate($filterDate);
+        }
+        
+        $totalReservations = count($dateReservations);
+        $allReservations = array_slice($dateReservations, $offset, $perPage);
+        
+        $todayPaxs = array_sum(array_column($dateReservations, 'spots'));
+        $confirmedCount = count(array_filter($dateReservations, fn($r) => $r['status'] === 'confirmed'));
+        $pendingCount = count(array_filter($dateReservations, fn($r) => $r['status'] === 'pending'));
+        
+        $peakHour = '--:--';
+        $peakEndTime = '--:--';
+        $isFullyBooked = false;
+        
+        if (!empty($dateReservations)) {
+            $activeReservations = array_filter($dateReservations, fn($r) => in_array($r['status'], ['confirmed', 'pending']));
+            if (!empty($activeReservations)) {
+                $hours = [];
+                foreach ($activeReservations as $res) {
+                    $hour = date('H', strtotime($res['start_time']));
+                    if (!isset($hours[$hour])) {
+                        $hours[$hour] = 0;
+                    }
+                    $hours[$hour]++;
+                }
+                arsort($hours);
+                $peakHourKey = array_key_first($hours);
+                $peakHour = date('H:i', strtotime($filterDate . ' ' . $peakHourKey . ':00'));
+                $peakEndTime = date('H:i', strtotime($peakHour . '+90 minutes'));
+                $isFullyBooked = reset($hours) >= 4;
+            }
+        }
+        
+        $stats = [
+            'todayPaxs' => $todayPaxs,
+            'confirmed' => $confirmedCount,
+            'pending' => $pendingCount,
+            'peakTime' => $peakHour,
+            'peakEndTime' => $peakEndTime,
+            'isFullyBooked' => $isFullyBooked,
+            'isPastDate' => $isPastDate
+        ];
+        
+        $totalPages = ceil($totalReservations / $perPage);
         
         $this->utility->view("admin/reservations", [
-            'reservations' => $reservations,
-            'currentPage' => (int)$page,
-            'totalPages' => $totalPages,
-            'totalReservations' => $total
+            'reservations' => $allReservations,
+            'stats' => $stats,
+            'filterDate' => $filterDate,
+            'pagination' => [
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'totalReservations' => $totalReservations
+            ]
         ]);
     }
 

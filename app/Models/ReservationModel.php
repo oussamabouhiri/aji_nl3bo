@@ -246,4 +246,39 @@ class ReservationModel extends Database {
             return 0;
         }
     }
+
+    public function getByDate($date, $limit = null, $offset = 0) {
+        try {
+            $sql = "SELECT r.*, u.name as customer_name, u.email, u.phone,
+                    t.reference as table_reference, t.capacity as table_capacity,
+                    g.name as game_name, g.image_url as game_image, g.price as game_price
+                    FROM reservations r
+                    LEFT JOIN users u ON r.user_id = u.id
+                    LEFT JOIN game_tables t ON r.table_id = t.id
+                    LEFT JOIN games g ON r.game_id = g.id
+                    WHERE r.date = ?
+                    ORDER BY r.start_time ASC";
+            
+            if ($limit) {
+                $sql .= " LIMIT $limit OFFSET $offset";
+            }
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$date]);
+            return $stmt->fetchAll();
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    public function countByDate($date) {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM reservations WHERE date = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$date]);
+            return (int) $stmt->fetch()['total'];
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 }

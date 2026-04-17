@@ -45,4 +45,21 @@ class Middleware
             Utility::redirect('/');
         }
     }
+
+    
+    public function user(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (empty($_SESSION['user_id'])) {
+            Utility::redirect('/login');
+            return;
+        }
+        
+        if (!empty($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') {
+            Utility::redirect('/admin');
+        }
+    }
 }

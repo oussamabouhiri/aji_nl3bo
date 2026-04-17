@@ -164,23 +164,27 @@
           <span class="text-sm">History</span>
         </a>
       </nav>
-      <div class="px-4 mt-auto space-y-4">
-        <a href="<?= BASE_URL ?>/admin/reservations"
-          class="w-full bg-primary text-on-primary font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/10">
-          <span class="material-symbols-outlined text-lg" data-icon="add">add</span>
-          New Reservation
-        </a>
-        <div class="pt-4 space-y-1">
-          <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+      <div class="px-4 mt-auto">
+        <div class="space-y-1 mb-4">
+          <a class="text-[#abcdcc] hover:bg-[#353534]/50 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
             href="<?= BASE_URL ?>/admin/settings">
-            <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+            <span class="material-symbols-outlined text-xl">settings</span>
             Settings
           </a>
-          <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+          <a class="text-[#abcdcc] hover:bg-[#353534]/50 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
             href="<?= BASE_URL ?>/logout">
-            <span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+            <span class="material-symbols-outlined text-xl">logout</span>
             Logout
           </a>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-surface-container/50">
+          <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary">person</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="text-xs font-bold truncate"><?= $_SESSION['user_name'] ?? 'Admin' ?></p>
+            <p class="text-[10px] text-secondary/60 truncate">Administrator</p>
+          </div>
         </div>
       </div>
     </aside>

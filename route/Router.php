@@ -10,7 +10,9 @@ define('BASE_URL', $config['base_url']);
 
 class Router {
     static private array $routes = [];
+
     static private int $currentRouteIndex;
+
     static private array $config = [];
 
     static public function init(array $config): void {
@@ -20,7 +22,7 @@ class Router {
     static public function get(string $pattern, array $callback): self {
         $route = [
             'method' => 'GET',
-            'pattern' => $pattern,
+            'pattern' =>  $pattern,
             'callback' => $callback,
             'middleware' => []
         ];
@@ -47,7 +49,7 @@ class Router {
         }
         return new self;
     }
-
+    
     static public function request(): array {
         if (isset($_GET['url'])) {
             $path = '/' . rtrim(ltrim($_GET['url'], '/'), '/');

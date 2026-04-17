@@ -50,14 +50,21 @@
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <a href="<?= BASE_URL ?>/" class="text-2xl font-black tracking-tighter text-[#e9c176]">Aji L3bo</a>
       <div class="hidden md:flex items-center gap-8">
-        <?php if (isset($_SESSION['user'])): ?>
-          <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/games">Games</a>
-          <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/reservation">Reserve</a>
-          <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/my-reservations">My Reservations</a>
+        <?php if ($isLoggedIn): ?>
+          <?php if ($isAdmin): ?>
+            <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/admin">Dashboard</a>
+            <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/admin/games">Games</a>
+            <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/admin/reservations">Reservations</a>
+            <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/admin/sessions">Sessions</a>
+          <?php else: ?>
+            <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/games">Games</a>
+            <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/reservation">Reserve</a>
+            <a class="text-[#abcdcc] hover:text-[#e9c176] transition-colors font-body text-sm" href="<?= BASE_URL ?>/my-reservations">My Reservations</a>
+          <?php endif; ?>
         <?php endif; ?>
       </div>
       <div class="flex items-center gap-4">
-        <?php if (isset($_SESSION['user'])): ?>
+        <?php if ($isLoggedIn): ?>
           <a href="<?= BASE_URL ?>/logout" class="text-sm text-[#c1c8c7] hover:text-[#e9c176] transition-colors">Logout</a>
         <?php else: ?>
           <a href="<?= BASE_URL ?>/login" class="text-sm text-[#c1c8c7] hover:text-[#e9c176] transition-colors">Login</a>
@@ -79,13 +86,22 @@
         Discover hundreds of board games, reserve your favorite table, and enjoy the ultimate gaming experience with friends and family.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <?php if (isset($_SESSION['user'])): ?>
-          <a href="<?= BASE_URL ?>/reservation" class="px-8 py-4 bg-[#e9c176] text-[#412d00] rounded-xl font-bold text-lg hover:opacity-90 shadow-lg shadow-[#e9c176]/20">
-            Reserve a Table
-          </a>
-          <a href="<?= BASE_URL ?>/games" class="px-8 py-4 bg-surface-high text-[#e5e2e1] rounded-xl font-bold text-lg hover:bg-surface-highest transition-colors">
-            Browse Games
-          </a>
+        <?php if ($isLoggedIn): ?>
+          <?php if ($isAdmin): ?>
+            <a href="<?= BASE_URL ?>/admin" class="px-8 py-4 bg-[#e9c176] text-[#412d00] rounded-xl font-bold text-lg hover:opacity-90 shadow-lg shadow-[#e9c176]/20">
+              Admin Dashboard
+            </a>
+            <a href="<?= BASE_URL ?>/admin/sessions" class="px-8 py-4 bg-surface-high text-[#e5e2e1] rounded-xl font-bold text-lg hover:bg-surface-highest transition-colors">
+              Manage Sessions
+            </a>
+          <?php else: ?>
+            <a href="<?= BASE_URL ?>/reservation" class="px-8 py-4 bg-[#e9c176] text-[#412d00] rounded-xl font-bold text-lg hover:opacity-90 shadow-lg shadow-[#e9c176]/20">
+              Reserve a Table
+            </a>
+            <a href="<?= BASE_URL ?>/games" class="px-8 py-4 bg-surface-high text-[#e5e2e1] rounded-xl font-bold text-lg hover:bg-surface-highest transition-colors">
+              Browse Games
+            </a>
+          <?php endif; ?>
         <?php else: ?>
           <a href="<?= BASE_URL ?>/register" class="px-8 py-4 bg-[#e9c176] text-[#412d00] rounded-xl font-bold text-lg hover:opacity-90 shadow-lg shadow-[#e9c176]/20">
             Get Started
@@ -170,15 +186,27 @@
     <div class="max-w-4xl mx-auto text-center bg-surface-container rounded-3xl p-12 relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-r from-[#e9c176]/5 to-[#abcdcc]/5"></div>
       <div class="relative">
-        <h2 class="text-3xl md:text-4xl font-headline font-bold mb-4">Ready to Play?</h2>
-        <p class="text-[#c1c8c7] max-w-xl mx-auto mb-8">
-          Join us and experience the best board game cafe in town.
-        </p>
-        <?php if (isset($_SESSION['user'])): ?>
+        <?php if ($isAdmin): ?>
+          <h2 class="text-3xl md:text-4xl font-headline font-bold mb-4">Admin Panel</h2>
+          <p class="text-[#c1c8c7] max-w-xl mx-auto mb-8">
+            Manage your board game cafe efficiently from the admin dashboard.
+          </p>
+          <a href="<?= BASE_URL ?>/admin" class="inline-block px-8 py-4 bg-[#e9c176] text-[#412d00] rounded-xl font-bold text-lg hover:opacity-90">
+            Go to Dashboard
+          </a>
+        <?php elseif ($isLoggedIn): ?>
+          <h2 class="text-3xl md:text-4xl font-headline font-bold mb-4">Ready to Play?</h2>
+          <p class="text-[#c1c8c7] max-w-xl mx-auto mb-8">
+            Join us and experience the best board game cafe in town.
+          </p>
           <a href="<?= BASE_URL ?>/reservation" class="inline-block px-8 py-4 bg-[#e9c176] text-[#412d00] rounded-xl font-bold text-lg hover:opacity-90">
             Make a Reservation
           </a>
         <?php else: ?>
+          <h2 class="text-3xl md:text-4xl font-headline font-bold mb-4">Ready to Play?</h2>
+          <p class="text-[#c1c8c7] max-w-xl mx-auto mb-8">
+            Join us and experience the best board game cafe in town.
+          </p>
           <a href="<?= BASE_URL ?>/register" class="inline-block px-8 py-4 bg-[#e9c176] text-[#412d00] rounded-xl font-bold text-lg hover:opacity-90">
             Get Started Free
           </a>
@@ -195,7 +223,11 @@
         <p class="text-[#c1c8c7] text-sm mt-1">Your ultimate board game destination</p>
       </div>
       <div class="flex gap-6 text-sm text-[#c1c8c7]">
-        <?php if (isset($_SESSION['user'])): ?>
+        <?php if ($isAdmin): ?>
+          <a href="<?= BASE_URL ?>/admin" class="hover:text-[#e9c176] transition-colors">Dashboard</a>
+          <a href="<?= BASE_URL ?>/admin/games" class="hover:text-[#e9c176] transition-colors">Games</a>
+          <a href="<?= BASE_URL ?>/admin/reservations" class="hover:text-[#e9c176] transition-colors">Reservations</a>
+        <?php elseif ($isLoggedIn): ?>
           <a href="<?= BASE_URL ?>/games" class="hover:text-[#e9c176] transition-colors">Games</a>
           <a href="<?= BASE_URL ?>/reservation" class="hover:text-[#e9c176] transition-colors">Reserve</a>
           <a href="<?= BASE_URL ?>/my-reservations" class="hover:text-[#e9c176] transition-colors">My Reservations</a>

@@ -82,6 +82,27 @@ class SessionModel extends Database {
         }
     }
 
+    public function getRecentCompleted($limit = 5) {
+        try {
+            $sql = "SELECT s.*, r.date as session_date, r.start_time, r.end_time, r.price as total_price,
+                    u.name as customer_name,
+                    g.name as game_name, g.image_url as game_image,
+                    t.reference as table_reference, t.id as table_number
+                    FROM sessions s
+                    LEFT JOIN reservations r ON s.reservation_id = r.id
+                    LEFT JOIN users u ON r.user_id = u.id
+                    LEFT JOIN games g ON s.game_id = g.id
+                    LEFT JOIN game_tables t ON r.table_id = t.id
+                    WHERE s.status = 'ended'
+                    ORDER BY s.ended_at DESC
+                    LIMIT $limit";
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll();
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
     public function getById($id) {
         try {
             $sql = "SELECT s.*, r.date, r.start_time, r.end_time, r.status as reservation_status, r.price as total_price,

@@ -28,11 +28,12 @@ class UserController {
 
     public function games() {
         $page = max(1, intval($_GET['page'] ?? 1));
-        $perPage = 12;
+        $perPage = 6;
         $categoryId = isset($_GET['category']) ? intval($_GET['category']) : null;
         $search = isset($_GET['search']) ? trim($_GET['search']) : null;
         $difficulty = isset($_GET['difficulty']) ? $_GET['difficulty'] : null;
-        $gamesResult = $this->gameModel->getPaginated($page, $perPage, $categoryId, $search, $difficulty, false);
+        $maxDuration = isset($_GET['max_duration']) ? intval($_GET['max_duration']) : null;
+        $gamesResult = $this->gameModel->getPaginated($page, $perPage, $categoryId, $search, $difficulty, $maxDuration, false);
 
         $categories = $this->categoryModel->getCategories();
         $this->utility->view("user/games", [
@@ -72,11 +73,8 @@ class UserController {
             return;
         }
         
-        $tables = $this->tableModel->getAll();
-        
-        $this->utility->view("user/games", [
-            'game' => $game,
-            'tables' => $tables
+        $this->utility->view("user/game-detail", [
+            'game' => $game
         ]);
     }
 
@@ -105,7 +103,10 @@ class UserController {
                 'totalPages' => $tableResult['totalPages'],
                 'totalTables' => $tableResult['totalTables'],
                 'perPage' => $tableResult['perPage']
-            ]
+            ],
+            'selectedDate' => $_GET['date'] ?? null,
+            'selectedTime' => $_GET['time'] ?? null,
+            'selectedDuration' => $_GET['duration'] ?? 2
         ]);
     }
 
@@ -288,6 +289,9 @@ class UserController {
         $date = $_GET['date'] ?? null;
         $time = $_GET['time'] ?? null;
         $duration = intval($_GET['duration'] ?? 2);
+        $page = max(1, intval($_GET['page'] ?? 1));
+        $perPage = 6;
+        $search = isset($_GET['search']) ? trim($_GET['search']) : null;
         
         if (!$date || !$time) {
             echo json_encode(['games' => [], 'tables' => [], 'error' => 'Date and time required']);
@@ -299,14 +303,19 @@ class UserController {
         $end = $start->modify("+{$duration} hours");
         $endTime = $end->format('H:i:s');
         
-        $gamesResult = $this->gameModel->getAvailableGames($date, $startTime, $endTime, 1, 100, null, null);
+        $gamesResult = $this->gameModel->getAvailableGames($date, $startTime, $endTime, $page, $perPage, null, $search);
         $availableTables = $this->tableModel->getAvailableTables($date, $startTime, $endTime);
         
         echo json_encode([
             'games' => $gamesResult['games'],
             'tables' => $availableTables,
             'totalGames' => $gamesResult['totalGames'],
-            'totalTables' => count($availableTables)
+            'totalTables' => count($availableTables),
+            'pagination' => [
+                'currentPage' => $gamesResult['currentPage'],
+                'totalPages' => $gamesResult['totalPages'],
+                'perPage' => $gamesResult['perPage']
+            ]
         ]);
     }
 

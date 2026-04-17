@@ -36,23 +36,23 @@ Router::get('/logout', [AuthController::class, 'logout'])->middleware('auth');
 // =====================
 
 //
-Router::get('/dashboard', [UserController::class, 'dashboard'])->middleware('auth');
+Router::get('/dashboard', [UserController::class, 'dashboard'])->middleware('user');
 
 // Reservation (auth required)
-Router::get('/reservation', [UserController::class, 'reservation'])->middleware('auth');
-Router::post('/reservation/create', [ReservationController::class, 'createUser'])->middleware('auth');
-Router::post('/reservation/cancel', [UserController::class, 'cancelReservation'])->middleware('auth');
-Router::get('/reservation/available', [UserController::class, 'getAvailable'])->middleware('auth');
+Router::get('/reservation', [UserController::class, 'reservation'])->middleware('user');
+Router::post('/reservation/create', [ReservationController::class, 'createUser'])->middleware('user');
+Router::post('/reservation/cancel', [UserController::class, 'cancelReservation'])->middleware('user');
+Router::get('/reservation/available', [UserController::class, 'getAvailable'])->middleware('user');
 
 // My Reservations (auth required)
-Router::get('/my-reservations', [UserController::class, 'myReservations'])->middleware('auth');
+Router::get('/my-reservations', [UserController::class, 'myReservations'])->middleware('user');
 
 // Profile (auth required)
-Router::get('/profile', [UserController::class, 'profile'])->middleware('auth');
+Router::get('/profile', [UserController::class, 'profile'])->middleware('user');
 
 // Games (auth required)
-Router::get('/games', [UserController::class, 'games'])->middleware('auth');
-Router::get('/games/{id}', [UserController::class, 'gameDetail'])->middleware('auth');
+Router::get('/games', [UserController::class, 'games'])->middleware('user');
+Router::get('/games/{id}', [UserController::class, 'gameDetail'])->middleware('user');
 
 // =====================
 // ADMIN ROUTES

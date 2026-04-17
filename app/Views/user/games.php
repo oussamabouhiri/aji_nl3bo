@@ -129,10 +129,28 @@
                 <a class="font-body text-[#abcdcc] hover:text-[#e9c176] transition-colors" href="<?= BASE_URL ?>/my-reservations">My Reservations</a>
             </div>
             <div class="flex items-center space-x-6">
+                <form method="GET" action="<?= BASE_URL ?>/games" class="relative hidden lg:block">
+                    <button type="submit" class="absolute left-4 top-1/2 -translate-y-1/2 text-[#c1c8c7]">
+                        <span class="material-symbols-outlined text-xl">search</span>
+                    </button>
+                    <?php if (isset($_GET['category'])): ?>
+                    <input type="hidden" name="category" value="<?= (int)$_GET['category'] ?>">
+                    <?php endif; ?>
+                    <?php if (isset($_GET['max_duration'])): ?>
+                    <input type="hidden" name="max_duration" value="<?= (int)$_GET['max_duration'] ?>">
+                    <?php endif; ?>
+                    <input name="search" id="searchInput" value="<?= htmlspecialchars($search ?? '', ENT_QUOTES) ?>"
+                        class="bg-surface-container-high border-none rounded-full py-2 pl-12 pr-10 text-sm w-64 focus:ring-1 focus:ring-primary/50 text-[#e5e2e1] placeholder-[#c1c8c7]/50"
+                        placeholder="Search games..." type="text">
+                    <?php if (!empty($search)): ?>
+                    <a href="<?= BASE_URL ?>/games<?= isset($_GET['category']) ? '?category=' . $_GET['category'] : '' ?><?= isset($_GET['max_duration']) && !isset($_GET['category']) ? '?max_duration=' . $_GET['max_duration'] : '' ?><?= isset($_GET['max_duration']) && isset($_GET['category']) ? '&max_duration=' . $_GET['max_duration'] : '' ?>"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-[#c1c8c7] hover:text-[#e9c176]">
+                        <span class="text-xl">&times;</span>
+                    </a>
+                    <?php endif; ?>
+                </form>
                 <a href="<?= BASE_URL ?>/logout" class="text-sm text-[#c1c8c7] hover:text-[#e9c176] transition-colors">Logout</a>
-                <div class="w-10 h-10 rounded-full overflow-hidden border border-primary/20">
-                    <img alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAw3A-H9NMwEc27KqDsw93vKKXxs73cvFw4gxSjxe1f1HfxwS1bUiWjginiKx0qSgnoKFO6kpdPSieQJAEjurCE0i-brqM_2FerCHTc4i_sW6b9EFxt6vzZGagIyoCbsfSP8GkkETMfliZkOY9W0_IoTjkmAqnrLlinrANL7e42YpGNADo3edXy9LBT3MU0p-VBEEsoJIJOqPA-yQdukmq1PcB5Y-L9kRNegXSVdpZOjw9tJM0bxwD759KVv7TIF1xWHkMhrqdm9Dq">
-                </div>
+            </div>
             </div>
         </div>
     </nav>
@@ -173,64 +191,77 @@
                             Refine Library
                         </h3>
                         <!-- Categories -->
-                        <div class="mb-8">
-                            <label
-                                class="font-headline text-xs font-bold text-secondary uppercase tracking-widest mb-4 block">Categories</label>
-                            <div class="space-y-3">
-                                <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input
-                                        class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary w-5 h-5"
-                                        type="checkbox">
-                                    <span
-                                        class="text-on-surface-variant group-hover:text-on-surface transition-colors">Strategy</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input
-                                        class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary w-5 h-5"
-                                        type="checkbox">
-                                    <span
-                                        class="text-on-surface-variant group-hover:text-on-surface transition-colors">Atmosphere</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input checked
-                                        class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary w-5 h-5"
-                                        type="checkbox">
-                                    <span class="text-on-surface font-semibold">Family</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input
-                                        class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary w-5 h-5"
-                                        type="checkbox">
-                                    <span
-                                        class="text-on-surface-variant group-hover:text-on-surface transition-colors">Experts</span>
-                                </label>
+                        <form id="filterForm" method="GET" action="<?= BASE_URL ?>/games">
+                            <?php if (isset($_GET['search'])): ?>
+                            <input type="hidden" name="search" value="<?= htmlspecialchars($_GET['search']) ?>">
+                            <?php endif; ?>
+                            <div class="mb-8">
+                                <label class="font-headline text-xs font-bold text-secondary uppercase tracking-widest mb-4 block">Categories</label>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 cursor-pointer group">
+                                        <input type="radio" name="category" value="" <?= !isset($_GET['category']) ? 'checked' : '' ?>
+                                            class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary w-5 h-5">
+                                        <span class="<?= !isset($_GET['category']) ? 'text-on-surface font-semibold' : 'text-on-surface-variant group-hover:text-on-surface' ?> transition-colors">All Games</span>
+                                    </label>
+                                    <?php foreach ($categories as $cat): ?>
+                                    <label class="flex items-center gap-3 cursor-pointer group">
+                                        <input type="radio" name="category" value="<?= $cat['id'] ?>" <?= (isset($_GET['category']) && $_GET['category'] == $cat['id']) ? 'checked' : '' ?>
+                                            class="rounded border-outline-variant bg-transparent text-primary focus:ring-primary w-5 h-5">
+                                        <span class="<?= (isset($_GET['category']) && $_GET['category'] == $cat['id']) ? 'text-on-surface font-semibold' : 'text-on-surface-variant group-hover:text-on-surface' ?> transition-colors"><?= htmlspecialchars($cat['name']) ?></span>
+                                    </label>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Players -->
-                        <div class="mb-8">
-                            <label
-                                class="font-headline text-xs font-bold text-secondary uppercase tracking-widest mb-4 block">Players</label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <button
-                                    class="bg-surface-container-high border border-outline-variant/15 py-2 rounded-xl text-sm font-medium hover:bg-primary/10 hover:text-primary transition-all">1-2</button>
-                                <button
-                                    class="brass-gradient text-on-primary py-2 rounded-xl text-sm font-bold shadow-lg">3-5</button>
-                                <button
-                                    class="bg-surface-container-high border border-outline-variant/15 py-2 rounded-xl text-sm font-medium hover:bg-primary/10 hover:text-primary transition-all">6+</button>
+                            <!-- Duration -->
+                            <div class="mb-4">
+                                <label class="font-headline text-xs font-bold text-secondary uppercase tracking-widest mb-4 block">Max Duration</label>
+                                <input name="max_duration" id="durationSlider" 
+                                    class="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
+                                    type="range" min="30" max="180" step="15" value="<?= $_GET['max_duration'] ?? 180 ?>">
+                                <div class="flex justify-between mt-2 text-xs text-on-surface-variant">
+                                    <span>30m</span>
+                                    <span id="durationValue"><?= $_GET['max_duration'] ?? 'Any' ?></span>
+                                    <span>3h</span>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Duration -->
-                        <div class="mb-4">
-                            <label
-                                class="font-headline text-xs font-bold text-secondary uppercase tracking-widest mb-4 block">Duration</label>
-                            <input
-                                class="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
-                                type="range">
-                            <div class="flex justify-between mt-2 text-xs text-on-surface-variant">
-                                <span>15m</span>
-                                <span>3h+</span>
-                            </div>
-                        </div>
+                        </form>
+                        <script>
+                            function applyFilters() {
+                                var form = document.getElementById('filterForm');
+                                var formData = new FormData(form);
+                                var params = new URLSearchParams(formData).toString();
+                                
+                                fetch('<?= BASE_URL ?>/games?' + params, {
+                                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                })
+                                .then(response => response.text())
+                                .then(html => {
+                                    var parser = new DOMParser();
+                                    var doc = parser.parseFromString(html, 'text/html');
+                                    var newGames = doc.querySelector('#gamesGrid');
+                                    var newPagination = doc.querySelector('#paginationContainer');
+                                    var newCount = doc.querySelector('#gamesCount');
+                                    
+                                    if (newGames) document.getElementById('gamesGrid').innerHTML = newGames.innerHTML;
+                                    if (newPagination) document.getElementById('paginationContainer').innerHTML = newPagination.innerHTML;
+                                    if (newCount) document.getElementById('gamesCount').textContent = newCount.textContent;
+                                    
+                                    history.pushState({}, '', '<?= BASE_URL ?>/games?' + params);
+                                    document.getElementById('games').scrollIntoView({ behavior: 'smooth' });
+                                });
+                            }
+                            
+                            document.querySelectorAll('input[name="category"]').forEach(function(radio) {
+                                radio.addEventListener('change', applyFilters);
+                            });
+                            
+                            var durationSlider = document.getElementById('durationSlider');
+                            var durationValue = document.getElementById('durationValue');
+                            durationSlider.addEventListener('change', function() {
+                                durationValue.textContent = this.value + 'm';
+                                applyFilters();
+                            });
+                        </script>
                     </div>
                     <div
                         class="bg-surface-container-low p-6 rounded-3xl relative overflow-hidden border border-outline-variant/5">
@@ -253,7 +284,7 @@
                 <div class="flex justify-between items-end mb-8">
                     <div>
                         <h2 class="font-headline text-3xl font-bold text-on-surface">Featured Collection</h2>
-                        <p class="text-on-surface-variant">Showing 24 games based on your filters</p>
+                        <p id="gamesCount" class="text-on-surface-variant">Showing <?= $pagination['totalGames'] ?> games</p>
                     </div>
                     <div class="flex items-center gap-4">
                         <span class="text-sm text-on-surface-variant">Sort by:</span>
@@ -265,7 +296,20 @@
                     </div>
                 </div>
                 <!-- Bento Style Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                <div id="gamesGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    <?php if (empty($games)): ?>
+                    <div class="col-span-full text-center py-16">
+                        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-surface-container flex items-center justify-center">
+                            <span class="material-symbols-outlined text-5xl text-[#c1c8c7]">search_off</span>
+                        </div>
+                        <h3 class="font-headline text-2xl font-bold mb-2">No Games Found</h3>
+                        <p class="text-[#c1c8c7] mb-6">Try adjusting your filters or search terms</p>
+                        <a href="<?= BASE_URL ?>/games" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90">
+                            <span class="material-symbols-outlined">refresh</span>
+                            Clear Filters
+                        </a>
+                    </div>
+                    <?php else: ?>
                     <?php foreach ($games as $game): ?>
                     <?php $isAvailable = ($game['status'] ?? 'available') === 'available'; ?>
                     <div class="group bg-surface-container rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-black/60">
@@ -309,25 +353,41 @@
                         </div>
                     </div>
                     <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 <!-- Pagination -->
-                <div class="mt-16 flex justify-center items-center gap-4">
-                    <button
+                <?php 
+                $filterParams = '';
+                if (isset($_GET['category'])) $filterParams .= '&category=' . $_GET['category'];
+                if (isset($_GET['search'])) $filterParams .= '&search=' . urlencode($_GET['search']);
+                if (isset($_GET['max_duration'])) $filterParams .= '&max_duration=' . $_GET['max_duration'];
+                ?>
+                <?php if ($pagination['totalPages'] > 1): ?>
+                <div id="paginationContainer" class="mt-16 flex justify-center items-center gap-4">
+                    <?php if ($pagination['currentPage'] > 1): ?>
+                    <a href="<?= BASE_URL ?>/games?page=<?= $pagination['currentPage'] - 1 ?><?= $filterParams ?>"
                         class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all">
                         <span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
-                    </button>
+                    </a>
+                    <?php endif; ?>
                     <div class="flex gap-2">
-                        <button class="w-12 h-12 rounded-full brass-gradient text-on-primary font-bold">1</button>
-                        <button
-                            class="w-12 h-12 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all font-bold">2</button>
-                        <button
-                            class="w-12 h-12 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all font-bold">3</button>
+                        <?php for ($i = 1; $i <= $pagination['totalPages']; $i++): ?>
+                        <?php if ($i == $pagination['currentPage']): ?>
+                        <span class="w-12 h-12 rounded-full brass-gradient text-on-primary font-bold flex items-center justify-center"><?= $i ?></span>
+                        <?php else: ?>
+                        <a href="<?= BASE_URL ?>/games?page=<?= $i ?><?= $filterParams ?>"
+                            class="w-12 h-12 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all font-bold flex items-center justify-center"><?= $i ?></a>
+                        <?php endif; ?>
+                        <?php endfor; ?>
                     </div>
-                    <button
+                    <?php if ($pagination['currentPage'] < $pagination['totalPages']): ?>
+                    <a href="<?= BASE_URL ?>/games?page=<?= $pagination['currentPage'] + 1 ?><?= $filterParams ?>"
                         class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all">
                         <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
-                    </button>
+                    </a>
+                    <?php endif; ?>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </main>

@@ -32,7 +32,7 @@ class GameModel extends Database {
         }
     }
 
-    public function getPaginated(int $page = 1, int $perPage = 12, ?int $categoryId = null, ?string $search = null, ?string $difficulty = null, bool $includeUnavailable = false): array
+    public function getPaginated(int $page = 1, int $perPage = 12, ?int $categoryId = null, ?string $search = null, ?string $difficulty = null, ?int $maxDuration = null, bool $includeUnavailable = false): array
     {
         try {
             $offset = ($page - 1) * $perPage;
@@ -52,6 +52,11 @@ class GameModel extends Database {
             if ($difficulty) {
                 $whereClause .= " AND g.difficulty = :difficulty";
                 $params['difficulty'] = $difficulty;
+            }
+            
+            if ($maxDuration) {
+                $whereClause .= " AND g.duration <= :max_duration";
+                $params['max_duration'] = $maxDuration;
             }
             
             $countSql = "SELECT COUNT(*) FROM games g $whereClause";
@@ -78,6 +83,9 @@ class GameModel extends Database {
             }
             if ($difficulty) {
                 $stmt->bindValue(':difficulty', $difficulty);
+            }
+            if ($maxDuration) {
+                $stmt->bindValue(':max_duration', $maxDuration, \PDO::PARAM_INT);
             }
             
             $stmt->execute();

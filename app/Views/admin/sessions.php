@@ -161,13 +161,8 @@ date_default_timezone_set('Africa/Casablanca');
                 <span class="font-medium text-sm">History</span>
             </a>
         </nav>
-        <div class="px-4 mt-auto space-y-4">
-            <a href="<?= BASE_URL ?>/admin/reservations"
-                class="w-full bg-primary text-on-primary font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/10">
-                <span class="material-symbols-outlined text-lg" data-icon="add">add</span>
-                New Reservation
-            </a>
-            <div class="pt-4 space-y-1">
+        <div class="px-4 mt-auto">
+            <div class="space-y-1 mb-4">
                 <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
                     href="<?= BASE_URL ?>/admin/settings">
                     <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
@@ -179,13 +174,13 @@ date_default_timezone_set('Africa/Casablanca');
                     Logout
                 </a>
             </div>
-            <div class="flex items-center gap-3 px-4 pt-4 border-t border-white/5">
-                <img class="w-8 h-8 rounded-full object-cover"
-                    data-alt="close-up portrait of professional male cafe administrator with modern haircut and stylish glasses in moody studio lighting"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTvmTeyYqUSz1UCRdpwY0jkAMjUuAz8aeu1EN4r21LyklK3epXS9xWqWgK4Url0aahNx1IFAT-kvktMH_i-K9tkMXT-7wDA5r-nBUdoEt_SZnElnKNoRheaBoI02EcPz4FsM32_Puk3ZOvPpzUe74vAR95akxLnJUtKhiTNXR5s-npUHwDKGXo8qUluQ5Nx5r82-Jpfnnr0khk-0HYmOSeOnRVFSP12UhHy8G1UF88em7kA45X6hvkr13D6UXJRr1SstKlu5TGBQYE">
+            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-surface-container/50">
+                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary">person</span>
+                </div>
                 <div class="overflow-hidden">
-                    <p class="text-xs font-bold truncate">Admin Console</p>
-                    <p class="text-[10px] text-secondary opacity-70 truncate">Logged in as Yassir</p>
+                    <p class="text-xs font-bold truncate"><?= $_SESSION['user_name'] ?? 'Admin' ?></p>
+                    <p class="text-[10px] text-secondary/60 truncate">Administrator</p>
                 </div>
             </div>
         </div>
@@ -215,51 +210,56 @@ date_default_timezone_set('Africa/Casablanca');
         </header>
 
         <!-- Status Tabs -->
+        <?php 
+        $activeSessions = $activeSessions ?? [];
+        $todayReservations = $todayReservations ?? [];
+        $tables = $tables ?? [];
+        
+        $sessionByTable = [];
+        foreach ($activeSessions as $session) {
+            $sessionByTable[$session['table_id']] = $session;
+        }
+        
+        $reservationsByTable = [];
+        foreach ($todayReservations as $res) {
+            $tableId = $res['table_id'];
+            if (!isset($reservationsByTable[$tableId])) {
+                $reservationsByTable[$tableId] = [];
+            }
+            $reservationsByTable[$tableId][] = $res;
+        }
+        
+        $activeCount = 0;
+        $bookedCount = 0;
+        $freeCount = 0;
+        foreach ($tables as $t) {
+            $tid = $t['id'];
+            $session = $sessionByTable[$tid] ?? null;
+            $reservations = $reservationsByTable[$tid] ?? [];
+            if ($session !== null) {
+                $activeCount++;
+            } elseif (!empty($reservations)) {
+                $bookedCount++;
+            } else {
+                $freeCount++;
+            }
+        }
+        ?>
         <div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
-            <button onclick="filterTables('all')" class="status-tab active flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="all">
-                <span class="material-symbols-outlined text-lg">grid_view</span>
-                All Tables
-                <span class="px-2 py-0.5 rounded-full text-xs bg-white/10"><?= count($tables) ?></span>
-            </button>
-            <button onclick="filterTables('active')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="active">
+            <button onclick="filterTables('active')" class="status-tab active flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="active">
                 <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">radio_button_checked</span>
                 Occupied
-                <span class="px-2 py-0.5 rounded-full text-xs bg-secondary/20 text-secondary"><?php 
-                    $activeCount = 0;
-                    foreach ($tables as $t) {
-                        $tid = $t['id'];
-                        if (isset($sessionByTable[$tid])) $activeCount++;
-                    }
-                    echo $activeCount;
-                ?></span>
+                <span class="px-2 py-0.5 rounded-full text-xs bg-secondary/20 text-secondary"><?= $activeCount ?></span>
             </button>
             <button onclick="filterTables('booked')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="booked">
                 <span class="material-symbols-outlined text-lg">event_busy</span>
                 Booked
-                <span class="px-2 py-0.5 rounded-full text-xs bg-primary/20 text-primary"><?php 
-                    $bookedCount = 0;
-                    foreach ($tables as $t) {
-                        $tid = $t['id'];
-                        $session = $sessionByTable[$tid] ?? null;
-                        $reservations = $reservationsByTable[$tid] ?? [];
-                        if ($session === null && !empty($reservations)) $bookedCount++;
-                    }
-                    echo $bookedCount;
-                ?></span>
+                <span class="px-2 py-0.5 rounded-full text-xs bg-primary/20 text-primary"><?= $bookedCount ?></span>
             </button>
             <button onclick="filterTables('free')" class="status-tab flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap" data-status="free">
                 <span class="material-symbols-outlined text-lg">weekend</span>
                 Free
-                <span class="px-2 py-0.5 rounded-full text-xs bg-green-500/20 text-green-400"><?php 
-                    $freeCount = 0;
-                    foreach ($tables as $t) {
-                        $tid = $t['id'];
-                        $session = $sessionByTable[$tid] ?? null;
-                        $reservations = $reservationsByTable[$tid] ?? [];
-                        if ($session === null && empty($reservations)) $freeCount++;
-                    }
-                    echo $freeCount;
-                ?></span>
+                <span class="px-2 py-0.5 rounded-full text-xs bg-green-500/20 text-green-400"><?= $freeCount ?></span>
             </button>
         </div>
 
@@ -290,21 +290,9 @@ date_default_timezone_set('Africa/Casablanca');
                 return true;
             }
             
-            // Index active sessions by table_id
-            $sessionByTable = [];
-            foreach ($activeSessions as $session) {
-                $sessionByTable[$session['table_id']] = $session;
-            }
+            // Index active sessions by table_id (already defined above)
             
-            // Group reservations by table
-            $reservationsByTable = [];
-            foreach ($todayReservations as $res) {
-                $tableId = $res['table_id'];
-                if (!isset($reservationsByTable[$tableId])) {
-                    $reservationsByTable[$tableId] = [];
-                }
-                $reservationsByTable[$tableId][] = $res;
-            }
+            // Group reservations by table (already defined above)
             
             foreach ($tables as $table): 
                 $tableId = $table['id'];
@@ -606,10 +594,8 @@ date_default_timezone_set('Africa/Casablanca');
         function filterTables(status) {
             const tabs = document.querySelectorAll('.status-tab');
             tabs.forEach(tab => {
-                tab.classList.remove('bg-primary', 'text-on-primary', 'bg-secondary/20', 'text-secondary', 'bg-primary/20', 'text-primary', 'bg-green-500/20', 'text-green-400');
-                if (tab.dataset.status === 'all') {
-                    tab.classList.add('bg-white/10', 'text-on-surface');
-                } else if (tab.dataset.status === 'active') {
+                tab.classList.remove('active', 'bg-secondary/20', 'text-secondary', 'bg-primary/20', 'text-primary', 'bg-green-500/20', 'text-green-400');
+                if (tab.dataset.status === 'active') {
                     tab.classList.add('text-secondary');
                 } else if (tab.dataset.status === 'booked') {
                     tab.classList.add('text-primary');
@@ -620,10 +606,9 @@ date_default_timezone_set('Africa/Casablanca');
             
             const activeTab = document.querySelector(`.status-tab[data-status="${status}"]`);
             if (activeTab) {
-                activeTab.classList.remove('bg-white/10', 'text-on-surface', 'text-secondary', 'text-primary', 'text-green-400');
-                if (status === 'all') {
-                    activeTab.classList.add('bg-primary', 'text-on-primary');
-                } else if (status === 'active') {
+                activeTab.classList.remove('text-secondary', 'text-primary', 'text-green-400');
+                activeTab.classList.add('active');
+                if (status === 'active') {
                     activeTab.classList.add('bg-secondary/20', 'text-secondary');
                 } else if (status === 'booked') {
                     activeTab.classList.add('bg-primary/20', 'text-primary');
@@ -635,9 +620,7 @@ date_default_timezone_set('Africa/Casablanca');
             const cards = document.querySelectorAll('.table-card');
             cards.forEach(card => {
                 const cardStatus = card.dataset.status;
-                if (status === 'all') {
-                    card.style.display = '';
-                } else if (cardStatus === status) {
+                if (cardStatus === status) {
                     card.style.display = '';
                 } else {
                     card.style.display = 'none';
@@ -647,7 +630,7 @@ date_default_timezone_set('Africa/Casablanca');
         
         // Initialize filter tabs styling
         document.addEventListener('DOMContentLoaded', function() {
-            filterTables('all');
+            filterTables('free');
         });
         </script>
         <!-- Floating Quick Action for Admin -->

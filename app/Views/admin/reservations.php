@@ -2,9 +2,10 @@
 use App\Helper\Csrf;
 date_default_timezone_set('Africa/Casablanca');
 
-// echo json_encode($reservations);
-
-// die();
+$stats = $stats ?? [];
+$reservations = $reservations ?? [];
+$pagination = $pagination ?? [];
+$filterDate = $filterDate ?? date('Y-m-d');
 
 ?>
 
@@ -168,23 +169,27 @@ date_default_timezone_set('Africa/Casablanca');
                 <span class="font-medium text-sm">History</span>
             </a>
         </nav>
-        <div class="px-4 mt-auto space-y-4">
-            <a href="<?= BASE_URL ?>/admin/reservations"
-                class="w-full bg-primary text-on-primary font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/10">
-                <span class="material-symbols-outlined text-lg" data-icon="add">add</span>
-                New Reservation
-            </a>
-            <div class="pt-4 space-y-1">
-                <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+        <div class="px-4 mt-auto">
+            <div class="space-y-1 mb-4">
+                <a class="text-[#abcdcc] hover:bg-[#353534]/50 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
                     href="<?= BASE_URL ?>/admin/settings">
-                    <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+                    <span class="material-symbols-outlined text-xl">settings</span>
                     Settings
                 </a>
-                <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+                <a class="text-[#abcdcc] hover:bg-[#353534]/50 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
                     href="<?= BASE_URL ?>/logout">
-                    <span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+                    <span class="material-symbols-outlined text-xl">logout</span>
                     Logout
                 </a>
+            </div>
+            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-surface-container/50">
+                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary">person</span>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-xs font-bold truncate"><?= $_SESSION['user_name'] ?? 'Admin' ?></p>
+                    <p class="text-[10px] text-secondary/60 truncate">Administrator</p>
+                </div>
             </div>
         </div>
     </aside>
@@ -192,11 +197,22 @@ date_default_timezone_set('Africa/Casablanca');
     <header
         class="fixed top-0 right-0 left-64 h-20 border-b border-[#414848]/15 bg-[#131313]/60 backdrop-blur-xl flex justify-between items-center px-12 z-40">
         <div
-            class="flex items-center bg-surface-container rounded-full px-4 py-2 w-96 border border-outline-variant/10">
+            class="flex items-center bg-surface-container rounded-full px-4 py-2 w-96 border border-outline-variant/10 relative">
             <span class="material-symbols-outlined text-secondary mr-2" data-icon="search">search</span>
-            <input
-                class="bg-transparent border-none focus:ring-0 text-sm w-full text-on-surface placeholder:text-outline"
+            <input id="searchInput"
+                class="bg-transparent border-none focus:ring-0 text-sm w-full text-on-surface placeholder:text-outline pr-8"
                 placeholder="Search reservations..." type="text">
+            <button type="button" onclick="document.getElementById('searchInput').value=''; document.getElementById('searchInput').focus();"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary/40 hover:text-primary hidden" id="clearSearch">
+                <span class="text-xl">&times;</span>
+            </button>
+            <script>
+                const searchInput = document.getElementById('searchInput');
+                const clearBtn = document.getElementById('clearSearch');
+                searchInput.addEventListener('input', function() {
+                    clearBtn.classList.toggle('hidden', !this.value);
+                });
+            </script>
         </div>
         <div class="flex items-center gap-6">
             <div class="flex items-center gap-4 border-r border-outline-variant/20 pr-6">
@@ -248,17 +264,17 @@ date_default_timezone_set('Africa/Casablanca');
                 <div class="col-span-1 bg-surface-container rounded-2xl p-6 border border-outline-variant/5">
                     <p class="text-secondary text-xs uppercase font-bold tracking-widest mb-1">Today's Paxs</p>
                     <div class="flex items-baseline gap-2">
-                        <span class="text-4xl font-headline font-extrabold text-primary">42</span>
-                        <span class="text-xs text-green-400 font-medium">+12% vs yest.</span>
+                        <span class="text-4xl font-headline font-extrabold text-primary"><?= $stats['todayPaxs'] ?? 0 ?></span>
+                        <span class="text-xs text-secondary/60 font-medium">Guests</span>
                     </div>
                 </div>
                 <div class="col-span-1 bg-surface-container rounded-2xl p-6 border border-outline-variant/5">
                     <p class="text-secondary text-xs uppercase font-bold tracking-widest mb-1">Confirmed</p>
-                    <span class="text-4xl font-headline font-extrabold text-on-surface">18</span>
+                    <span class="text-4xl font-headline font-extrabold text-green-400"><?= str_pad($stats['confirmed'] ?? 0, 2, '0', STR_PAD_LEFT) ?></span>
                 </div>
                 <div class="col-span-1 bg-surface-container rounded-2xl p-6 border border-outline-variant/5">
                     <p class="text-secondary text-xs uppercase font-bold tracking-widest mb-1">Pending</p>
-                    <span class="text-4xl font-headline font-extrabold text-on-surface">06</span>
+                    <span class="text-4xl font-headline font-extrabold text-yellow-400"><?= str_pad($stats['pending'] ?? 0, 2, '0', STR_PAD_LEFT) ?></span>
                 </div>
                 <div
                     class="col-span-1 bg-surface-container-highest rounded-2xl p-6 border border-primary/20 relative overflow-hidden group">
@@ -266,17 +282,16 @@ date_default_timezone_set('Africa/Casablanca');
                         class="absolute top-0 right-0 w-32 h-32 brass-gradient opacity-10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:opacity-20 transition-opacity">
                     </div>
                     <p class="text-primary text-xs uppercase font-bold tracking-widest mb-1">Upcoming Peak</p>
-                    <span class="text-2xl font-headline font-extrabold text-on-surface">19:30 - 21:00</span>
+                    <span class="text-2xl font-headline font-extrabold text-on-surface"><?= $stats['peakTime'] ?? '--:--' ?> - <?= $stats['peakEndTime'] ?? '--:--' ?></span>
                     <p class="text-xs text-secondary mt-2 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
-                        Fully Booked
+                        <span class="material-symbols-outlined text-[14px]" data-icon="<?= ($stats['isFullyBooked'] ?? false) ? 'check_circle' : 'trending_up' ?>"><?= ($stats['isFullyBooked'] ?? false) ? 'check_circle' : 'trending_up' ?></span>
+                        <?= ($stats['isFullyBooked'] ?? false) ? 'Fully Booked' : 'On Track' ?>
                     </p>
                 </div>
             </div>
             <!-- Table Section -->
             <div class="bg-surface-container rounded-2xl border border-outline-variant/10 overflow-hidden shadow-2xl">
-                <div
-                    class="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low">
+                <form method="GET" class="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low">
                     <div class="flex gap-4 items-center">
                         <div
                             class="flex items-center gap-2 px-4 py-2 bg-surface-dim rounded-lg border border-outline-variant/20">
@@ -288,14 +303,16 @@ date_default_timezone_set('Africa/Casablanca');
                             class="flex items-center gap-2 px-4 py-2 bg-surface-dim rounded-lg border border-outline-variant/20">
                             <span class="material-symbols-outlined text-primary text-sm"
                                 data-icon="calendar_today">calendar_today</span>
-                            <span class="text-xs font-bold text-on-surface uppercase tracking-wider">Nov 14, 2023</span>
+                            <input type="date" name="date" value="<?= $filterDate ?? date('Y-m-d') ?>" 
+                                class="bg-transparent border-none focus:ring-0 text-xs font-bold text-on-surface uppercase tracking-wider cursor-pointer"
+                                onchange="this.form.submit()">
                         </div>
                     </div>
-                    <button
+                    <button type="button" onclick="window.location.href='<?= BASE_URL ?>/admin/reservations'"
                         class="text-secondary hover:text-primary transition-colors flex items-center gap-2 text-sm font-bold">
                         <span class="material-symbols-outlined text-lg" data-icon="download">download</span> Export CSV
                     </button>
-                </div>
+                </form>
                 <table class="w-full text-left border-separate border-spacing-0">
                     <thead>
                         <tr class="bg-surface-container-low">
@@ -323,6 +340,17 @@ date_default_timezone_set('Africa/Casablanca');
                         <?php 
                         $listReservations = $reservations ?? [];
                         
+                        if (empty($listReservations)): ?>
+                        <tr>
+                            <td colspan="6" class="p-12 text-center">
+                                <div class="flex flex-col items-center gap-4">
+                                    <span class="material-symbols-outlined text-5xl text-secondary/30">event_busy</span>
+                                    <p class="text-secondary font-medium">No reservations found</p>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php else:
+                        $isPast = $stats['isPastDate'] ?? false;
                         foreach ($listReservations as $res): 
                             $status = $res['status'] ?? 'pending';
                             $statusColors = [
@@ -410,25 +438,32 @@ date_default_timezone_set('Africa/Casablanca');
                                 </div>
                             </td>
                         </tr>
-                        <?php endforeach; ?>
+                        <?php 
+                        endforeach;
+                        endif;
+                        ?>
                     </tbody>
                 </table>
                 <div class="p-6 bg-surface-container-low border-t border-outline-variant/10 flex justify-between items-center">
-                    <p class="text-sm text-secondary">Showing <?= count($listReservations) ?> of <?= $totalReservations ?? 0 ?> reservations</p>
-                    <?php if (isset($totalPages) && $totalPages > 1): ?>
+                    <p class="text-sm text-secondary">Showing <?= count($reservations) ?> of <?= $pagination['totalReservations'] ?? 0 ?> reservations</p>
+                    <?php if (isset($pagination['totalPages']) && $pagination['totalPages'] > 1): ?>
                     <div class="flex gap-2">
-                        <?php if ($currentPage > 1): ?>
-                        <a href="?page=<?= $currentPage - 1 ?>" class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">
+                        <?php if ($pagination['currentPage'] > 1): ?>
+                        <a href="?page=<?= $pagination['currentPage'] - 1 ?>&date=<?= $filterDate ?? '' ?>" class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">
                             <span class="material-symbols-outlined">chevron_left</span>
                         </a>
                         <?php endif; ?>
-                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                        <a href="?page=<?= $i ?>" class="w-10 h-10 flex items-center justify-center rounded-lg <?= $i === $currentPage ? 'bg-primary/10 border border-primary/30 text-primary font-bold' : 'border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary' ?>">
+                        <?php 
+                        $start = max(1, $pagination['currentPage'] - 2);
+                        $end = min($pagination['totalPages'], $pagination['currentPage'] + 2);
+                        for ($i = $start; $i <= $end; $i++): 
+                        ?>
+                        <a href="?page=<?= $i ?>&date=<?= $filterDate ?? '' ?>" class="w-10 h-10 flex items-center justify-center rounded-lg <?= $i === $pagination['currentPage'] ? 'bg-primary/10 border border-primary/30 text-primary font-bold' : 'border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary' ?>">
                             <?= $i ?>
                         </a>
                         <?php endfor; ?>
-                        <?php if ($currentPage < $totalPages): ?>
-                        <a href="?page=<?= $currentPage + 1 ?>" class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">
+                        <?php if ($pagination['currentPage'] < $pagination['totalPages']): ?>
+                        <a href="?page=<?= $pagination['currentPage'] + 1 ?>&date=<?= $filterDate ?? '' ?>" class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/20 hover:bg-surface-container-highest transition-colors text-secondary">
                             <span class="material-symbols-outlined">chevron_right</span>
                         </a>
                         <?php endif; ?>
