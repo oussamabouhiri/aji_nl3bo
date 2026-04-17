@@ -485,25 +485,6 @@ Ce projet a été développé en équipe de **3 développeurs** avec méthodolog
 
 ---
 
-## 🎉 Roadmap
-
-### Version 1.1 (Prochaine Release)
-
-- [ ] Système de notifications par email (confirmation réservation)
-- [ ] Export PDF des statistiques admin
-- [ ] API REST pour mobile app
-- [ ] Paiement en ligne intégré
-- [ ] Multi-langue (FR / AR / EN)
-
-### Version 2.0 (Future)
-
-- [ ] PWA (Progressive Web App)
-- [ ] Chat en temps réel (WebSockets)
-- [ ] Programme de fidélité
-- [ ] Recommandations AI basées sur historique
-
----
-
 <div align="center">
 
 **Made with ❤️ by the Aji L3bo Team**
