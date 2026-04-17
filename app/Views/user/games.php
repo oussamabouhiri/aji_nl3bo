@@ -115,6 +115,10 @@
         .glow-orb {
             box-shadow: 0 0 8px #4ade80;
         }
+
+        .hide-user-fab {
+            display: none;
+        }
     </style>
 </head>
 
@@ -393,7 +397,7 @@
     </main>
     <!-- Contextual FAB -->
     <button
-        class="fixed bottom-8 right-8 brass-gradient text-on-primary shadow-2xl shadow-primary/20 w-16 h-16 rounded-full flex items-center justify-center transition-transform hover:scale-110 active:scale-95 z-40">
+        class="fixed bottom-8 right-8 brass-gradient text-on-primary shadow-2xl shadow-primary/20 w-16 h-16 rounded-full flex items-center justify-center transition-transform hover:scale-110 active:scale-95 z-40 hide-user-fab">
         <span class="material-symbols-outlined text-3xl" data-icon="add"
             style="font-variation-settings: 'wght' 600;">add</span>
     </button>

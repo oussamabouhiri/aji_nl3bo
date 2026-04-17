@@ -49,6 +49,8 @@ Router::get('/my-reservations', [UserController::class, 'myReservations'])->midd
 
 // Profile (auth required)
 Router::get('/profile', [UserController::class, 'profile'])->middleware('user');
+Router::get('/profile/edit', [UserController::class, 'editProfile'])->middleware('user');
+Router::post('/profile/update', [UserController::class, 'updateProfile'])->middleware('user');
 
 // Games (auth required)
 Router::get('/games', [UserController::class, 'games'])->middleware('user');

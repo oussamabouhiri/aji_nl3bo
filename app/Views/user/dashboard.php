@@ -1,5 +1,7 @@
 <?php
-$userName = $_SESSION['user_name'] ?? 'User';
+$userName = $user['name'] ?? 'User';
+$userEmail = $user['email'] ?? '';
+$userCreatedAt = $user['created_at'] ?? date('Y-m-d');
 $config = require __DIR__ . '/../../../config/app.php';
 $baseUrl = $config['base_url'];
 ?>
@@ -148,9 +150,9 @@ $baseUrl = $config['base_url'];
             <div class="bg-surface-container p-8 rounded-xl shadow-2xl relative overflow-hidden group">
                 <div class="relative z-10">
                     <p class="text-outline-variant font-label text-sm uppercase tracking-widest mb-4">Your Reservations</p>
-                    <h3 class="text-5xl font-headline font-extrabold text-on-surface">0</h3>
+                    <h3 class="text-5xl font-headline font-extrabold text-on-surface"><?= $upcomingCount ?></h3>
                     <div class="mt-4 flex items-center text-primary text-sm font-semibold">
-                        <span>No upcoming sessions</span>
+                        <span><?= $upcomingCount > 0 ? 'Upcoming sessions' : 'No upcoming sessions' ?></span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined absolute -bottom-4 -right-4 text-primary/10 text-9xl">event</span>
@@ -158,7 +160,7 @@ $baseUrl = $config['base_url'];
             <div class="bg-surface-container-high p-8 rounded-xl shadow-2xl relative overflow-hidden group">
                 <div class="relative z-10">
                     <p class="text-outline-variant font-label text-sm uppercase tracking-widest mb-4">Available Games</p>
-                    <h3 class="text-5xl font-headline font-extrabold text-on-surface">12</h3>
+                    <h3 class="text-5xl font-headline font-extrabold text-on-surface"><?= $gamesCount ?></h3>
                     <div class="mt-4 flex items-center text-secondary text-sm font-semibold">
                         <span>Ready to play</span>
                     </div>
@@ -168,9 +170,9 @@ $baseUrl = $config['base_url'];
             <div class="bg-surface-container p-8 rounded-xl shadow-2xl relative overflow-hidden group">
                 <div class="relative z-10">
                     <p class="text-outline-variant font-label text-sm uppercase tracking-widest mb-4">Total Sessions</p>
-                    <h3 class="text-5xl font-headline font-extrabold text-on-surface">0</h3>
+                    <h3 class="text-5xl font-headline font-extrabold text-on-surface"><?= $totalSessions ?></h3>
                     <div class="mt-4 flex items-center text-tertiary text-sm font-semibold">
-                        <span>Start your first game</span>
+                        <span><?= $totalPlaytime > 0 ? $totalPlaytime . ' hrs played' : 'Start your first game' ?></span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined absolute -bottom-4 -right-4 text-tertiary/10 text-9xl">timer</span>
@@ -181,11 +183,11 @@ $baseUrl = $config['base_url'];
             <div class="space-y-6">
                 <h2 class="text-2xl font-headline font-extrabold tracking-tight">Quick Actions</h2>
                 <div class="grid grid-cols-2 gap-4">
-                    <a href="<?= $baseUrl ?>games" class="bg-surface-container p-6 rounded-xl hover:bg-surface-container-high transition-colors">
+                    <a href="<?= $baseUrl ?>/games" class="bg-surface-container p-6 rounded-xl hover:bg-surface-container-high transition-colors">
                         <span class="material-symbols-outlined text-primary text-3xl mb-2">sports_esports</span>
                         <p class="font-bold">Browse Games</p>
                     </a>
-                    <a href="<?= $baseUrl ?>reservation" class="bg-surface-container p-6 rounded-xl hover:bg-surface-container-high transition-colors">
+                    <a href="<?= $baseUrl ?>/reservation" class="bg-surface-container p-6 rounded-xl hover:bg-surface-container-high transition-colors">
                         <span class="material-symbols-outlined text-primary text-3xl mb-2">event_available</span>
                         <p class="font-bold">Make Reservation</p>
                     </a>
@@ -200,10 +202,11 @@ $baseUrl = $config['base_url'];
                         </div>
                         <div>
                             <p class="text-xl font-bold"><?= htmlspecialchars($userName) ?></p>
-                            <p class="text-secondary text-sm">Member since now</p>
+                            <p class="text-secondary text-sm"><?= htmlspecialchars($userEmail) ?></p>
+                            <p class="text-secondary text-xs mt-1">Member since <?= date('M Y', strtotime($userCreatedAt)) ?></p>
                         </div>
                     </div>
-                    <a href="<?= $baseUrl ?>profile" class="text-primary font-bold text-sm hover:underline">Edit Profile</a>
+                    <a href="<?= $baseUrl ?>/profile/edit" class="text-primary font-bold text-sm hover:underline">Edit Profile</a>
                 </div>
             </div>
         </div>
