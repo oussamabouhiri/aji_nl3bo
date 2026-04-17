@@ -43,22 +43,22 @@
 
 <body class="bg-background text-on-surface">
   <!-- SideNavBar -->
-  <aside class="h-screen w-64 fixed left-0 top-0 bg-[#0e0e0e] flex flex-col py-6 shadow-[16px_0_40px_-4px_rgba(0,0,0,0.5)] z-50">
-    <div class="px-8 mb-8">
+  <aside class="h-screen w-64 fixed left-0 top-0 bg-[#0e0e0e] flex flex-col py-4 shadow-[16px_0_40px_-4px_rgba(0,0,0,0.5)] z-50">
+    <div class="px-6 mb-4">
       <a href="<?= BASE_URL ?>/" class="text-xl font-bold text-[#e9c176]">Aji L3bo</a>
     </div>
-    <div class="px-6 mb-6">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-          <span class="material-symbols-outlined text-primary">person</span>
+    <div class="px-4 mb-4">
+      <div class="flex items-center gap-3 py-2 px-2 rounded-xl bg-surface-container/50">
+        <div class="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary text-sm">person</span>
         </div>
-        <div>
-          <p class="text-on-surface font-headline font-bold text-sm leading-none"><?= $_SESSION['user_name'] ?? 'Admin' ?></p>
-          <p class="text-secondary text-xs mt-1">Administrator</p>
+        <div class="overflow-hidden min-w-0">
+          <p class="text-on-surface font-bold text-xs truncate"><?= $_SESSION['user_name'] ?? 'Admin' ?></p>
+          <p class="text-secondary text-[10px]">Administrator</p>
         </div>
       </div>
     </div>
-    <nav class="flex-1 space-y-1 px-2">
+    <nav class="flex-1 overflow-y-auto px-2 py-2 space-y-1">
       <!-- Dashboard -->
       <a class="bg-gradient-to-r from-[#e9c176] to-[#bd9852] text-[#412d00] rounded-full px-4 py-3 font-bold flex items-center gap-3 shadow-lg shadow-primary/20"
         href="<?= BASE_URL ?>/admin">
@@ -96,7 +96,7 @@
         <span class="text-sm">History</span>
       </a>
     </nav>
-    <div class="px-4 mt-auto">
+    <div class="mt-auto pt-4 border-t border-outline-variant/20 px-2">
       <div class="space-y-1 mb-4">
         <a class="text-[#abcdcc] hover:bg-[#353534]/50 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
           href="<?= BASE_URL ?>/admin/settings">
@@ -219,7 +219,7 @@
                 </td>
                 <td class="px-6 py-5 text-right">
                   <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <?php if ($reservation['reservation_status'] === 'confirmed'): ?>
+                    <?php if (($reservation['status'] ?? 'pending') === 'confirmed'): ?>
                     <a href="<?= BASE_URL ?>/admin/reservations/start-session/<?= $reservation['id'] ?>" 
                        class="px-3 py-1 bg-primary/20 hover:bg-primary/40 rounded-full text-primary text-xs font-bold">
                       Start

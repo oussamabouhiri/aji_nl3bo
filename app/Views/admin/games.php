@@ -131,12 +131,12 @@
 <body class="bg-background text-on-surface font-body selection:bg-primary/30">
     <!-- SideNavBar Anchor -->
     <aside
-        class="h-screen w-64 fixed left-0 top-0 border-r border-[#414848]/15 bg-[#131313] flex flex-col py-8 z-50 shadow-[16px_0_40px_-4px_rgba(0,0,0,0.1)]">
-        <div class="px-8 mb-12">
+        class="h-screen w-64 fixed left-0 top-0 border-r border-[#414848]/15 bg-[#131313] flex flex-col py-4 z-50 shadow-[16px_0_40px_-4px_rgba(0,0,0,0.1)]">
+        <div class="px-8 mb-6">
             <h1 class="text-2xl font-black tracking-tight text-[#e9c176] font-headline">The Tactile Archive</h1>
             <p class="text-[10px] uppercase tracking-[0.2em] text-secondary/50 mt-1">Digital Curator</p>
         </div>
-        <nav class="flex-1 space-y-1">
+        <nav class="flex-1 overflow-y-auto px-2 py-2 space-y-1">
             <!-- Dashboard -->
             <a class="text-[#abcdcc] hover:bg-[#353534]/50 mx-2 px-4 py-3 rounded-full transition-all flex items-center gap-3 group"
                 href="<?= BASE_URL ?>/admin">
@@ -187,13 +187,27 @@
                     Logout
                 </a>
             </div>
-            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-surface-container/50">
-                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary">person</span>
+            <div class="mt-4 pt-4 border-t border-outline-variant/20 px-2">
+                <div class="space-y-1 mb-4">
+                    <a class="text-[#abcdcc] hover:bg-[#353534]/50 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+                        href="<?= BASE_URL ?>/admin/settings">
+                        <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+                        Settings
+                    </a>
+                    <a class="text-[#abcdcc] hover:bg-[#353534]/50 px-4 py-2 rounded-full transition-all flex items-center gap-3 text-sm"
+                        href="<?= BASE_URL ?>/logout">
+                        <span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+                        Logout
+                    </a>
                 </div>
-                <div class="overflow-hidden">
-                    <p class="text-xs font-bold truncate"><?= $_SESSION['user_name'] ?? 'Admin' ?></p>
-                    <p class="text-[10px] text-secondary/60 truncate">Administrator</p>
+                <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-surface-container/50">
+                    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-primary">person</span>
+                    </div>
+                    <div class="overflow-hidden min-w-0">
+                        <p class="text-xs font-bold truncate"><?= $_SESSION['user_name'] ?? 'Admin' ?></p>
+                        <p class="text-[10px] text-secondary/60 truncate">Administrator</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -287,6 +301,13 @@
         </form>
         <!-- Games List -->
         <div class="grid grid-cols-1 gap-4">
+            <?php if (empty($games)): ?>
+            <div class="flex flex-col items-center justify-center py-20 text-center">
+                <span class="material-symbols-outlined text-6xl text-secondary/20 mb-4">sports_esports</span>
+                <p class="text-secondary text-lg">No games found</p>
+                <p class="text-secondary/40 text-sm mt-2">Try adjusting your filters or add a new game</p>
+            </div>
+            <?php else: ?>
             <?php foreach ($games ?? [] as $game): ?>
             <div
                 class="group relative flex items-center bg-surface-container hover:bg-surface-container-high transition-all duration-500 rounded-2xl p-4 border border-outline-variant/5 shadow-xl">
@@ -355,6 +376,7 @@
                 </div>
             </div>
             <?php endforeach; ?>
+            <?php endif; ?>
         </div>
         <!-- Footer / Pagination -->
         <?php 
@@ -387,7 +409,7 @@
                 for ($i = $pageStart; $i <= $pageEnd; $i++): 
                 ?>
                     <a href="?page=<?= $i ?><?= isset($_GET['category']) ? '&category=' . $_GET['category'] : '' ?><?= isset($_GET['difficulty']) ? '&difficulty=' . $_GET['difficulty'] : '' ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?>"
-                        class="w-10 h-10 rounded-lg <?= $i == $currentPage ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-surface-container transition-colors text-secondary/60' ?>">
+                        class="w-10 h-10 rounded-lg flex items-center justify-center <?= $i == $currentPage ? 'bg-primary/10 text-primary font-bold border border-primary/30' : 'hover:bg-surface-container transition-colors text-secondary/60 border border-transparent' ?>">
                         <?= $i ?>
                     </a>
                 <?php endfor; ?>

@@ -71,6 +71,7 @@ Router::post('/admin/categories/delete/{id}', [CategoryController::class, 'delet
 Router::get('/admin/reservations', [ReservationController::class, 'index'])->middleware('admin');
 Router::get('/admin/reservations/view/{id}', [ReservationController::class, 'view'])->middleware('admin');
 Router::post('/admin/reservations/create', [ReservationController::class, 'create'])->middleware('admin');
+Router::post('/admin/reservations/quick-create', [ReservationController::class, 'quickCreate'])->middleware('admin');
 Router::post('/admin/reservations/update', [ReservationController::class, 'update'])->middleware('admin');
 Router::post('/admin/reservations/confirm/{id}', [ReservationController::class, 'confirm'])->middleware('admin');
 Router::post('/admin/reservations/cancel/{id}', [ReservationController::class, 'cancel'])->middleware('admin');
